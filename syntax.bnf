@@ -1,0 +1,3 @@
+<gpa> ::= "4.0" | <leading> "." <trailing>
+<leading> ::= [0-3]
+<trailing> ::= [0-9]
