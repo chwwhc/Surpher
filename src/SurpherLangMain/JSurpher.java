@@ -1,4 +1,4 @@
-package SurpherLang;
+package SurpherLangMain;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -12,7 +12,6 @@ import java.util.Scanner;
 
 public final class JSurpher {
     private static boolean aHadError = false;
-
 
     public static void main(String[] args) throws IOException {
         if (args.length > 1) {
@@ -30,6 +29,7 @@ public final class JSurpher {
 
     /**
      * Executes a script in batch mode
+     * 
      * @param pPath path of the script
      * @throws IOException
      */
@@ -45,6 +45,7 @@ public final class JSurpher {
 
     /**
      * Enters the interactive mode
+     * 
      * @throws IOException
      */
     private static void runPrompt() throws IOException {
@@ -69,20 +70,22 @@ public final class JSurpher {
 
     /**
      * Interprets and executes the source code
-     * @param pScript the source code 
+     * 
+     * @param pScript the source code
      */
     private static void run(String pScript) {
         Lexer lexer = new Lexer(pScript);
         List<Token> tokens = lexer.scanTokens();
 
-        for(Token t: tokens){
+        for (Token t : tokens) {
             System.out.println(t);
         }
     }
 
     /**
      * Generates an error
-     * @param pLine location of the error
+     * 
+     * @param pLine    location of the error
      * @param pMessage explanation of the error
      */
     static void error(int pLine, String pMessage) {

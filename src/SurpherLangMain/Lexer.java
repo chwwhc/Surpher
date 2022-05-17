@@ -1,4 +1,4 @@
-package SurpherLang;
+package SurpherLangMain;
 
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Stack;
 
-import SurpherLang.Token.TokenType;
+import SurpherLangMain.Token.TokenType;
 
 /**
  * Lexer for the Surpher language

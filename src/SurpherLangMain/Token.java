@@ -1,4 +1,4 @@
-package SurpherLang;
+package SurpherLangMain;
 
 /**
  * Represents a lexical token of Surpher
@@ -43,6 +43,15 @@ class Token {
         aLexeme = pLexeme;
         aLiteral = pLiteral;
         aLine = pLine;
+    }
+
+    /**
+     * Getter method to retrieve the lexeme
+     * 
+     * @return
+     */
+    String getLexeme() {
+        return aLexeme;
     }
 
     @Override

@@ -1,3 +1,6 @@
-<gpa> ::= "4.0" | <leading> "." <trailing>
-<leading> ::= [0-3]
-<trailing> ::= [0-9]
+<expr> ::= <literal> | <unary op> <expr> | <expr> <binary op> <expr> | grouping
+<literal> ::= INT | FLOAT | STRING | "true" | "false" |  "none" ;
+<grouping> ::= "(" <expression> ")" ;
+<unary op> ::= "-" | "!" ;
+<binary op> ::= "+" | "-" | "*" | "/" | "&&" | "&" | "|" | "||" | "^" | "%"
+                | ">" | ">=" | "<" | "<=" | "==" | "!="
