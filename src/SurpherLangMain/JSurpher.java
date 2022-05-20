@@ -10,6 +10,8 @@ import java.nio.file.Paths;
 import java.util.List;
 import java.util.Scanner;
 
+import SurpherLangMain.Token.TokenType;
+
 public final class JSurpher {
     private static boolean aHadError = false;
 
@@ -49,8 +51,7 @@ public final class JSurpher {
      * @throws IOException
      */
     private static void runPrompt() throws IOException {
-        InputStreamReader userInput = new InputStreamReader(System.in);
-        BufferedReader buffer = new BufferedReader(userInput);
+        BufferedReader buffer = new BufferedReader(new InputStreamReader(System.in));
 
         // REPL
         while (true) {
@@ -76,10 +77,12 @@ public final class JSurpher {
     private static void run(String pScript) {
         Lexer lexer = new Lexer(pScript);
         List<Token> tokens = lexer.scanTokens();
+        Parser parser = new Parser(tokens);
 
-        for (Token t : tokens) {
-            System.out.println(t);
-        }
+        if (aHadError)
+            return;
+
+        System.out.println(new ASTPrinter().ASTPrint(parser.parse()));
     }
 
     /**
@@ -90,6 +93,14 @@ public final class JSurpher {
      */
     static void error(int pLine, String pMessage) {
         report(pLine, "", pMessage);
+    }
+
+    static void error(Token pToken, String pMessage) {
+        if (pToken.getType() == TokenType.EOF) {
+            report(pToken.getLine(), " at end", pMessage);
+        } else {
+            report(pToken.getLine(), " at '" + pToken.getLexeme() + "'", pMessage);
+        }
     }
 
     private static void report(int pLine, String pLocation, String pMessage) {

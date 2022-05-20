@@ -54,6 +54,30 @@ class Token {
         return aLexeme;
     }
 
+    /**
+     * Getter method to retrieve the token type
+     * @return
+     */
+    TokenType getType(){
+        return aType;
+    }
+
+    /**
+     * Getter method to retrieve the literal object 
+     * @return
+     */
+    Object getLiteral(){
+        return aLiteral;
+    }
+
+    /**
+     * Getter method to retrieve the position of this token
+     * @return
+     */
+    int getLine(){
+        return aLine;
+    }
+
     @Override
     public String toString() {
         return "lexical type: " + aType + " , lexeme: " + aLexeme + " , literal: " + aLiteral;

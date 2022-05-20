@@ -5,6 +5,10 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Stack;
+import java.util.function.Supplier;
+import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.function.Predicate;
 
 import SurpherLangMain.Token.TokenType;
 
@@ -12,7 +16,7 @@ import SurpherLangMain.Token.TokenType;
  * Lexer for the Surpher language
  */
 class Lexer {
-    private final String aSource;
+    private String aSource;
     private final List<Token> aTokenList = new LinkedList<>();
     private static final Map<String, TokenType> aKeywords = new HashMap<>();
     private int aStart = 0;
@@ -44,6 +48,28 @@ class Lexer {
         aKeywords.put("newtype", TokenType.NEWTYPE);
     }
 
+    private Consumer<TokenType> addToken = pType -> addToken(pType, null);
+    private Supplier<Character> anyChar = () -> aSource.charAt(aCurrent++);
+    private Supplier<Boolean> isAtEnd = () -> aCurrent >= aSource.length();
+    private Predicate<Character> isDigit = pChar -> pChar >= '0' && pChar <= '9';
+    private Predicate<Character> isAlpha = pChar -> (pChar >= 'a' && pChar <= 'z') || (pChar >= 'A' && pChar <= 'Z')
+            || pChar == '_';
+    private Predicate<Character> isAlphaNumeric = isAlpha.or(isDigit);
+    private Function<Integer, Character> lookAHead = pOffset -> {
+        if (isAtEnd.get() || aCurrent + pOffset >= aSource.length()) {
+            return '\0';
+        } else {
+            return aSource.charAt(aCurrent + pOffset);
+        }
+    };
+    private Function<Character, Boolean> matchNext = pExpectedChar -> {
+        if (isAtEnd.get() || aSource.charAt(aCurrent) != pExpectedChar) {
+            return false;
+        }
+        aCurrent++;
+        return true;
+    };
+
     /**
      * Constructor for the Surpher lexer
      * 
@@ -54,72 +80,27 @@ class Lexer {
     }
 
     /**
-     * Determines if the given char is a valid identifier
-     * element([a-zA-Z_][0-9a-zA-Z_]*)
-     * 
-     * @param pChar
-     * @return
-     */
-    private boolean isAlpha(char pChar) {
-        return (pChar >= 'a' && pChar <= 'z') || (pChar >= 'A' && pChar <= 'Z') || pChar == '_';
-    }
-
-    /**
-     * Determines if the given char is a valid identifier
-     * element([a-zA-Z_][0-9a-zA-Z_]*) or a valid digit
-     * 
-     * @param pChar
-     * @return
-     */
-    private boolean isAlphaNumeric(char pChar) {
-        return isAlpha(pChar) || isDigit(pChar);
-    }
-
-    /**
-     * Determines if the given char is a valid digit
-     * 
-     * @param pChar
-     * @return
-     */
-    private boolean isDigit(char pChar) {
-        return pChar >= '0' && pChar <= '9';
-    }
-
-    /**
-     * Attempts to match the given char; increments the cursor if it succeeds
-     * 
-     * @param pExpected given char to be matched
-     * @return
-     */
-    private boolean matchNext(char pExpected) {
-        if (isAtEnd() || aSource.charAt(aCurrent) != pExpected) {
-            return false;
-        }
-        aCurrent++;
-        return true;
-    }
-
-    /**
      * Attempts to match a Number type of Surpher
      */
     private void matchNumber() {
+
         // check if the first char is a digit
-        while (isDigit(lookAHead(0))) {
-            anyChar();
+        while (isDigit.test(lookAHead.apply(0))) {
+            anyChar.get();
         }
 
-        if (lookAHead(0) == '.' && isDigit(lookAHead(1))) {
+        if (lookAHead.apply(0) == '.' && isDigit.test(lookAHead.apply(1))) {
             // case 1: FLOAT
-            anyChar();
-            while (isDigit(lookAHead(0))) {
-                anyChar();
+            anyChar.get();
+            while (isDigit.test(lookAHead.apply(0))) {
+                anyChar.get();
             }
             addToken(TokenType.FLOAT, Double.parseDouble(aSource.substring(aStart, aCurrent)));
             return;
         } else {
             // case 2: INTEGER
-            while (isDigit(lookAHead(0))) {
-                anyChar();
+            while (isDigit.test(lookAHead.apply(0))) {
+                anyChar.get();
             }
             addToken(TokenType.INTEGER, Integer.parseInt(aSource.substring(aStart, aCurrent)));
             return;
@@ -132,8 +113,8 @@ class Lexer {
      */
     private void matchIdentifierAndReserved() {
         // check if the leading char is a valid identifier element
-        while (isAlphaNumeric(lookAHead(0))) {
-            anyChar();
+        while (isAlphaNumeric.test(lookAHead.apply(0))) {
+            anyChar.get();
         }
         String word = aSource.substring(aStart, aCurrent);
         TokenType type = aKeywords.get(word);
@@ -142,7 +123,7 @@ class Lexer {
             type = TokenType.IDENTIFIER;
         }
         // case 2: keyword
-        addToken(type);
+        addToken.accept(type);
     }
 
     /**
@@ -150,21 +131,21 @@ class Lexer {
      */
     private void matchString() {
         // skip over the string body
-        while (!isAtEnd() && lookAHead(0) != '"') {
-            if (lookAHead(0) == '\n') {
+        while (!isAtEnd.get() && lookAHead.apply(0) != '"') {
+            if (lookAHead.apply(0) == '\n') {
                 aLine++;
             }
-            anyChar();
+            anyChar.get();
         }
 
         // error: unterminated string
-        if (isAtEnd()) {
+        if (isAtEnd.get()) {
             JSurpher.error(aLine, "unterminated string");
             return;
         }
 
         // skip over the right quotation
-        anyChar();
+        anyChar.get();
 
         String value = aSource.substring(aStart + 1, aCurrent - 1);
         addToken(TokenType.STRING, value);
@@ -178,24 +159,25 @@ class Lexer {
         Stack<Integer> commentStack = new Stack<>();
         commentStack.push(0);
 
-        while (!commentStack.empty() && !isAtEnd()) {
+        while (!commentStack.empty() && !isAtEnd.get()) {
             // error: unterminated comment
-            if (isAtEnd()) {
+            if (isAtEnd.get()) {
                 JSurpher.error(aLine, "unterminated comment");
                 return;
             }
 
             // update the stack accordingly
-            if (matchNext('(')) {
-                if (matchNext('*')) {
+            if (matchNext.apply('(')) {
+                if (matchNext.apply('*')) {
                     commentStack.push(0);
                 }
-            } else if (matchNext('*')) {
-                if (matchNext(')')) {
+            } else if (matchNext.apply('*')) {
+                if (matchNext.apply(')')) {
                     commentStack.pop();
                 }
             }
-            anyChar();
+            if (!isAtEnd.get())
+                anyChar.get();
         }
     }
 
@@ -203,43 +185,43 @@ class Lexer {
      * Reads and analyzes the next lexical token in the source code
      */
     private void scanToken() {
-        char nextChar = anyChar();
+        char nextChar = anyChar.get();
         switch (nextChar) {
             case '(' -> {
-                if (matchNext('*')) {
+                if (matchNext.apply('*')) {
                     skipComment();
                 } else {
-                    addToken(TokenType.LEFT_PAREN);
+                    addToken.accept(TokenType.LEFT_PAREN);
                 }
             }
-            case ')' -> addToken(TokenType.RIGHT_PAREN);
-            case '{' -> addToken(TokenType.LEFT_BRACE);
-            case '}' -> addToken(TokenType.RIGHT_BRACE);
-            case '[' -> addToken(TokenType.LEFT_BRACKET);
-            case ']' -> addToken(TokenType.RIGHT_BRACKET);
-            case ',' -> addToken(TokenType.COMMA);
-            case '.' -> addToken(TokenType.DOT);
-            case ';' -> addToken(matchNext(';') ? TokenType.DOUBLE_SEMICOLON : TokenType.SINGLE_SEMICOLON);
-            case '+' -> addToken(TokenType.PLUS);
-            case '-' -> addToken(TokenType.MINUS);
-            case '%' -> addToken(TokenType.PERCENT);
-            case '*' -> addToken(TokenType.STAR);
-            case '/' -> addToken(TokenType.SLASH);
-            case '|' -> addToken(matchNext('|') ? TokenType.DOUBLE_BAR : TokenType.SINGLE_BAR);
-            case '^' -> addToken(TokenType.CARET);
-            case '&' -> addToken(matchNext('&') ? TokenType.DOUBLE_AMPERSAND : TokenType.SINGLE_AMPERSAND);
-            case '!' -> addToken(matchNext('=') ? TokenType.BANG_EQUAL : TokenType.BANG);
-            case '=' -> addToken(matchNext('=') ? TokenType.DOUBLE_EQUAL : TokenType.SINGLE_EQUAL);
-            case '>' -> addToken(matchNext('=') ? TokenType.GREATER_EQUAL : TokenType.GREATER);
-            case '<' -> addToken(matchNext('=') ? TokenType.LESS_EQUAL : TokenType.LESS);
+            case ')' -> addToken.accept(TokenType.RIGHT_PAREN);
+            case '{' -> addToken.accept(TokenType.LEFT_BRACE);
+            case '}' -> addToken.accept(TokenType.RIGHT_BRACE);
+            case '[' -> addToken.accept(TokenType.LEFT_BRACKET);
+            case ']' -> addToken.accept(TokenType.RIGHT_BRACKET);
+            case ',' -> addToken.accept(TokenType.COMMA);
+            case '.' -> addToken.accept(TokenType.DOT);
+            case ';' -> addToken.accept(matchNext.apply(';') ? TokenType.DOUBLE_SEMICOLON : TokenType.SINGLE_SEMICOLON);
+            case '+' -> addToken.accept(TokenType.PLUS);
+            case '-' -> addToken.accept(TokenType.MINUS);
+            case '%' -> addToken.accept(TokenType.PERCENT);
+            case '*' -> addToken.accept(TokenType.STAR);
+            case '/' -> addToken.accept(TokenType.SLASH);
+            case '|' -> addToken.accept(matchNext.apply('|') ? TokenType.DOUBLE_BAR : TokenType.SINGLE_BAR);
+            case '^' -> addToken.accept(TokenType.CARET);
+            case '&' -> addToken.accept(matchNext.apply('&') ? TokenType.DOUBLE_AMPERSAND : TokenType.SINGLE_AMPERSAND);
+            case '!' -> addToken.accept(matchNext.apply('=') ? TokenType.BANG_EQUAL : TokenType.BANG);
+            case '=' -> addToken.accept(matchNext.apply('=') ? TokenType.DOUBLE_EQUAL : TokenType.SINGLE_EQUAL);
+            case '>' -> addToken.accept(matchNext.apply('=') ? TokenType.GREATER_EQUAL : TokenType.GREATER);
+            case '<' -> addToken.accept(matchNext.apply('=') ? TokenType.LESS_EQUAL : TokenType.LESS);
             case ' ', '\r', '\t' -> {
             }
             case '"' -> matchString();
             case '\n' -> aLine++;
             default -> {
-                if (isDigit(nextChar)) {
+                if (isDigit.test(nextChar)) {
                     matchNumber();
-                } else if (isAlpha(nextChar)) {
+                } else if (isAlpha.test(nextChar)) {
                     matchIdentifierAndReserved();
                 } else {
                     JSurpher.error(aCurrent, "invalid character");
@@ -247,15 +229,6 @@ class Lexer {
 
             }
         }
-    }
-
-    /**
-     * Consumes a char in the source code; increments the cursor by 1
-     * 
-     * @return the next char in the source code
-     */
-    private char anyChar() {
-        return aSource.charAt(aCurrent++);
     }
 
     /**
@@ -270,44 +243,12 @@ class Lexer {
     }
 
     /**
-     * Appends a lexical token without a literal to the token list
-     * 
-     * @param pType the type of the lexical token
-     */
-    private void addToken(TokenType pType) {
-        addToken(pType, null);
-    }
-
-    /**
-     * Peeks the source code without updating the cursor
-     * 
-     * @param pOffset location of the desired char
-     * @return the char at the desired location
-     */
-    private char lookAHead(int pOffset) {
-        if (isAtEnd() || aCurrent + pOffset >= aSource.length()) {
-            return '\0';
-        } else {
-            return aSource.charAt(aCurrent + pOffset);
-        }
-    }
-
-    /**
-     * Checks if the cursor reaches the end of the source code
-     * 
-     * @return
-     */
-    private boolean isAtEnd() {
-        return aCurrent >= aSource.length();
-    }
-
-    /**
      * Reads throught the source code and generates a list of lexical tokens
      * 
      * @return a list of lexical tokens of Surpher
      */
     List<Token> scanTokens() {
-        while (!isAtEnd()) {
+        while (!isAtEnd.get()) {
             aStart = aCurrent;
             scanToken();
         }
@@ -315,5 +256,4 @@ class Lexer {
         aTokenList.add(new Token(TokenType.EOF, "", null, aLine));
         return aTokenList;
     }
-
 }
