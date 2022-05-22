@@ -8,12 +8,14 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
-import java.util.Scanner;
 
+import SurpherLangMain.Stmt.Expression;
 import SurpherLangMain.Token.TokenType;
 
 public final class JSurpher {
     private static boolean aHadError = false;
+    private static boolean aHadRuntimeError = false;
+    private static final Interpreter aInterpreter = new Interpreter();
 
     public static void main(String[] args) throws IOException {
         if (args.length > 1) {
@@ -40,9 +42,11 @@ public final class JSurpher {
         run(new String(script, Charset.defaultCharset()));
 
         // an error occurred during the execution
-        if (aHadError) {
+        if (aHadError)
             System.exit(65);
-        }
+        if (aHadRuntimeError)
+            System.exit(70);
+
     }
 
     /**
@@ -57,15 +61,14 @@ public final class JSurpher {
         while (true) {
             System.out.print("Surpher> ");
             String line = buffer.readLine();
-            if (line == null) {
-                break;
+            if (line.equals("quit!!!")) {
+                System.out.println("closing the prompt...");
+                System.exit(0);
             }
             run(line);
 
-            // an error occurred during the execution
-            if (aHadError) {
+            if (aHadError)
                 System.exit(65);
-            }
         }
     }
 
@@ -81,8 +84,7 @@ public final class JSurpher {
 
         if (aHadError)
             return;
-
-        System.out.println(new ASTPrinter().ASTPrint(parser.parse()));
+        aInterpreter.interpret(parser.parse());
     }
 
     /**
@@ -101,6 +103,11 @@ public final class JSurpher {
         } else {
             report(pToken.getLine(), " at '" + pToken.getLexeme() + "'", pMessage);
         }
+    }
+
+    static void runtimeError(RuntimeError pError) {
+        System.err.println(pError.getMessage() + "\n[line " + pError.getToken().getLine() + "]");
+        aHadRuntimeError = true;
     }
 
     private static void report(int pLine, String pLocation, String pMessage) {

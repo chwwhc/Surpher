@@ -4,7 +4,6 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Stack;
 import java.util.function.Supplier;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -46,6 +45,7 @@ class Lexer {
         aKeywords.put("break", TokenType.BREAK);
         aKeywords.put("continue", TokenType.CONTINUE);
         aKeywords.put("newtype", TokenType.NEWTYPE);
+        aKeywords.put("print", TokenType.PRINT);
     }
 
     private Consumer<TokenType> addToken = pType -> addToken(pType, null);
@@ -90,19 +90,19 @@ class Lexer {
         }
 
         if (lookAHead.apply(0) == '.' && isDigit.test(lookAHead.apply(1))) {
-            // case 1: FLOAT
+            // case 1: float number
             anyChar.get();
             while (isDigit.test(lookAHead.apply(0))) {
                 anyChar.get();
             }
-            addToken(TokenType.FLOAT, Double.parseDouble(aSource.substring(aStart, aCurrent)));
+            addToken(TokenType.NUMBER, Double.parseDouble(aSource.substring(aStart, aCurrent)));
             return;
         } else {
-            // case 2: INTEGER
+            // case 2: int number
             while (isDigit.test(lookAHead.apply(0))) {
                 anyChar.get();
             }
-            addToken(TokenType.INTEGER, Integer.parseInt(aSource.substring(aStart, aCurrent)));
+            addToken(TokenType.NUMBER, Double.parseDouble(aSource.substring(aStart, aCurrent)));
             return;
         }
 
@@ -155,11 +155,10 @@ class Lexer {
      * Skips over a comment section of Surpher
      */
     private void skipComment() {
-        // use a stack to identify a comment section
-        Stack<Integer> commentStack = new Stack<>();
-        commentStack.push(0);
+        // keep track of the balance
+        int flag = 1;
 
-        while (!commentStack.empty() && !isAtEnd.get()) {
+        while (flag != 0 && !isAtEnd.get()) {
             // error: unterminated comment
             if (isAtEnd.get()) {
                 JSurpher.error(aLine, "unterminated comment");
@@ -169,11 +168,11 @@ class Lexer {
             // update the stack accordingly
             if (matchNext.apply('(')) {
                 if (matchNext.apply('*')) {
-                    commentStack.push(0);
+                    flag++;
                 }
             } else if (matchNext.apply('*')) {
                 if (matchNext.apply(')')) {
-                    commentStack.pop();
+                    flag--;
                 }
             }
             if (!isAtEnd.get())
@@ -202,7 +201,7 @@ class Lexer {
             case ',' -> addToken.accept(TokenType.COMMA);
             case '.' -> addToken.accept(TokenType.DOT);
             case ';' -> addToken.accept(matchNext.apply(';') ? TokenType.DOUBLE_SEMICOLON : TokenType.SINGLE_SEMICOLON);
-            case '+' -> addToken.accept(TokenType.PLUS);
+            case '+' -> addToken.accept(matchNext.apply('+') ? TokenType.DOUBLE_PLUS : TokenType.SINGLE_PLUS);
             case '-' -> addToken.accept(TokenType.MINUS);
             case '%' -> addToken.accept(TokenType.PERCENT);
             case '*' -> addToken.accept(TokenType.STAR);

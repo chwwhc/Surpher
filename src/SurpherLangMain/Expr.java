@@ -1,77 +1,152 @@
 package SurpherLangMain;
 
+import java.util.List;
+
 /**
  * Auto-generated AST file
  */
 abstract class Expr {
-  abstract <R> R accept(ExprVisitor<R> pVisitor);
+  abstract <R> R accept(Visitor<R> pVisitor);
 
-  interface ExprVisitor<R> {
-    R visitBinaryExpr(Binary pExpr);
+   interface Visitor<R> {
+       R visitBinaryExpr(Binary pExpr);
+       R visitGroupingExpr(Grouping pExpr);
+       R visitLiteralExpr(Literal pExpr);
+       R visitUnaryExpr(Unary pExpr);
+       R visitVariableExpr(Variable pExpr);
+       R visitAssignExpr(Assign pExpr);
+       }
 
-    R visitGroupingExpr(Grouping pExpr);
+   static class Binary extends Expr {
+      private final Expr aLeft;
+      private final Token aOperator;
+      private final Expr aRight;
 
-    R visitLiteralExpr(Literal pExpr);
-
-    R visitUnaryExpr(Unary pExpr);
-  }
-
-  static class Binary extends Expr {
-    final Expr aLeft;
-    final Token aOperator;
-    final Expr aRight;
-
-    Binary(Expr pLeft, Token pOperator, Expr pRight) {
-      aLeft = pLeft;
-      aOperator = pOperator;
-      aRight = pRight;
-    }
+     Binary(Expr pLeft, Token pOperator, Expr pRight) {
+       aLeft = pLeft;
+       aOperator = pOperator;
+       aRight = pRight;
+       }
 
     @Override
-    <R> R accept(ExprVisitor<R> pVisitor) {
+    <R> R accept(Visitor<R> pVisitor) {
       return pVisitor.visitBinaryExpr(this);
-    }
-  }
+   }
 
-  static class Grouping extends Expr {
-    final Expr aExpression;
+    Expr getLeft() {
+      return aLeft;
+   }
 
-    Grouping(Expr pExpression) {
-      aExpression = pExpression;
-    }
+    Token getOperator() {
+      return aOperator;
+   }
+
+    Expr getRight() {
+      return aRight;
+   }
+
+   }
+
+   static class Grouping extends Expr {
+      private final Expr aExpression;
+
+     Grouping(Expr pExpression) {
+       aExpression = pExpression;
+       }
 
     @Override
-    <R> R accept(ExprVisitor<R> pVisitor) {
+    <R> R accept(Visitor<R> pVisitor) {
       return pVisitor.visitGroupingExpr(this);
-    }
-  }
+   }
 
-  static class Literal extends Expr {
-    final Object aValue;
+    Expr getExpression() {
+      return aExpression;
+   }
 
-    Literal(Object pValue) {
-      aValue = pValue;
-    }
+   }
+
+   static class Literal extends Expr {
+      private final Object aValue;
+
+     Literal(Object pValue) {
+       aValue = pValue;
+       }
 
     @Override
-    <R> R accept(ExprVisitor<R> pVisitor) {
+    <R> R accept(Visitor<R> pVisitor) {
       return pVisitor.visitLiteralExpr(this);
-    }
-  }
+   }
 
-  static class Unary extends Expr {
-    final Token aOperator;
-    final Expr aRight;
+    Object getValue() {
+      return aValue;
+   }
 
-    Unary(Token pOperator, Expr pRight) {
-      aOperator = pOperator;
-      aRight = pRight;
-    }
+   }
+
+   static class Unary extends Expr {
+      private final Token aOperator;
+      private final Expr aRight;
+
+     Unary(Token pOperator, Expr pRight) {
+       aOperator = pOperator;
+       aRight = pRight;
+       }
 
     @Override
-    <R> R accept(ExprVisitor<R> pVisitor) {
+    <R> R accept(Visitor<R> pVisitor) {
       return pVisitor.visitUnaryExpr(this);
-    }
-  }
+   }
+
+    Token getOperator() {
+      return aOperator;
+   }
+
+    Expr getRight() {
+      return aRight;
+   }
+
+   }
+
+   static class Variable extends Expr {
+      private final Token aName;
+
+     Variable(Token pName) {
+       aName = pName;
+       }
+
+    @Override
+    <R> R accept(Visitor<R> pVisitor) {
+      return pVisitor.visitVariableExpr(this);
+   }
+
+    Token getName() {
+      return aName;
+   }
+
+   }
+
+   static class Assign extends Expr {
+      private final Token aName;
+      private final Expr aValue;
+
+     Assign(Token pName, Expr pValue) {
+       aName = pName;
+       aValue = pValue;
+       }
+
+    @Override
+    <R> R accept(Visitor<R> pVisitor) {
+      return pVisitor.visitAssignExpr(this);
+   }
+
+    Token getName() {
+      return aName;
+   }
+
+    Expr getValue() {
+      return aValue;
+   }
+
+   }
 
 }

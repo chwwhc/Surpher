@@ -3,7 +3,7 @@ package SurpherLangMain;
 import SurpherLangMain.Expr.*;
 import SurpherLangMain.Token.*;
 
-public class ASTPrinter implements Expr.ExprVisitor<String> {
+public class ASTPrinter implements Expr.Visitor<String> {
 
     public String ASTPrint(Expr pExpr) {
         return pExpr.accept(this);
@@ -31,22 +31,30 @@ public class ASTPrinter implements Expr.ExprVisitor<String> {
 
     @Override
     public String visitBinaryExpr(Binary pExpr) {
-        return parenthesize(pExpr.aOperator.getLexeme(), pExpr.aLeft, pExpr.aRight);
+        return parenthesize(pExpr.getOperator().getLexeme(), pExpr.getLeft(), pExpr.getRight());
     }
 
     @Override
     public String visitGroupingExpr(Grouping pExpr) {
-        return parenthesize("group", pExpr.aExpression);
+        return parenthesize("group", pExpr.getExpression());
     }
 
     @Override
     public String visitLiteralExpr(Literal pExpr) {
-        return (pExpr.aValue == null) ? "none" : pExpr.aValue.toString();
+        if (pExpr.getValue() instanceof Double) {
+            double val = (double) pExpr.getValue();
+            if ((int) val == val) {
+                return Integer.toString((int) val);
+            } else {
+                return Double.toString(val);
+            }
+        }
+        return (pExpr.getValue() == null) ? "none" : pExpr.getValue().toString();
     }
 
     @Override
     public String visitUnaryExpr(Unary pExpr) {
-        return parenthesize(pExpr.aOperator.getLexeme(), pExpr.aRight);
+        return parenthesize(pExpr.getOperator().getLexeme(), pExpr.getRight());
     }
 
     public static void main(String[] args) {
@@ -59,6 +67,18 @@ public class ASTPrinter implements Expr.ExprVisitor<String> {
                         new Expr.Literal(45.67)));
 
         System.out.println(new ASTPrinter().ASTPrint(expression));
+    }
+
+    @Override
+    public String visitVariableExpr(Variable pExpr) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public String visitAssignExpr(Assign pExpr) {
+        // TODO Auto-generated method stub
+        return null;
     }
 
 }
