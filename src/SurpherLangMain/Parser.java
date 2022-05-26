@@ -1,41 +1,34 @@
 package SurpherLangMain;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import SurpherLangMain.Token.TokenType;
+
+import java.util.*;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-import SurpherLangMain.Token.TokenType;
-
 public class Parser {
-    private static class ParseError extends RuntimeException {
-    }
-
     private List<Token> aTokens;
     private int aCurrent = 0;
+    private final Supplier<Token> peek = () -> aTokens.get(aCurrent);
+    private final Supplier<Boolean> isAtEnd = () -> peek.get().getType() == TokenType.EOF;
+    private final Function<TokenType, Boolean> check = pType -> !isAtEnd.get() && peek.get().getType() == pType;
+    private final Supplier<Token> previous = () -> aCurrent > 0 ? aTokens.get(aCurrent - 1) : null;
+    private final Supplier<Token> advance = () -> {
+        if (!isAtEnd.get())
+            aCurrent++;
+        return previous.get();
+    };
 
     Parser(List<Token> pTokens) {
         aTokens = pTokens;
     }
 
     List<Stmt> parse() {
-        List<Stmt> stmts = new ArrayList<>();
+        List<Stmt> stmts = new LinkedList<>();
         while (!isAtEnd.get())
             stmts.add(declaration());
-        return stmts;
+        return Collections.unmodifiableList(stmts);
     }
-
-    private Supplier<Token> peek = () -> aTokens.get(aCurrent);
-    private Supplier<Boolean> isAtEnd = () -> peek.get().getType() == TokenType.EOF;
-    private Supplier<Token> previous = () -> aCurrent > 0 ? aTokens.get(aCurrent - 1) : null;
-    private Function<TokenType, Boolean> check = pType -> isAtEnd.get() ? false
-            : peek.get().getType() == pType;
-    private Supplier<Token> advance = () -> {
-        if (!isAtEnd.get())
-            aCurrent++;
-        return previous.get();
-    };
 
     private Token consume(TokenType pType, String pMessage) {
         if (check.apply(pType))
@@ -49,7 +42,7 @@ public class Parser {
     }
 
     private boolean match(TokenType... pTypes) {
-        if (((new ArrayList<>(Arrays.asList(pTypes))).stream().anyMatch(x -> check.apply(x)))) {
+        if (((new ArrayList<>(Arrays.asList(pTypes))).stream().anyMatch(check::apply))) {
             advance.get();
             return true;
         } else {
@@ -74,7 +67,7 @@ public class Parser {
     }
 
     private Supplier<Expr> assignment() {
-        Expr expr = comma().get();
+        Expr expr = logicalOR().get();
 
         if (match(TokenType.SINGLE_EQUAL)) {
             Token equals = previous.get();
@@ -88,10 +81,6 @@ public class Parser {
             error(equals, "Invalid assignment target.");
         }
         return () -> expr;
-    }
-
-    private Supplier<Expr> comma() {
-        return () -> parseBinary(logicalOR(), TokenType.COMMA);
     }
 
     private Supplier<Expr> logicalOR() {
@@ -116,22 +105,22 @@ public class Parser {
 
     private Supplier<Expr> equality() {
         return () -> parseBinary(comparison(),
-                new TokenType[] { TokenType.DOUBLE_EQUAL, TokenType.BANG_EQUAL });
+                TokenType.DOUBLE_EQUAL, TokenType.BANG_EQUAL);
     }
 
     private Supplier<Expr> comparison() {
         return () -> parseBinary(term(),
-                new TokenType[] { TokenType.LESS, TokenType.LESS_EQUAL, TokenType.GREATER, TokenType.GREATER_EQUAL });
+                TokenType.LESS, TokenType.LESS_EQUAL, TokenType.GREATER, TokenType.GREATER_EQUAL);
     }
 
     private Supplier<Expr> term() {
         return () -> parseBinary(factor(),
-                new TokenType[] { TokenType.SINGLE_PLUS, TokenType.MINUS, TokenType.DOUBLE_PLUS });
+                TokenType.SINGLE_PLUS, TokenType.MINUS, TokenType.DOUBLE_PLUS);
     }
 
     private Supplier<Expr> factor() {
         return () -> parseBinary(unary(),
-                new TokenType[] { TokenType.STAR, TokenType.SLASH, TokenType.PERCENT });
+                TokenType.STAR, TokenType.SLASH, TokenType.PERCENT);
     }
 
     private Supplier<Expr> unary() {
@@ -140,7 +129,7 @@ public class Parser {
             Expr right = unary().get();
             return () -> new Expr.Unary(operator, right);
         }
-        return () -> primary();
+        return this::primary;
     }
 
     private Expr primary() {
@@ -163,9 +152,9 @@ public class Parser {
     }
 
     private Stmt statement() {
-        if (match(TokenType.PRINT))
-            return printStatement();
-        return expressionStatement();
+        if (match(TokenType.PRINT)) return printStatement();
+        else if (match(TokenType.LEFT_BRACE)) return new Stmt.Block(blockStatement());
+        else return expressionStatement();
     }
 
     private Stmt printStatement() {
@@ -176,9 +165,8 @@ public class Parser {
 
     private Stmt declaration() {
         try {
-            if (match(TokenType.VAR))
-                return varDeclaration();
-            return statement();
+            if (match(TokenType.VAR)) return varDeclaration();
+            else return statement();
         } catch (ParseError e) {
             synchronize();
             return null;
@@ -195,6 +183,13 @@ public class Parser {
 
         consume(TokenType.DOUBLE_SEMICOLON, "Expect \";;\" after variable declaration.");
         return new Stmt.Var(name, initializer);
+    }
+
+    private List<Stmt> blockStatement() {
+        List<Stmt> statements = new LinkedList<>();
+        while (!check.apply(TokenType.RIGHT_BRACE) && !isAtEnd.get()) statements.add(declaration());
+        consume(TokenType.RIGHT_BRACE, "Expect '}' after block.");
+        return Collections.unmodifiableList(statements);
     }
 
     private Stmt expressionStatement() {
@@ -230,5 +225,8 @@ public class Parser {
 
             advance.get();
         }
+    }
+
+    private static class ParseError extends RuntimeException {
     }
 }

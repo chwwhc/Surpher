@@ -2,22 +2,22 @@ package SurpherLangMain;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.function.BiConsumer;
 
-public class Environment {
+class Environment {
     private final Map<String, Object> aValuesTable = new HashMap<>();
-    private static Environment aEnvironment = new Environment();
+    private final Environment aEnclosing;
 
-    private Environment() {
+    Environment() {
+        aEnclosing = null;
     }
 
-    static Environment getEnvironment() {
-        return aEnvironment;
+    Environment(Environment pEnclosing){
+        aEnclosing = pEnclosing;
     }
 
     Object get(Token pToken) {
-        if (aValuesTable.containsKey(pToken.getLexeme()))
-            return aValuesTable.get(pToken.getLexeme());
+        if (aValuesTable.containsKey(pToken.getLexeme())) return aValuesTable.get(pToken.getLexeme());
+        if (aEnclosing != null) return aEnclosing.get(pToken);
         throw new RuntimeError(pToken, "Undefined variable '" + pToken.getLexeme() + "'.");
     }
 
@@ -28,6 +28,10 @@ public class Environment {
     void update(Token pToken, Object pValue) {
         if (aValuesTable.containsKey(pToken.getLexeme())) {
             aValuesTable.put(pToken.getLexeme(), pValue);
+            return;
+        }
+        if(aEnclosing != null){
+            aEnclosing.update(pToken, pValue);
             return;
         }
         throw new RuntimeError(pToken, "Undefined variable '" + pToken.getLexeme() + "'.");

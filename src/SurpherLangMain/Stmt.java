@@ -1,77 +1,100 @@
 package SurpherLangMain;
 
+import java.util.Collections;
 import java.util.List;
 
 /**
  * Auto-generated AST file
  */
 abstract class Stmt {
-  abstract <R> R accept(Visitor<R> pVisitor);
+    abstract <R> R accept(Visitor<R> pVisitor);
 
-   interface Visitor<R> {
-       R visitExpressionStmt(Expression pStmt);
-       R visitVarStmt(Var pStmt);
-       R visitPrintStmt(Print pStmt);
-       }
+    interface Visitor<R> {
+        R visitExpressionStmt(Expression pStmt);
 
-   static class Expression extends Stmt {
-      private final Expr aExpression;
+        R visitVarStmt(Var pStmt);
 
-     Expression(Expr pExpression) {
-       aExpression = pExpression;
-       }
+        R visitPrintStmt(Print pStmt);
 
-    @Override
-    <R> R accept(Visitor<R> pVisitor) {
-      return pVisitor.visitExpressionStmt(this);
-   }
+        R visitBlockStmt(Block pStmt);
+    }
 
-    Expr getExpression() {
-      return aExpression;
-   }
+    static class Expression extends Stmt {
+        private final Expr aExpression;
 
-   }
+        Expression(Expr pExpression) {
+            aExpression = pExpression;
+        }
 
-   static class Var extends Stmt {
-      private final Token aName;
-      private final Expr aInitializer;
+        @Override
+        <R> R accept(Visitor<R> pVisitor) {
+            return pVisitor.visitExpressionStmt(this);
+        }
 
-     Var(Token pName, Expr pInitializer) {
-       aName = pName;
-       aInitializer = pInitializer;
-       }
+        Expr getExpression() {
+            return aExpression;
+        }
 
-    @Override
-    <R> R accept(Visitor<R> pVisitor) {
-      return pVisitor.visitVarStmt(this);
-   }
+    }
 
-    Token getName() {
-      return aName;
-   }
+    static class Var extends Stmt {
+        private final Token aName;
+        private final Expr aInitializer;
 
-    Expr getInitializer() {
-      return aInitializer;
-   }
+        Var(Token pName, Expr pInitializer) {
+            aName = pName;
+            aInitializer = pInitializer;
+        }
 
-   }
+        @Override
+        <R> R accept(Visitor<R> pVisitor) {
+            return pVisitor.visitVarStmt(this);
+        }
 
-   static class Print extends Stmt {
-      private final Expr aExpression;
+        Token getName() {
+            return aName;
+        }
 
-     Print(Expr pExpression) {
-       aExpression = pExpression;
-       }
+        Expr getInitializer() {
+            return aInitializer;
+        }
 
-    @Override
-    <R> R accept(Visitor<R> pVisitor) {
-      return pVisitor.visitPrintStmt(this);
-   }
+    }
 
-    Expr getExpression() {
-      return aExpression;
-   }
+    static class Print extends Stmt {
+        private final Expr aExpression;
 
-   }
+        Print(Expr pExpression) {
+            aExpression = pExpression;
+        }
+
+        @Override
+        <R> R accept(Visitor<R> pVisitor) {
+            return pVisitor.visitPrintStmt(this);
+        }
+
+        Expr getExpression() {
+            return aExpression;
+        }
+
+    }
+
+    static class Block extends Stmt {
+        private final List<Stmt> aStatements;
+
+        Block(List<Stmt> pStatements) {
+            aStatements = pStatements;
+        }
+
+        @Override
+        <R> R accept(Visitor<R> pVisitor) {
+            return pVisitor.visitBlockStmt(this);
+        }
+
+        List<Stmt> getStatements() {
+            return Collections.unmodifiableList(aStatements);
+        }
+
+    }
 
 }

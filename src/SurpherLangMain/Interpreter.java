@@ -1,39 +1,34 @@
 package SurpherLangMain;
 
+import SurpherLangMain.Expr.*;
+import SurpherLangMain.Stmt.Expression;
+import SurpherLangMain.Stmt.Print;
+
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.BiConsumer;
 import java.util.function.BiPredicate;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
-import SurpherLangMain.Expr.Assign;
-import SurpherLangMain.Expr.Binary;
-import SurpherLangMain.Expr.Grouping;
-import SurpherLangMain.Expr.Literal;
-import SurpherLangMain.Expr.Unary;
-import SurpherLangMain.Expr.Variable;
-import SurpherLangMain.Stmt.Expression;
-import SurpherLangMain.Stmt.Print;
-import SurpherLangMain.Stmt.Var;
+import static SurpherLangMain.JSurpher.runtimeError;
 
 public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
-    private Environment aEnvironment = Environment.getEnvironment();
-
-    private Predicate<Object> isTruthy = pObject -> {
+    private final Predicate<Object> isTruthy = pObject -> {
         if (pObject == null)
             return false;
         if (pObject instanceof Boolean)
             return (Boolean) pObject;
         return true;
     };
-    private BiPredicate<Object, Object> isEqual = (pObject1, pObject2) -> {
+    private final BiPredicate<Object, Object> isEqual = (pObject1, pObject2) -> {
         if (pObject1 == null && pObject2 == null)
             return true;
         if (pObject1 == null)
             return false;
         return pObject1.equals(pObject2);
     };
-    private Function<Object, String> stringify = pObject -> {
+    private final Function<Object, String> stringify = pObject -> {
         if (pObject == null)
             return "none";
         if (pObject instanceof Double) {
@@ -45,6 +40,7 @@ public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
         }
         return pObject.toString();
     };
+    private Environment aEnvironment = new Environment();
 
     private Object evaluate(Expr pExpr) {
         return pExpr.accept(this);
@@ -52,9 +48,9 @@ public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
 
     void interpret(List<Stmt> statements) {
         try {
-            statements.stream().forEach(stmt -> stmt.accept(this));
+            statements.forEach(stmt -> stmt.accept(this));
         } catch (RuntimeError error) {
-            JSurpher.runtimeError(error);
+            runtimeError(error);
         }
     }
 
@@ -64,9 +60,7 @@ public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
         Object right = evaluate(pExpr.getRight());
 
         return switch (pExpr.getOperator().getType()) {
-            case COMMA -> {
-                yield right;
-            }
+            case COMMA -> right;
             case MINUS -> {
                 checkOperandTypes(pExpr.getOperator(), Double.class, "Double", left, right);
                 yield (double) left - (double) right;
@@ -86,7 +80,7 @@ public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
             }
             case DOUBLE_PLUS -> {
                 checkOperandTypes(pExpr.getOperator(), String.class, "String", left, right);
-                yield (String) left + (String) right;
+                yield left + (String) right;
             }
             case CARET -> {
                 checkOperandTypes(pExpr.getOperator(), Double.class, "Double", left, right);
@@ -142,9 +136,7 @@ public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
         Object right = evaluate(pExpr.getRight());
 
         return switch (pExpr.getOperator().getType()) {
-            case BANG -> {
-                yield isTruthy.negate().test(right);
-            }
+            case BANG -> isTruthy.negate().test(right);
             case MINUS -> {
                 checkOperandTypes(pExpr.getOperator(), Double.class, "Double", right);
                 yield -(Double) right;
@@ -154,16 +146,15 @@ public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
     }
 
     private void checkOperandTypes(Token pOperator, Class<?> pTargetType, String pTargetTypeName, Object... pOperands) {
-        if (Arrays.asList(pOperands).stream().allMatch(operand -> operand.getClass() == pTargetType))
+        if (Arrays.stream(pOperands).allMatch(operand -> operand.getClass() == pTargetType))
             return;
         throw new RuntimeError(pOperator, "Operand(s) must be a " + pTargetTypeName + ".");
     }
 
     private void checkZero(Token pOperator, Double... pOperands) {
-        if (Arrays.asList(pOperands).stream().allMatch(operand -> operand == 0)) {
+        if (Arrays.stream(pOperands).allMatch(operand -> operand == 0)) {
             throw new RuntimeError(pOperator, "Denominator must be non-zero.");
         }
-        return;
     }
 
     @Override
@@ -192,6 +183,21 @@ public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
     public Void visitPrintStmt(Print pStmt) {
         Object value = evaluate(pStmt.getExpression());
         System.out.println(stringify.apply(value));
+        return null;
+    }
+
+    @Override
+    public Void visitBlockStmt(Stmt.Block pStmt) {
+        BiConsumer<List<Stmt>, Environment> executeBlock = (pStmtList, pEnvironment) -> {
+            Environment prevEnvironment = aEnvironment;
+            try {
+                aEnvironment = pEnvironment;
+                pStmtList.forEach(pStmtListElem -> pStmtListElem.accept(this));
+            } finally {
+                aEnvironment = prevEnvironment;
+            }
+        };
+        executeBlock.accept(pStmt.getStatements(), new Environment(aEnvironment));
         return null;
     }
 

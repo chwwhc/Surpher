@@ -1,9 +1,21 @@
 package SurpherLangMain;
 
 import SurpherLangMain.Expr.*;
-import SurpherLangMain.Token.*;
+import SurpherLangMain.Token.TokenType;
 
 public class ASTPrinter implements Expr.Visitor<String> {
+
+    public static void main(String[] args) {
+        Expr expression = new Expr.Binary(
+                new Expr.Unary(
+                        new Token(TokenType.MINUS, "^", null, 1),
+                        new Expr.Literal(123)),
+                new Token(TokenType.STAR, "%", null, 1),
+                new Expr.Grouping(
+                        new Expr.Literal(45.67)));
+
+        System.out.println(new ASTPrinter().ASTPrint(expression));
+    }
 
     public String ASTPrint(Expr pExpr) {
         return pExpr.accept(this);
@@ -11,7 +23,7 @@ public class ASTPrinter implements Expr.Visitor<String> {
 
     /**
      * Helper method to enclose an expression using parentheses
-     * 
+     *
      * @param pName  name of the expression
      * @param pExprs list of nonterminals/terminals
      * @return
@@ -55,18 +67,6 @@ public class ASTPrinter implements Expr.Visitor<String> {
     @Override
     public String visitUnaryExpr(Unary pExpr) {
         return parenthesize(pExpr.getOperator().getLexeme(), pExpr.getRight());
-    }
-
-    public static void main(String[] args) {
-        Expr expression = new Expr.Binary(
-                new Expr.Unary(
-                        new Token(TokenType.MINUS, "^", null, 1),
-                        new Expr.Literal(123)),
-                new Token(TokenType.STAR, "%", null, 1),
-                new Expr.Grouping(
-                        new Expr.Literal(45.67)));
-
-        System.out.println(new ASTPrinter().ASTPrint(expression));
     }
 
     @Override

@@ -1,29 +1,24 @@
 package SurpherLangMain;
 
+import SurpherLangMain.Token.TokenType;
+
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Supplier;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
-
-import SurpherLangMain.Token.TokenType;
+import java.util.function.Supplier;
 
 /**
  * Lexer for the Surpher language
  */
 class Lexer {
-    private String aSource;
-    private final List<Token> aTokenList = new LinkedList<>();
     private static final Map<String, TokenType> aKeywords = new HashMap<>();
-    private int aStart = 0;
-    private int aCurrent = 0;
-    private int aLine = 1;
 
-    /**
-     * Automatically adds the reserved keywords
+    /*
+      Automatically adds the reserved keywords
      */
     static {
         aKeywords.put("class", TokenType.CLASS);
@@ -48,31 +43,36 @@ class Lexer {
         aKeywords.put("print", TokenType.PRINT);
     }
 
-    private Consumer<TokenType> addToken = pType -> addToken(pType, null);
-    private Supplier<Character> anyChar = () -> aSource.charAt(aCurrent++);
-    private Supplier<Boolean> isAtEnd = () -> aCurrent >= aSource.length();
-    private Predicate<Character> isDigit = pChar -> pChar >= '0' && pChar <= '9';
-    private Predicate<Character> isAlpha = pChar -> (pChar >= 'a' && pChar <= 'z') || (pChar >= 'A' && pChar <= 'Z')
+    private final List<Token> aTokenList = new LinkedList<>();
+    private final Predicate<Character> isDigit = pChar -> pChar >= '0' && pChar <= '9';
+    private final Predicate<Character> isAlpha = pChar -> (pChar >= 'a' && pChar <= 'z') || (pChar >= 'A' && pChar <= 'Z')
             || pChar == '_';
-    private Predicate<Character> isAlphaNumeric = isAlpha.or(isDigit);
-    private Function<Integer, Character> lookAHead = pOffset -> {
+    private final Predicate<Character> isAlphaNumeric = isAlpha.or(isDigit);
+    private String aSource;
+    private int aStart = 0;
+    private int aCurrent = 0;
+    private final Supplier<Character> anyChar = () -> aSource.charAt(aCurrent++);
+    private final Supplier<Boolean> isAtEnd = () -> aCurrent >= aSource.length();
+    private final Function<Integer, Character> lookAHead = pOffset -> {
         if (isAtEnd.get() || aCurrent + pOffset >= aSource.length()) {
             return '\0';
         } else {
             return aSource.charAt(aCurrent + pOffset);
         }
     };
-    private Function<Character, Boolean> matchNext = pExpectedChar -> {
+    private final Function<Character, Boolean> matchNext = pExpectedChar -> {
         if (isAtEnd.get() || aSource.charAt(aCurrent) != pExpectedChar) {
             return false;
         }
         aCurrent++;
         return true;
     };
+    private int aLine = 1;
+    private final Consumer<TokenType> addType = pType -> addToken(pType, null);
 
     /**
      * Constructor for the Surpher lexer
-     * 
+     *
      * @param pSource source code
      */
     Lexer(String pSource) {
@@ -92,19 +92,12 @@ class Lexer {
         if (lookAHead.apply(0) == '.' && isDigit.test(lookAHead.apply(1))) {
             // case 1: float number
             anyChar.get();
-            while (isDigit.test(lookAHead.apply(0))) {
-                anyChar.get();
-            }
-            addToken(TokenType.NUMBER, Double.parseDouble(aSource.substring(aStart, aCurrent)));
-            return;
-        } else {
-            // case 2: int number
-            while (isDigit.test(lookAHead.apply(0))) {
-                anyChar.get();
-            }
-            addToken(TokenType.NUMBER, Double.parseDouble(aSource.substring(aStart, aCurrent)));
-            return;
+        }  // case 2: int number
+
+        while (isDigit.test(lookAHead.apply(0))) {
+            anyChar.get();
         }
+        addToken(TokenType.NUMBER, Double.parseDouble(aSource.substring(aStart, aCurrent)));
 
     }
 
@@ -123,7 +116,7 @@ class Lexer {
             type = TokenType.IDENTIFIER;
         }
         // case 2: keyword
-        addToken.accept(type);
+        addType.accept(type);
     }
 
     /**
@@ -166,14 +159,10 @@ class Lexer {
             }
 
             // update the stack accordingly
-            if (matchNext.apply('(')) {
-                if (matchNext.apply('*')) {
-                    flag++;
-                }
-            } else if (matchNext.apply('*')) {
-                if (matchNext.apply(')')) {
-                    flag--;
-                }
+            if (matchNext.apply('(') && matchNext.apply('*')) {
+                flag++;
+            } else if (matchNext.apply('*') && matchNext.apply(')')) {
+                flag--;
             }
             if (!isAtEnd.get())
                 anyChar.get();
@@ -190,29 +179,29 @@ class Lexer {
                 if (matchNext.apply('*')) {
                     skipComment();
                 } else {
-                    addToken.accept(TokenType.LEFT_PAREN);
+                    addType.accept(TokenType.LEFT_PAREN);
                 }
             }
-            case ')' -> addToken.accept(TokenType.RIGHT_PAREN);
-            case '{' -> addToken.accept(TokenType.LEFT_BRACE);
-            case '}' -> addToken.accept(TokenType.RIGHT_BRACE);
-            case '[' -> addToken.accept(TokenType.LEFT_BRACKET);
-            case ']' -> addToken.accept(TokenType.RIGHT_BRACKET);
-            case ',' -> addToken.accept(TokenType.COMMA);
-            case '.' -> addToken.accept(TokenType.DOT);
-            case ';' -> addToken.accept(matchNext.apply(';') ? TokenType.DOUBLE_SEMICOLON : TokenType.SINGLE_SEMICOLON);
-            case '+' -> addToken.accept(matchNext.apply('+') ? TokenType.DOUBLE_PLUS : TokenType.SINGLE_PLUS);
-            case '-' -> addToken.accept(TokenType.MINUS);
-            case '%' -> addToken.accept(TokenType.PERCENT);
-            case '*' -> addToken.accept(TokenType.STAR);
-            case '/' -> addToken.accept(TokenType.SLASH);
-            case '|' -> addToken.accept(matchNext.apply('|') ? TokenType.DOUBLE_BAR : TokenType.SINGLE_BAR);
-            case '^' -> addToken.accept(TokenType.CARET);
-            case '&' -> addToken.accept(matchNext.apply('&') ? TokenType.DOUBLE_AMPERSAND : TokenType.SINGLE_AMPERSAND);
-            case '!' -> addToken.accept(matchNext.apply('=') ? TokenType.BANG_EQUAL : TokenType.BANG);
-            case '=' -> addToken.accept(matchNext.apply('=') ? TokenType.DOUBLE_EQUAL : TokenType.SINGLE_EQUAL);
-            case '>' -> addToken.accept(matchNext.apply('=') ? TokenType.GREATER_EQUAL : TokenType.GREATER);
-            case '<' -> addToken.accept(matchNext.apply('=') ? TokenType.LESS_EQUAL : TokenType.LESS);
+            case ')' -> addType.accept(TokenType.RIGHT_PAREN);
+            case '{' -> addType.accept(TokenType.LEFT_BRACE);
+            case '}' -> addType.accept(TokenType.RIGHT_BRACE);
+            case '[' -> addType.accept(TokenType.LEFT_BRACKET);
+            case ']' -> addType.accept(TokenType.RIGHT_BRACKET);
+            case ',' -> addType.accept(TokenType.COMMA);
+            case '.' -> addType.accept(TokenType.DOT);
+            case ';' -> addType.accept(matchNext.apply(';') ? TokenType.DOUBLE_SEMICOLON : TokenType.SINGLE_SEMICOLON);
+            case '+' -> addType.accept(matchNext.apply('+') ? TokenType.DOUBLE_PLUS : TokenType.SINGLE_PLUS);
+            case '-' -> addType.accept(TokenType.MINUS);
+            case '%' -> addType.accept(TokenType.PERCENT);
+            case '*' -> addType.accept(TokenType.STAR);
+            case '/' -> addType.accept(TokenType.SLASH);
+            case '|' -> addType.accept(matchNext.apply('|') ? TokenType.DOUBLE_BAR : TokenType.SINGLE_BAR);
+            case '^' -> addType.accept(TokenType.CARET);
+            case '&' -> addType.accept(matchNext.apply('&') ? TokenType.DOUBLE_AMPERSAND : TokenType.SINGLE_AMPERSAND);
+            case '!' -> addType.accept(matchNext.apply('=') ? TokenType.BANG_EQUAL : TokenType.BANG);
+            case '=' -> addType.accept(matchNext.apply('=') ? TokenType.DOUBLE_EQUAL : TokenType.SINGLE_EQUAL);
+            case '>' -> addType.accept(matchNext.apply('=') ? TokenType.GREATER_EQUAL : TokenType.GREATER);
+            case '<' -> addType.accept(matchNext.apply('=') ? TokenType.LESS_EQUAL : TokenType.LESS);
             case ' ', '\r', '\t' -> {
             }
             case '"' -> matchString();
@@ -232,18 +221,17 @@ class Lexer {
 
     /**
      * Appends a lexical token with a literal to the token list
-     * 
+     *
      * @param pType    the type of the lexical token
      * @param pLiteral the literal of the lexical token
      */
     private void addToken(TokenType pType, Object pLiteral) {
-        String text = aSource.substring(aStart, aCurrent);
-        aTokenList.add(new Token(pType, text, pLiteral, aLine));
+        aTokenList.add(new Token(pType, aSource.substring(aStart, aCurrent), pLiteral, aLine));
     }
 
     /**
      * Reads throught the source code and generates a list of lexical tokens
-     * 
+     *
      * @return a list of lexical tokens of Surpher
      */
     List<Token> scanTokens() {

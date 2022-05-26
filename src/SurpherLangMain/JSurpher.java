@@ -1,16 +1,14 @@
 package SurpherLangMain;
 
+import SurpherLangMain.Token.TokenType;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.Reader;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
-
-import SurpherLangMain.Stmt.Expression;
-import SurpherLangMain.Token.TokenType;
 
 public final class JSurpher {
     private static boolean aHadError = false;
@@ -20,7 +18,7 @@ public final class JSurpher {
     public static void main(String[] args) throws IOException {
         if (args.length > 1) {
             // invalid usage
-            System.out.println("Usage: jsurpher [script]");
+            System.out.println("Usage: JSurpher [script]");
             System.exit(64);
         } else if (args.length == 1) {
             // batch mode
@@ -103,6 +101,7 @@ public final class JSurpher {
         } else {
             report(pToken.getLine(), " at '" + pToken.getLexeme() + "'", pMessage);
         }
+        ;
     }
 
     static void runtimeError(RuntimeError pError) {
