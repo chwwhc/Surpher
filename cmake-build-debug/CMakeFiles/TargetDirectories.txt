@@ -1,0 +1,3 @@
+/home/chuhanwen/projects/CppSurpher/cmake-build-debug/CMakeFiles/rebuild_cache.dir
+/home/chuhanwen/projects/CppSurpher/cmake-build-debug/CMakeFiles/edit_cache.dir
+/home/chuhanwen/projects/CppSurpher/cmake-build-debug/CMakeFiles/CppSurpher.dir
