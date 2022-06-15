@@ -33,15 +33,12 @@ std::map<std::string, TokenType> keyWords = {
 Lexer::Lexer(std::string source_code) : source_code(std::move(source_code)){
 }
 
-Lexer::~Lexer()
-= default;
-
 char Lexer::anyChar() {
     return source_code[current++];
 }
 
 bool Lexer::matchNextChar(const char &expected) {
-    if (is_at_end() || source_code[current] != expected) {
+    if (isAtEnd() || source_code[current] != expected) {
         return false;
     }
     current++;
@@ -57,18 +54,18 @@ void Lexer::addToken(const TokenType &type) {
 }
 
 char Lexer::lookAHead(const uint32_t &offset) {
-    return (is_at_end() || current + offset >= source_code.size()) ? '\0' : source_code[current + offset];
+    return (isAtEnd() || current + offset >= source_code.size()) ? '\0' : source_code[current + offset];
 }
 
 void Lexer::matchString() {
-    while (lookAHead(0) != '"' && !is_at_end()) {
+    while (lookAHead(0) != '"' && !isAtEnd()) {
         if (lookAHead(0) == '\n') {
             line++;
         }
         anyChar();
     }
 
-    if (is_at_end()) {
+    if (isAtEnd()) {
         ::error(line, "Unterminated string.");
         return;
     }
@@ -82,15 +79,15 @@ void Lexer::matchString() {
 
 
 void Lexer::matchNumber() {
-    while (is_digit(lookAHead(0))) {
+    while (isDigit(lookAHead(0))) {
         anyChar();
     }
 
-    if (lookAHead(0) == '.' && is_digit(lookAHead(1))) {
+    if (lookAHead(0) == '.' && isDigit(lookAHead(1))) {
         anyChar();
     }
 
-    while (is_digit(lookAHead(0))) {
+    while (isDigit(lookAHead(0))) {
         anyChar();
     }
 
@@ -101,7 +98,7 @@ void Lexer::matchNumber() {
 
 
 void Lexer::matchIdentifierOrReserved() {
-    while (is_alpha_numeric(lookAHead(0))) {
+    while (isAlphaNumeric(lookAHead(0))) {
         anyChar();
     }
 
@@ -120,13 +117,13 @@ void Lexer::matchIdentifierOrReserved() {
 void Lexer::skipComment() {
     uint32_t flag = 1;
 
-    while(flag != 0 && !is_at_end()){
+    while(flag != 0 && !isAtEnd()){
         if(matchNextChar('(') && matchNextChar('*')){
             flag++;
         }else if(matchNextChar('*') && matchNextChar(')')){
             flag--;
         }
-        if(is_at_end()){
+        if(isAtEnd()){
             ::error(line, "Unterminated comment.");
             return;
         }else{
@@ -268,9 +265,9 @@ void Lexer::scanToken() {
             line++;
             break;
         default:
-            if(is_digit(next_char)){
+            if(isDigit(next_char)){
                 matchNumber();
-            }else if(is_alpha(next_char)){
+            }else if(isAlpha(next_char)){
                 matchIdentifierOrReserved();
             }else{
                 ::error(current, "invalid character");
@@ -280,7 +277,7 @@ void Lexer::scanToken() {
 }
 
 std::vector<Token> Lexer::scanTokens() {
-    while(!is_at_end()){
+    while(!isAtEnd()){
         start = current;
         scanToken();
     }
@@ -288,6 +285,22 @@ std::vector<Token> Lexer::scanTokens() {
     TokenType type = EOF_TOKEN;
     token_list.emplace_back(Token("", nullptr, type, line));
     return token_list;
+}
+
+bool Lexer::isAtEnd() {
+    return current >= source_code.size();
+}
+
+bool Lexer::isDigit(const char &c) {
+    return c >= '0' && c <= '9';
+}
+
+bool Lexer::isAlpha(const char &c) {
+    return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z');
+}
+
+bool Lexer::isAlphaNumeric(const char &c) {
+    return isDigit(c) || isAlpha(c);
 }
 
 

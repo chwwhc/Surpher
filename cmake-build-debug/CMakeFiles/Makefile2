@@ -44,16 +44,16 @@ RM = /usr/bin/cmake -E remove -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/chuhanwen/projects/CppSurpher
+CMAKE_SOURCE_DIR = /home/chuhanwen/projects/Surpher
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/chuhanwen/projects/CppSurpher/cmake-build-debug
+CMAKE_BINARY_DIR = /home/chuhanwen/projects/Surpher/cmake-build-debug
 
 #=============================================================================
 # Directory level rules for the build root directory
 
 # The main recursive "all" target.
-all: CMakeFiles/CppSurpher.dir/all
+all: CMakeFiles/Surpher.dir/all
 
 .PHONY : all
 
@@ -63,36 +63,36 @@ preinstall:
 .PHONY : preinstall
 
 # The main recursive "clean" target.
-clean: CMakeFiles/CppSurpher.dir/clean
+clean: CMakeFiles/Surpher.dir/clean
 
 .PHONY : clean
 
 #=============================================================================
-# Target rules for target CMakeFiles/CppSurpher.dir
+# Target rules for target CMakeFiles/Surpher.dir
 
 # All Build rule for target.
-CMakeFiles/CppSurpher.dir/all:
-	$(MAKE) -f CMakeFiles/CppSurpher.dir/build.make CMakeFiles/CppSurpher.dir/depend
-	$(MAKE) -f CMakeFiles/CppSurpher.dir/build.make CMakeFiles/CppSurpher.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/chuhanwen/projects/CppSurpher/cmake-build-debug/CMakeFiles --progress-num=1,2,3,4,5,6,7,8,9 "Built target CppSurpher"
-.PHONY : CMakeFiles/CppSurpher.dir/all
+CMakeFiles/Surpher.dir/all:
+	$(MAKE) -f CMakeFiles/Surpher.dir/build.make CMakeFiles/Surpher.dir/depend
+	$(MAKE) -f CMakeFiles/Surpher.dir/build.make CMakeFiles/Surpher.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/chuhanwen/projects/Surpher/cmake-build-debug/CMakeFiles --progress-num=1,2,3,4,5,6,7,8,9,10,11 "Built target Surpher"
+.PHONY : CMakeFiles/Surpher.dir/all
 
 # Build rule for subdir invocation for target.
-CMakeFiles/CppSurpher.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/chuhanwen/projects/CppSurpher/cmake-build-debug/CMakeFiles 9
-	$(MAKE) -f CMakeFiles/Makefile2 CMakeFiles/CppSurpher.dir/all
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/chuhanwen/projects/CppSurpher/cmake-build-debug/CMakeFiles 0
-.PHONY : CMakeFiles/CppSurpher.dir/rule
+CMakeFiles/Surpher.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/chuhanwen/projects/Surpher/cmake-build-debug/CMakeFiles 11
+	$(MAKE) -f CMakeFiles/Makefile2 CMakeFiles/Surpher.dir/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/chuhanwen/projects/Surpher/cmake-build-debug/CMakeFiles 0
+.PHONY : CMakeFiles/Surpher.dir/rule
 
 # Convenience name for target.
-CppSurpher: CMakeFiles/CppSurpher.dir/rule
+Surpher: CMakeFiles/Surpher.dir/rule
 
-.PHONY : CppSurpher
+.PHONY : Surpher
 
 # clean rule for target.
-CMakeFiles/CppSurpher.dir/clean:
-	$(MAKE) -f CMakeFiles/CppSurpher.dir/build.make CMakeFiles/CppSurpher.dir/clean
-.PHONY : CMakeFiles/CppSurpher.dir/clean
+CMakeFiles/Surpher.dir/clean:
+	$(MAKE) -f CMakeFiles/Surpher.dir/build.make CMakeFiles/Surpher.dir/clean
+.PHONY : CMakeFiles/Surpher.dir/clean
 
 #=============================================================================
 # Special targets to cleanup operation of make.

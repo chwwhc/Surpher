@@ -14,12 +14,15 @@ class Lexer {
     uint32_t start = 0;
     uint32_t current = 0;
 
-    const std::function<bool(void)> is_at_end = [&, this]() {return current >= source_code.size();};
-    const std::function<bool(const char)> is_digit = [&](auto c) { return c >= '0' && c <= '9'; };
-    const std::function<bool(const char)> is_alpha = [&](auto c) { return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z'); };
-    const std::function<bool(const char)> is_alpha_numeric = [&](auto c) { return is_digit(c) || is_alpha(c); };
-
     void scanToken();
+
+    bool isAtEnd();
+
+    static bool isDigit(const char &c);
+
+    static bool isAlpha(const char &c);
+
+    static bool isAlphaNumeric(const char &c);
 
     void skipComment();
 
@@ -29,7 +32,7 @@ class Lexer {
 
     void addToken(const TokenType &type);
 
-    void addToken(const TokenType &type, const std::any& literal);
+    void addToken(const TokenType &type, const std::any &literal);
 
     bool matchNextChar(const char &expected);
 
@@ -41,8 +44,6 @@ class Lexer {
 
 public:
     explicit Lexer(std::string source_code);
-
-    ~Lexer();
 
     std::vector<Token> scanTokens();
 };

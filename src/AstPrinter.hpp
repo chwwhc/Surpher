@@ -11,12 +11,10 @@
 #include "Expr.hpp"
 
 class AstPrinter : public ExprVisitor {
-    std::function<std::string(const std::shared_ptr<Expr>)> print = [&](auto expr) {
-        return std::any_cast<std::string>(expr->accept(*this));
-    };
-
     template<class... E>
     std::string parenthesize(std::string_view name, E... expr);
+
+    std::string print(const std::shared_ptr<Expr> &expr);
 
 public:
     std::any visitBinaryExpr(const std::shared_ptr<Binary> &expr) override;

@@ -26,7 +26,7 @@
 					[
 						0
 					],
-					"name" : "CppSurpher",
+					"name" : "Surpher",
 					"targetIndexes" : 
 					[
 						0
@@ -37,9 +37,9 @@
 			[
 				{
 					"directoryIndex" : 0,
-					"id" : "CppSurpher::@6890427a1f51a3e7e1df",
-					"jsonFile" : "target-CppSurpher-Debug-599e08c02067c917b596.json",
-					"name" : "CppSurpher",
+					"id" : "Surpher::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-Surpher-Debug-53a2170fbf92f91a8e88.json",
+					"name" : "Surpher",
 					"projectIndex" : 0
 				}
 			]
@@ -48,8 +48,8 @@
 	"kind" : "codemodel",
 	"paths" : 
 	{
-		"build" : "/home/chuhanwen/projects/CppSurpher/cmake-build-debug",
-		"source" : "/home/chuhanwen/projects/CppSurpher"
+		"build" : "/home/chuhanwen/projects/Surpher/cmake-build-debug",
+		"source" : "/home/chuhanwen/projects/Surpher"
 	},
 	"version" : 
 	{

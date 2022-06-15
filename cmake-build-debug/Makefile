@@ -48,10 +48,10 @@ RM = /usr/bin/cmake -E remove -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/chuhanwen/projects/CppSurpher
+CMAKE_SOURCE_DIR = /home/chuhanwen/projects/Surpher
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/chuhanwen/projects/CppSurpher/cmake-build-debug
+CMAKE_BINARY_DIR = /home/chuhanwen/projects/Surpher/cmake-build-debug
 
 #=============================================================================
 # Targets provided globally by CMake.
@@ -80,9 +80,9 @@ edit_cache/fast: edit_cache
 
 # The main all target
 all: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/chuhanwen/projects/CppSurpher/cmake-build-debug/CMakeFiles /home/chuhanwen/projects/CppSurpher/cmake-build-debug/CMakeFiles/progress.marks
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/chuhanwen/projects/Surpher/cmake-build-debug/CMakeFiles /home/chuhanwen/projects/Surpher/cmake-build-debug/CMakeFiles/progress.marks
 	$(MAKE) -f CMakeFiles/Makefile2 all
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/chuhanwen/projects/CppSurpher/cmake-build-debug/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/chuhanwen/projects/Surpher/cmake-build-debug/CMakeFiles 0
 .PHONY : all
 
 # The main clean target
@@ -111,17 +111,17 @@ depend:
 .PHONY : depend
 
 #=============================================================================
-# Target rules for targets named CppSurpher
+# Target rules for targets named Surpher
 
 # Build rule for target.
-CppSurpher: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 CppSurpher
-.PHONY : CppSurpher
+Surpher: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 Surpher
+.PHONY : Surpher
 
 # fast build rule for target.
-CppSurpher/fast:
-	$(MAKE) -f CMakeFiles/CppSurpher.dir/build.make CMakeFiles/CppSurpher.dir/build
-.PHONY : CppSurpher/fast
+Surpher/fast:
+	$(MAKE) -f CMakeFiles/Surpher.dir/build.make CMakeFiles/Surpher.dir/build
+.PHONY : Surpher/fast
 
 src/AstPrinter.o: src/AstPrinter.cpp.o
 
@@ -129,7 +129,7 @@ src/AstPrinter.o: src/AstPrinter.cpp.o
 
 # target to build an object file
 src/AstPrinter.cpp.o:
-	$(MAKE) -f CMakeFiles/CppSurpher.dir/build.make CMakeFiles/CppSurpher.dir/src/AstPrinter.cpp.o
+	$(MAKE) -f CMakeFiles/Surpher.dir/build.make CMakeFiles/Surpher.dir/src/AstPrinter.cpp.o
 .PHONY : src/AstPrinter.cpp.o
 
 src/AstPrinter.i: src/AstPrinter.cpp.i
@@ -138,7 +138,7 @@ src/AstPrinter.i: src/AstPrinter.cpp.i
 
 # target to preprocess a source file
 src/AstPrinter.cpp.i:
-	$(MAKE) -f CMakeFiles/CppSurpher.dir/build.make CMakeFiles/CppSurpher.dir/src/AstPrinter.cpp.i
+	$(MAKE) -f CMakeFiles/Surpher.dir/build.make CMakeFiles/Surpher.dir/src/AstPrinter.cpp.i
 .PHONY : src/AstPrinter.cpp.i
 
 src/AstPrinter.s: src/AstPrinter.cpp.s
@@ -147,8 +147,35 @@ src/AstPrinter.s: src/AstPrinter.cpp.s
 
 # target to generate assembly for a file
 src/AstPrinter.cpp.s:
-	$(MAKE) -f CMakeFiles/CppSurpher.dir/build.make CMakeFiles/CppSurpher.dir/src/AstPrinter.cpp.s
+	$(MAKE) -f CMakeFiles/Surpher.dir/build.make CMakeFiles/Surpher.dir/src/AstPrinter.cpp.s
 .PHONY : src/AstPrinter.cpp.s
+
+src/Environment.o: src/Environment.cpp.o
+
+.PHONY : src/Environment.o
+
+# target to build an object file
+src/Environment.cpp.o:
+	$(MAKE) -f CMakeFiles/Surpher.dir/build.make CMakeFiles/Surpher.dir/src/Environment.cpp.o
+.PHONY : src/Environment.cpp.o
+
+src/Environment.i: src/Environment.cpp.i
+
+.PHONY : src/Environment.i
+
+# target to preprocess a source file
+src/Environment.cpp.i:
+	$(MAKE) -f CMakeFiles/Surpher.dir/build.make CMakeFiles/Surpher.dir/src/Environment.cpp.i
+.PHONY : src/Environment.cpp.i
+
+src/Environment.s: src/Environment.cpp.s
+
+.PHONY : src/Environment.s
+
+# target to generate assembly for a file
+src/Environment.cpp.s:
+	$(MAKE) -f CMakeFiles/Surpher.dir/build.make CMakeFiles/Surpher.dir/src/Environment.cpp.s
+.PHONY : src/Environment.cpp.s
 
 src/Error.o: src/Error.cpp.o
 
@@ -156,7 +183,7 @@ src/Error.o: src/Error.cpp.o
 
 # target to build an object file
 src/Error.cpp.o:
-	$(MAKE) -f CMakeFiles/CppSurpher.dir/build.make CMakeFiles/CppSurpher.dir/src/Error.cpp.o
+	$(MAKE) -f CMakeFiles/Surpher.dir/build.make CMakeFiles/Surpher.dir/src/Error.cpp.o
 .PHONY : src/Error.cpp.o
 
 src/Error.i: src/Error.cpp.i
@@ -165,7 +192,7 @@ src/Error.i: src/Error.cpp.i
 
 # target to preprocess a source file
 src/Error.cpp.i:
-	$(MAKE) -f CMakeFiles/CppSurpher.dir/build.make CMakeFiles/CppSurpher.dir/src/Error.cpp.i
+	$(MAKE) -f CMakeFiles/Surpher.dir/build.make CMakeFiles/Surpher.dir/src/Error.cpp.i
 .PHONY : src/Error.cpp.i
 
 src/Error.s: src/Error.cpp.s
@@ -174,7 +201,7 @@ src/Error.s: src/Error.cpp.s
 
 # target to generate assembly for a file
 src/Error.cpp.s:
-	$(MAKE) -f CMakeFiles/CppSurpher.dir/build.make CMakeFiles/CppSurpher.dir/src/Error.cpp.s
+	$(MAKE) -f CMakeFiles/Surpher.dir/build.make CMakeFiles/Surpher.dir/src/Error.cpp.s
 .PHONY : src/Error.cpp.s
 
 src/Expr.o: src/Expr.cpp.o
@@ -183,7 +210,7 @@ src/Expr.o: src/Expr.cpp.o
 
 # target to build an object file
 src/Expr.cpp.o:
-	$(MAKE) -f CMakeFiles/CppSurpher.dir/build.make CMakeFiles/CppSurpher.dir/src/Expr.cpp.o
+	$(MAKE) -f CMakeFiles/Surpher.dir/build.make CMakeFiles/Surpher.dir/src/Expr.cpp.o
 .PHONY : src/Expr.cpp.o
 
 src/Expr.i: src/Expr.cpp.i
@@ -192,7 +219,7 @@ src/Expr.i: src/Expr.cpp.i
 
 # target to preprocess a source file
 src/Expr.cpp.i:
-	$(MAKE) -f CMakeFiles/CppSurpher.dir/build.make CMakeFiles/CppSurpher.dir/src/Expr.cpp.i
+	$(MAKE) -f CMakeFiles/Surpher.dir/build.make CMakeFiles/Surpher.dir/src/Expr.cpp.i
 .PHONY : src/Expr.cpp.i
 
 src/Expr.s: src/Expr.cpp.s
@@ -201,7 +228,7 @@ src/Expr.s: src/Expr.cpp.s
 
 # target to generate assembly for a file
 src/Expr.cpp.s:
-	$(MAKE) -f CMakeFiles/CppSurpher.dir/build.make CMakeFiles/CppSurpher.dir/src/Expr.cpp.s
+	$(MAKE) -f CMakeFiles/Surpher.dir/build.make CMakeFiles/Surpher.dir/src/Expr.cpp.s
 .PHONY : src/Expr.cpp.s
 
 src/Interpreter.o: src/Interpreter.cpp.o
@@ -210,7 +237,7 @@ src/Interpreter.o: src/Interpreter.cpp.o
 
 # target to build an object file
 src/Interpreter.cpp.o:
-	$(MAKE) -f CMakeFiles/CppSurpher.dir/build.make CMakeFiles/CppSurpher.dir/src/Interpreter.cpp.o
+	$(MAKE) -f CMakeFiles/Surpher.dir/build.make CMakeFiles/Surpher.dir/src/Interpreter.cpp.o
 .PHONY : src/Interpreter.cpp.o
 
 src/Interpreter.i: src/Interpreter.cpp.i
@@ -219,7 +246,7 @@ src/Interpreter.i: src/Interpreter.cpp.i
 
 # target to preprocess a source file
 src/Interpreter.cpp.i:
-	$(MAKE) -f CMakeFiles/CppSurpher.dir/build.make CMakeFiles/CppSurpher.dir/src/Interpreter.cpp.i
+	$(MAKE) -f CMakeFiles/Surpher.dir/build.make CMakeFiles/Surpher.dir/src/Interpreter.cpp.i
 .PHONY : src/Interpreter.cpp.i
 
 src/Interpreter.s: src/Interpreter.cpp.s
@@ -228,7 +255,7 @@ src/Interpreter.s: src/Interpreter.cpp.s
 
 # target to generate assembly for a file
 src/Interpreter.cpp.s:
-	$(MAKE) -f CMakeFiles/CppSurpher.dir/build.make CMakeFiles/CppSurpher.dir/src/Interpreter.cpp.s
+	$(MAKE) -f CMakeFiles/Surpher.dir/build.make CMakeFiles/Surpher.dir/src/Interpreter.cpp.s
 .PHONY : src/Interpreter.cpp.s
 
 src/Lexer.o: src/Lexer.cpp.o
@@ -237,7 +264,7 @@ src/Lexer.o: src/Lexer.cpp.o
 
 # target to build an object file
 src/Lexer.cpp.o:
-	$(MAKE) -f CMakeFiles/CppSurpher.dir/build.make CMakeFiles/CppSurpher.dir/src/Lexer.cpp.o
+	$(MAKE) -f CMakeFiles/Surpher.dir/build.make CMakeFiles/Surpher.dir/src/Lexer.cpp.o
 .PHONY : src/Lexer.cpp.o
 
 src/Lexer.i: src/Lexer.cpp.i
@@ -246,7 +273,7 @@ src/Lexer.i: src/Lexer.cpp.i
 
 # target to preprocess a source file
 src/Lexer.cpp.i:
-	$(MAKE) -f CMakeFiles/CppSurpher.dir/build.make CMakeFiles/CppSurpher.dir/src/Lexer.cpp.i
+	$(MAKE) -f CMakeFiles/Surpher.dir/build.make CMakeFiles/Surpher.dir/src/Lexer.cpp.i
 .PHONY : src/Lexer.cpp.i
 
 src/Lexer.s: src/Lexer.cpp.s
@@ -255,7 +282,7 @@ src/Lexer.s: src/Lexer.cpp.s
 
 # target to generate assembly for a file
 src/Lexer.cpp.s:
-	$(MAKE) -f CMakeFiles/CppSurpher.dir/build.make CMakeFiles/CppSurpher.dir/src/Lexer.cpp.s
+	$(MAKE) -f CMakeFiles/Surpher.dir/build.make CMakeFiles/Surpher.dir/src/Lexer.cpp.s
 .PHONY : src/Lexer.cpp.s
 
 src/Parser.o: src/Parser.cpp.o
@@ -264,7 +291,7 @@ src/Parser.o: src/Parser.cpp.o
 
 # target to build an object file
 src/Parser.cpp.o:
-	$(MAKE) -f CMakeFiles/CppSurpher.dir/build.make CMakeFiles/CppSurpher.dir/src/Parser.cpp.o
+	$(MAKE) -f CMakeFiles/Surpher.dir/build.make CMakeFiles/Surpher.dir/src/Parser.cpp.o
 .PHONY : src/Parser.cpp.o
 
 src/Parser.i: src/Parser.cpp.i
@@ -273,7 +300,7 @@ src/Parser.i: src/Parser.cpp.i
 
 # target to preprocess a source file
 src/Parser.cpp.i:
-	$(MAKE) -f CMakeFiles/CppSurpher.dir/build.make CMakeFiles/CppSurpher.dir/src/Parser.cpp.i
+	$(MAKE) -f CMakeFiles/Surpher.dir/build.make CMakeFiles/Surpher.dir/src/Parser.cpp.i
 .PHONY : src/Parser.cpp.i
 
 src/Parser.s: src/Parser.cpp.s
@@ -282,8 +309,35 @@ src/Parser.s: src/Parser.cpp.s
 
 # target to generate assembly for a file
 src/Parser.cpp.s:
-	$(MAKE) -f CMakeFiles/CppSurpher.dir/build.make CMakeFiles/CppSurpher.dir/src/Parser.cpp.s
+	$(MAKE) -f CMakeFiles/Surpher.dir/build.make CMakeFiles/Surpher.dir/src/Parser.cpp.s
 .PHONY : src/Parser.cpp.s
+
+src/Stmt.o: src/Stmt.cpp.o
+
+.PHONY : src/Stmt.o
+
+# target to build an object file
+src/Stmt.cpp.o:
+	$(MAKE) -f CMakeFiles/Surpher.dir/build.make CMakeFiles/Surpher.dir/src/Stmt.cpp.o
+.PHONY : src/Stmt.cpp.o
+
+src/Stmt.i: src/Stmt.cpp.i
+
+.PHONY : src/Stmt.i
+
+# target to preprocess a source file
+src/Stmt.cpp.i:
+	$(MAKE) -f CMakeFiles/Surpher.dir/build.make CMakeFiles/Surpher.dir/src/Stmt.cpp.i
+.PHONY : src/Stmt.cpp.i
+
+src/Stmt.s: src/Stmt.cpp.s
+
+.PHONY : src/Stmt.s
+
+# target to generate assembly for a file
+src/Stmt.cpp.s:
+	$(MAKE) -f CMakeFiles/Surpher.dir/build.make CMakeFiles/Surpher.dir/src/Stmt.cpp.s
+.PHONY : src/Stmt.cpp.s
 
 src/Surpher.o: src/Surpher.cpp.o
 
@@ -291,7 +345,7 @@ src/Surpher.o: src/Surpher.cpp.o
 
 # target to build an object file
 src/Surpher.cpp.o:
-	$(MAKE) -f CMakeFiles/CppSurpher.dir/build.make CMakeFiles/CppSurpher.dir/src/Surpher.cpp.o
+	$(MAKE) -f CMakeFiles/Surpher.dir/build.make CMakeFiles/Surpher.dir/src/Surpher.cpp.o
 .PHONY : src/Surpher.cpp.o
 
 src/Surpher.i: src/Surpher.cpp.i
@@ -300,7 +354,7 @@ src/Surpher.i: src/Surpher.cpp.i
 
 # target to preprocess a source file
 src/Surpher.cpp.i:
-	$(MAKE) -f CMakeFiles/CppSurpher.dir/build.make CMakeFiles/CppSurpher.dir/src/Surpher.cpp.i
+	$(MAKE) -f CMakeFiles/Surpher.dir/build.make CMakeFiles/Surpher.dir/src/Surpher.cpp.i
 .PHONY : src/Surpher.cpp.i
 
 src/Surpher.s: src/Surpher.cpp.s
@@ -309,7 +363,7 @@ src/Surpher.s: src/Surpher.cpp.s
 
 # target to generate assembly for a file
 src/Surpher.cpp.s:
-	$(MAKE) -f CMakeFiles/CppSurpher.dir/build.make CMakeFiles/CppSurpher.dir/src/Surpher.cpp.s
+	$(MAKE) -f CMakeFiles/Surpher.dir/build.make CMakeFiles/Surpher.dir/src/Surpher.cpp.s
 .PHONY : src/Surpher.cpp.s
 
 src/Token.o: src/Token.cpp.o
@@ -318,7 +372,7 @@ src/Token.o: src/Token.cpp.o
 
 # target to build an object file
 src/Token.cpp.o:
-	$(MAKE) -f CMakeFiles/CppSurpher.dir/build.make CMakeFiles/CppSurpher.dir/src/Token.cpp.o
+	$(MAKE) -f CMakeFiles/Surpher.dir/build.make CMakeFiles/Surpher.dir/src/Token.cpp.o
 .PHONY : src/Token.cpp.o
 
 src/Token.i: src/Token.cpp.i
@@ -327,7 +381,7 @@ src/Token.i: src/Token.cpp.i
 
 # target to preprocess a source file
 src/Token.cpp.i:
-	$(MAKE) -f CMakeFiles/CppSurpher.dir/build.make CMakeFiles/CppSurpher.dir/src/Token.cpp.i
+	$(MAKE) -f CMakeFiles/Surpher.dir/build.make CMakeFiles/Surpher.dir/src/Token.cpp.i
 .PHONY : src/Token.cpp.i
 
 src/Token.s: src/Token.cpp.s
@@ -336,7 +390,7 @@ src/Token.s: src/Token.cpp.s
 
 # target to generate assembly for a file
 src/Token.cpp.s:
-	$(MAKE) -f CMakeFiles/CppSurpher.dir/build.make CMakeFiles/CppSurpher.dir/src/Token.cpp.s
+	$(MAKE) -f CMakeFiles/Surpher.dir/build.make CMakeFiles/Surpher.dir/src/Token.cpp.s
 .PHONY : src/Token.cpp.s
 
 # Help Target
@@ -347,10 +401,13 @@ help:
 	@echo "... depend"
 	@echo "... rebuild_cache"
 	@echo "... edit_cache"
-	@echo "... CppSurpher"
+	@echo "... Surpher"
 	@echo "... src/AstPrinter.o"
 	@echo "... src/AstPrinter.i"
 	@echo "... src/AstPrinter.s"
+	@echo "... src/Environment.o"
+	@echo "... src/Environment.i"
+	@echo "... src/Environment.s"
 	@echo "... src/Error.o"
 	@echo "... src/Error.i"
 	@echo "... src/Error.s"
@@ -366,6 +423,9 @@ help:
 	@echo "... src/Parser.o"
 	@echo "... src/Parser.i"
 	@echo "... src/Parser.s"
+	@echo "... src/Stmt.o"
+	@echo "... src/Stmt.i"
+	@echo "... src/Stmt.s"
 	@echo "... src/Surpher.o"
 	@echo "... src/Surpher.i"
 	@echo "... src/Surpher.s"

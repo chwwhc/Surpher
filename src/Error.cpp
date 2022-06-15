@@ -3,7 +3,7 @@
 #include <utility>
 
 static void report(const uint32_t &line, const std::string_view &location, const std::string_view &message) {
-    std::cerr << "[line " << line << "] Error" << location << ": " << message << std::endl;
+    std::cerr << "[line " << line << "] Error " << location << ": " << message << std::endl;
     had_error = true;
 }
 

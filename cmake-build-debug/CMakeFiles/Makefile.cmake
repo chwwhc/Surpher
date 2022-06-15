@@ -48,5 +48,5 @@ set(CMAKE_MAKEFILE_PRODUCTS
 
 # Dependency information for all targets:
 set(CMAKE_DEPEND_INFO_FILES
-  "CMakeFiles/CppSurpher.dir/DependInfo.cmake"
+  "CMakeFiles/Surpher.dir/DependInfo.cmake"
   )

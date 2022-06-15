@@ -33,3 +33,28 @@ std::any Unary::accept(ExprVisitor &visitor) {
 }
 
 
+Assign::Assign(Token  name, std::shared_ptr<Expr> value) : name{std::move(name)}, value{std::move(value)}{
+
+}
+
+std::any Assign::accept(ExprVisitor &visitor) {
+    return visitor.visitAssignExpr(shared_from_this());
+}
+
+Variable::Variable(Token  name) : name{std::move(name)}{
+
+}
+
+std::any Variable::accept(ExprVisitor &visitor) {
+    return visitor.visitVariableExpr(shared_from_this());
+}
+
+Logical::Logical(std::shared_ptr<Expr> left, Token op, std::shared_ptr<Expr> right) : left{std::move(left)}, op{std::move(op)}, right{std::move(right)}{
+
+}
+
+std::any Logical::accept(ExprVisitor &visitor) {
+    return visitor.visitLogicalExpr(shared_from_this());
+}
+
+

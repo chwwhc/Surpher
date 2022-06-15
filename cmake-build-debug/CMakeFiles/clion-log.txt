@@ -1,4 +1,4 @@
-C:\WINDOWS\system32\wsl.exe --distribution Ubuntu20.04LTS --exec /bin/bash -c "export CLION_IDE=TRUE && export JETBRAINS_IDE=TRUE && cd /home/chuhanwen/projects/CppSurpher/cmake-build-debug && /usr/bin/cmake -DCMAKE_BUILD_TYPE=Debug -G 'CodeBlocks - Unix Makefiles' -S /home/chuhanwen/projects/CppSurpher -B /home/chuhanwen/projects/CppSurpher/cmake-build-debug"
+C:\WINDOWS\system32\wsl.exe --distribution Ubuntu20.04LTS --exec /bin/sh -c "export CLION_IDE=TRUE && export JETBRAINS_IDE=TRUE && cd /home/chuhanwen/projects/Surpher/cmake-build-debug && /usr/bin/cmake -DCMAKE_BUILD_TYPE=Debug -G 'CodeBlocks - Unix Makefiles' -S /home/chuhanwen/projects/Surpher -B /home/chuhanwen/projects/Surpher/cmake-build-debug"
 -- Configuring done
 -- Generating done
--- Build files have been written to: /home/chuhanwen/projects/CppSurpher/cmake-build-debug
+-- Build files have been written to: /home/chuhanwen/projects/Surpher/cmake-build-debug

@@ -150,8 +150,8 @@
 	"kind" : "cmakeFiles",
 	"paths" : 
 	{
-		"build" : "/home/chuhanwen/projects/CppSurpher/cmake-build-debug",
-		"source" : "/home/chuhanwen/projects/CppSurpher"
+		"build" : "/home/chuhanwen/projects/Surpher/cmake-build-debug",
+		"source" : "/home/chuhanwen/projects/Surpher"
 	},
 	"version" : 
 	{

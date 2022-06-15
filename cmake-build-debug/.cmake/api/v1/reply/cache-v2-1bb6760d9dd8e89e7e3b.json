@@ -55,7 +55,7 @@
 				}
 			],
 			"type" : "INTERNAL",
-			"value" : "/home/chuhanwen/projects/CppSurpher/cmake-build-debug"
+			"value" : "/home/chuhanwen/projects/Surpher/cmake-build-debug"
 		},
 		{
 			"name" : "CMAKE_CACHE_MAJOR_VERSION",
@@ -679,7 +679,7 @@
 				}
 			],
 			"type" : "INTERNAL",
-			"value" : "/home/chuhanwen/projects/CppSurpher"
+			"value" : "/home/chuhanwen/projects/Surpher"
 		},
 		{
 			"name" : "CMAKE_INSTALL_PREFIX",
@@ -923,7 +923,7 @@
 				}
 			],
 			"type" : "STATIC",
-			"value" : "CppSurpher"
+			"value" : "Surpher"
 		},
 		{
 			"name" : "CMAKE_RANLIB",
@@ -1206,30 +1206,6 @@
 			"value" : "FALSE"
 		},
 		{
-			"name" : "CppSurpher_BINARY_DIR",
-			"properties" : 
-			[
-				{
-					"name" : "HELPSTRING",
-					"value" : "Value Computed by CMake"
-				}
-			],
-			"type" : "STATIC",
-			"value" : "/home/chuhanwen/projects/CppSurpher/cmake-build-debug"
-		},
-		{
-			"name" : "CppSurpher_SOURCE_DIR",
-			"properties" : 
-			[
-				{
-					"name" : "HELPSTRING",
-					"value" : "Value Computed by CMake"
-				}
-			],
-			"type" : "STATIC",
-			"value" : "/home/chuhanwen/projects/CppSurpher"
-		},
-		{
 			"name" : "ProcessorCount_cmd_nproc",
 			"properties" : 
 			[
@@ -1260,6 +1236,30 @@
 			],
 			"type" : "FILEPATH",
 			"value" : "/usr/sbin/sysctl"
+		},
+		{
+			"name" : "Surpher_BINARY_DIR",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : "Value Computed by CMake"
+				}
+			],
+			"type" : "STATIC",
+			"value" : "/home/chuhanwen/projects/Surpher/cmake-build-debug"
+		},
+		{
+			"name" : "Surpher_SOURCE_DIR",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : "Value Computed by CMake"
+				}
+			],
+			"type" : "STATIC",
+			"value" : "/home/chuhanwen/projects/Surpher"
 		}
 	],
 	"kind" : "cache",

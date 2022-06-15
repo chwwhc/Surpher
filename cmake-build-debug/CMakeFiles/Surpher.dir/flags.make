@@ -6,5 +6,5 @@ CXX_FLAGS = -g   -std=gnu++17
 
 CXX_DEFINES = 
 
-CXX_INCLUDES = -I/home/chuhanwen/projects/CppSurpher/src 
+CXX_INCLUDES = -I/home/chuhanwen/projects/Surpher/src 
 

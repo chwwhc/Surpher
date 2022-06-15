@@ -41,6 +41,10 @@ std::any AstPrinter::visitUnaryExpr(const std::shared_ptr<Unary> &expr) {
 std::string AstPrinter::printAst(const std::shared_ptr<Expr> &expr) {
     return std::any_cast<std::string>(expr->accept(*this));
 }
+
+std::string AstPrinter::print(const std::shared_ptr<Expr> &expr) {
+    return std::any_cast<std::string>(expr->accept(*this));
+}
 /*
     int main(int argc, char *argv[]) {
         std::shared_ptr<Expr> expression = std::make_shared<Binary>(
