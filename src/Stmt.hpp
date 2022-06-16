@@ -11,6 +11,8 @@ struct Print;
 struct Var;
 struct If;
 struct While;
+struct Break;
+struct Continue;
 
 struct StmtVisitor {
     virtual std::any visitBlockStmt(const std::shared_ptr<Block> &stmt) = 0;
@@ -24,6 +26,10 @@ struct StmtVisitor {
     virtual std::any visitIfStmt(const std::shared_ptr<If> &stmt) = 0;
 
     virtual std::any visitWhileStmt(const std::shared_ptr<While> &stmt) = 0;
+
+    virtual std::any visitBreakStmt(const std::shared_ptr<Break> &stmt) = 0;
+
+    virtual std::any visitContinueStmt(const std::shared_ptr<Continue> &stmt) = 0;
 
     virtual ~StmtVisitor() = default;
 };
@@ -91,6 +97,20 @@ struct While : Stmt, public std::enable_shared_from_this<While> {
 
     While(std::shared_ptr<Expr> condition, std::shared_ptr<Stmt> body);
 
+    std::any accept(StmtVisitor &visitor) override;
+};
+
+struct Break : Stmt, public std::enable_shared_from_this<Break>{
+    const Token break_tok;
+
+    explicit Break(Token break_tok);
+    std::any accept(StmtVisitor &visitor) override;
+};
+
+struct Continue : Stmt, public std::enable_shared_from_this<Continue>{
+    const Token continue_tok;
+
+    explicit Continue(Token continue_tok);
     std::any accept(StmtVisitor &visitor) override;
 };
 

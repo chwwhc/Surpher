@@ -99,6 +99,10 @@ void Interpreter::interpret(const std::vector<std::shared_ptr<Stmt>> &statements
         }
     } catch (RuntimeError &e) {
         ::runtimeError(e);
+    } catch(BreakError &e){
+        ::breakError(e);
+    }catch (ContinueError &e){
+        ::continueError(e);
     }
 }
 
@@ -268,7 +272,22 @@ std::any Interpreter::visitLogicalExpr(const std::shared_ptr<Logical> &expr) {
 
 std::any Interpreter::visitWhileStmt(const std::shared_ptr<While> &stmt) {
     while(isTruthy(evaluate(stmt->condition))){
-        execute(stmt->body);
+        try{
+            execute(stmt->body);
+        } catch (BreakError e) {
+            break;
+        } catch(ContinueError e){
+            continue;
+        }
     }
     return {};
 }
+
+std::any Interpreter::visitBreakStmt(const std::shared_ptr<Break> &stmt) {
+    throw BreakError{stmt->break_tok, "'break' must be used in loop"};
+}
+
+std::any Interpreter::visitContinueStmt(const std::shared_ptr<Continue> &stmt) {
+    throw ContinueError{stmt->continue_tok, "'continue' must be used in loop"};
+}
+

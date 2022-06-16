@@ -46,3 +46,19 @@ While::While(std::shared_ptr<Expr> condition, std::shared_ptr<Stmt> body) : cond
 std::any While::accept(StmtVisitor &visitor) {
     return visitor.visitWhileStmt(shared_from_this());
 }
+
+std::any Break::accept(StmtVisitor &visitor) {
+    return visitor.visitBreakStmt(shared_from_this());
+}
+
+Break::Break(Token break_tok) : break_tok{std::move(break_tok)}{
+
+}
+
+std::any Continue::accept(StmtVisitor &visitor) {
+    return visitor.visitContinueStmt(shared_from_this());
+}
+
+Continue::Continue(Token continue_tok) : continue_tok{std::move(continue_tok)}{
+
+}

@@ -177,6 +177,18 @@ class Parser {
         return body;
     };
 
+    std::function<std::shared_ptr<Stmt>()> break_statement = [this](){
+        auto break_tok = previous();
+        consume(SINGLE_SEMICOLON, "Expect ';' after 'break'.");
+        return std::make_shared<Break>(break_tok);
+    };
+
+    std::function<std::shared_ptr<Stmt>()> continue_statement = [this](){
+        auto continue_tok = previous();
+        consume(SINGLE_SEMICOLON, "Expect ';' after 'continue'.");
+        return std::make_shared<Continue>(continue_tok);
+    };
+
     std::function<std::shared_ptr<Stmt>()> statement = [this]() {
         if (match(PRINT)) {
             return print_statement();
@@ -188,6 +200,10 @@ class Parser {
             return while_statement();
         }else if(match(FOR)){
             return for_statement();
+        }else if(match(BREAK)){
+            return break_statement();
+        }else if(match(CONTINUE)){
+            return continue_statement();
         }
         else {
             return expression_statement();

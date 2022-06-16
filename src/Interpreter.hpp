@@ -51,6 +51,10 @@ public:
 
     std::any visitIfStmt(const std::shared_ptr<If> &stmt) override;
 
+    std::any visitBreakStmt(const std::shared_ptr<Break> &stmt) override;
+
+    std::any visitContinueStmt(const std::shared_ptr<Continue> &stmt) override;
+
     std::any visitWhileStmt(const std::shared_ptr<While> &stmt) override;
 
     std::any visitAssignExpr(const std::shared_ptr<Assign> &expr) override;

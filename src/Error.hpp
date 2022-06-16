@@ -20,7 +20,23 @@ struct RuntimeError : public std::runtime_error {
     RuntimeError(Token token, const std::string_view &message);
 };
 
+struct BreakError : public std::runtime_error{
+    const Token break_tok;
+
+    BreakError(Token token, const std::string_view &message);
+};
+
+struct ContinueError : public std::runtime_error{
+    const Token continue_tok;
+
+    ContinueError(Token token, const std::string_view &message);
+};
+
 void runtimeError(const RuntimeError &error);
+
+void continueError(const ContinueError &error);
+
+void breakError(const BreakError &error);
 
 
 #endif //CPPSURPHER_ERROR_HPP
