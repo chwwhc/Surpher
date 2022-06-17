@@ -135,6 +135,12 @@
 		<Unit filename="/home/chuhanwen/projects/Surpher/src/Surpher.cpp">
 			<Option target="Surpher"/>
 		</Unit>
+		<Unit filename="/home/chuhanwen/projects/Surpher/src/SurpherCallable.cpp">
+			<Option target="Surpher"/>
+		</Unit>
+		<Unit filename="/home/chuhanwen/projects/Surpher/src/SurpherCallable.hpp">
+			<Option target="Surpher"/>
+		</Unit>
 		<Unit filename="/home/chuhanwen/projects/Surpher/src/Token.cpp">
 			<Option target="Surpher"/>
 		</Unit>

@@ -32,6 +32,12 @@ struct ContinueError : public std::runtime_error{
     ContinueError(Token token, const std::string_view &message);
 };
 
+struct ReturnError : public std::runtime_error{
+    const std::any value;
+
+    explicit ReturnError(std::any value);
+};
+
 void runtimeError(const RuntimeError &error);
 
 void continueError(const ContinueError &error);

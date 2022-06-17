@@ -3,8 +3,11 @@
 
 #include <memory>
 #include <any>
+#include <vector>
 
 #include "Token.hpp"
+
+struct Stmt;
 
 struct Binary;
 struct Group;
@@ -13,6 +16,12 @@ struct Unary;
 struct Assign;
 struct Variable;
 struct Logical;
+struct Call;
+struct Lambda;
+
+namespace {
+    uint64_t lambdaName = 0;
+}
 
 struct ExprVisitor {
     virtual std::any visitBinaryExpr(const std::shared_ptr<Binary> &expr) = 0;
@@ -29,7 +38,9 @@ struct ExprVisitor {
 
     virtual std::any visitLogicalExpr(const std::shared_ptr<Logical> &expr) = 0;
 
-    virtual ~ExprVisitor() = default;
+    virtual std::any visitCallExpr(const std::shared_ptr<Call> &expr) = 0;
+
+    virtual std::any visitLambdaExpr(const std::shared_ptr<Lambda> &expr) = 0;
 };
 
 struct Expr {
@@ -96,6 +107,26 @@ struct Variable: Expr, public std::enable_shared_from_this<Variable> {
     std::any accept(ExprVisitor& visitor) override;
 
 
+};
+
+struct Call : Expr, public std::enable_shared_from_this<Call> {
+    const std::shared_ptr<Expr> callee;
+    const Token paren;
+    const std::vector<std::shared_ptr<Expr>> arguments;
+
+    Call(std::shared_ptr<Expr> callee, Token paren, std::vector<std::shared_ptr<Expr>> arguments);
+
+    std::any accept(ExprVisitor &visitor) override;
+};
+
+struct Lambda : Expr, public std::enable_shared_from_this<Lambda> {
+    const Token name;
+    const std::vector<Token> params;
+    const std::vector<std::shared_ptr<Stmt>> body;
+
+    Lambda(Token name, std::vector<Token> params, std::vector<std::shared_ptr<Stmt>> body);
+
+    std::any accept(ExprVisitor &visitor) override;
 };
 
 #endif //CPPSURPHER_EXPR_HPP

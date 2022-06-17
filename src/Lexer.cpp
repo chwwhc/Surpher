@@ -12,7 +12,7 @@ std::map<std::string, TokenType> keyWords = {
         {"class",    CLASS},
         {"else",     ELSE},
         {"false",    FALSE},
-        {"func",     FUN},
+        {"fun",     FUN},
         {"for",      FOR},
         {"if",       IF},
         {"none",     NONE},
@@ -28,6 +28,7 @@ std::map<std::string, TokenType> keyWords = {
         {"break",    BREAK},
         {"continue", CONTINUE},
         {"newtype",  NEWTYPE},
+        {"lambda", LAMBDA},
         {"print",    PRINT}};
 
 Lexer::Lexer(std::string source_code) : source_code(std::move(source_code)){
@@ -122,8 +123,11 @@ void Lexer::skipComment() {
             flag++;
         }else if(matchNextChar('*') && matchNextChar(')')){
             flag--;
+            if(isAtEnd()){
+                return;
+            }
         }
-        if(isAtEnd()){
+        if(isAtEnd() ){
             ::error(line, "Unterminated comment.");
             return;
         }else{
@@ -272,7 +276,6 @@ void Lexer::scanToken() {
             }else{
                 ::error(current, "invalid character");
             }
-
     }
 }
 

@@ -98,11 +98,11 @@ void Interpreter::interpret(const std::vector<std::shared_ptr<Stmt>> &statements
             execute(statement);
         }
     } catch (RuntimeError &e) {
-        ::runtimeError(e);
+        runtimeError(e);
     } catch(BreakError &e){
-        ::breakError(e);
+        breakError(e);
     }catch (ContinueError &e){
-        ::continueError(e);
+        continueError(e);
     }
 }
 
@@ -198,12 +198,16 @@ std::string Interpreter::stringify(const std::any &val) {
         return "none"s;
     }
     if (val.type() == typeid(double)) {
-        double double_val = std::any_cast<double>(val);
-        long long int_val = double_val;
-        if(int_val == double_val){
-            return std::to_string(int_val);
+        auto double_val = std::any_cast<double>(val);
+        std::string num_str = std::to_string(double_val);
+        if(floor(double_val) == double_val){
+            uint32_t point_index = 0;
+            while(point_index < num_str.size() && num_str[point_index] != '.'){
+                point_index++;
+            }
+            return num_str.substr(0, point_index);
         }
-        return std::to_string(double_val);
+        return num_str;
     }
     if (val.type() == typeid(std::string)) {
         return std::any_cast<std::string>(val);
@@ -274,9 +278,9 @@ std::any Interpreter::visitWhileStmt(const std::shared_ptr<While> &stmt) {
     while(isTruthy(evaluate(stmt->condition))){
         try{
             execute(stmt->body);
-        } catch (BreakError e) {
+        } catch (BreakError &e) {
             break;
-        } catch(ContinueError e){
+        } catch(ContinueError &e){
             continue;
         }
     }
@@ -289,5 +293,53 @@ std::any Interpreter::visitBreakStmt(const std::shared_ptr<Break> &stmt) {
 
 std::any Interpreter::visitContinueStmt(const std::shared_ptr<Continue> &stmt) {
     throw ContinueError{stmt->continue_tok, "'continue' must be used in loop"};
+}
+
+std::any Interpreter::visitCallExpr(const std::shared_ptr<Call> &expr) {
+    std::any callee = evaluate(expr->callee);
+
+    std::vector<std::any> arguments;
+    for(const auto& argument: expr->arguments){
+        arguments.emplace_back(evaluate(argument));
+    }
+
+    std::shared_ptr<SurpherCallable> function;
+
+    if(callee.type() == typeid(std::shared_ptr<SurpherFunction>)){
+        function = std::any_cast<std::shared_ptr<SurpherFunction>>(callee);
+    }else{
+        throw RuntimeError(expr->paren, "Can only call functions and classes.");
+    }
+
+    if(arguments.size() != function->arity()){
+        throw RuntimeError(expr->paren, "Expected " + std::to_string(function->arity()) + " arguments but got " + std::to_string(arguments.size()) + ".");
+    }
+
+    return function->call(*this, arguments);
+}
+
+Interpreter::Interpreter() : globals(new Environment){
+    globals->define("clock", std::shared_ptr<Clock>{});
+}
+
+std::any Interpreter::visitFunctionStmt(const std::shared_ptr<Function> &stmt) {
+    auto function = std::make_shared<SurpherFunction>(stmt, environment);
+    environment->define(stmt->name.lexeme, function);
+    return {};
+}
+
+std::any Interpreter::visitReturnStmt(const std::shared_ptr<Return> &stmt) {
+    std::any value{};
+    if(stmt->value != nullptr){
+        value = evaluate(stmt->value);
+    }
+
+    throw ReturnError(value);
+}
+
+std::any Interpreter::visitLambdaExpr(const std::shared_ptr<Lambda> &expr) {
+    auto function = std::make_shared<SurpherFunction>(std::make_shared<Function>(expr->name, expr->params, expr->body), environment);
+    environment->define(expr->name.lexeme, function);
+    return function;
 }
 

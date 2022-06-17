@@ -58,3 +58,18 @@ std::any Logical::accept(ExprVisitor &visitor) {
 }
 
 
+Call::Call(std::shared_ptr<Expr> callee, Token paren, std::vector<std::shared_ptr<Expr>> arguments) : callee(std::move(callee)), paren(std::move(paren)), arguments(std::move(arguments)){
+
+}
+
+std::any Call::accept(ExprVisitor &visitor) {
+    return visitor.visitCallExpr(shared_from_this());
+}
+
+Lambda::Lambda(Token name, std::vector<Token> params, std::vector<std::shared_ptr<Stmt>> body) : name(std::move(name)), params(std::move(params)), body(std::move(body)){
+
+}
+
+std::any Lambda::accept(ExprVisitor &visitor) {
+    return visitor.visitLambdaExpr(shared_from_this());
+}

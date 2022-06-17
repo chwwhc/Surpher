@@ -7,14 +7,16 @@
 #include "Expr.hpp"
 #include "Error.hpp"
 #include "Stmt.hpp"
+#include "SurpherCallable.hpp"
 
 using namespace std::string_literals;
 
 class Interpreter : public ExprVisitor, public StmtVisitor {
-    std::shared_ptr<Environment> environment{new Environment{}};
+public:
+    const std::shared_ptr<Environment> globals;
+private:
 
-    void
-    executeBlock(const std::vector<std::shared_ptr<Stmt>> &stmts, const std::shared_ptr<Environment> &curr_environment);
+    std::shared_ptr<Environment> environment = globals;
 
     static bool isTruthy(const std::any &val);
 
@@ -31,6 +33,11 @@ class Interpreter : public ExprVisitor, public StmtVisitor {
     void execute(const std::shared_ptr<Stmt> &stmt);
 
 public:
+    void
+    executeBlock(const std::vector<std::shared_ptr<Stmt>> &stmts, const std::shared_ptr<Environment> &curr_environment);
+
+    std::any visitLambdaExpr(const std::shared_ptr<Lambda> &expr) override;
+
     std::any visitBinaryExpr(const std::shared_ptr<Binary> &expr) override;
 
     std::any visitLogicalExpr(const std::shared_ptr<Logical> &expr) override;
@@ -53,6 +60,8 @@ public:
 
     std::any visitBreakStmt(const std::shared_ptr<Break> &stmt) override;
 
+    std::any visitFunctionStmt(const std::shared_ptr<Function> &stmt) override;
+
     std::any visitContinueStmt(const std::shared_ptr<Continue> &stmt) override;
 
     std::any visitWhileStmt(const std::shared_ptr<While> &stmt) override;
@@ -60,6 +69,12 @@ public:
     std::any visitAssignExpr(const std::shared_ptr<Assign> &expr) override;
 
     std::any visitVariableExpr(const std::shared_ptr<Variable> &expr) override;
+
+    std::any visitCallExpr(const std::shared_ptr<Call> &expr) override;
+
+    std::any visitReturnStmt(const std::shared_ptr<Return> &stmt) override;
+
+    Interpreter();
 
     void interpret(const std::vector<std::shared_ptr<Stmt>> &statements);
 };

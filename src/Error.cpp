@@ -47,3 +47,7 @@ ContinueError::ContinueError(Token token, const std::string_view &message) : std
                                                                              continue_tok{std::move(token)}{
 
 }
+
+ReturnError::ReturnError(std::any value) : runtime_error(""), value(std::move(value)) {
+
+}

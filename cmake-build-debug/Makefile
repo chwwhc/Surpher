@@ -366,6 +366,33 @@ src/Surpher.cpp.s:
 	$(MAKE) -f CMakeFiles/Surpher.dir/build.make CMakeFiles/Surpher.dir/src/Surpher.cpp.s
 .PHONY : src/Surpher.cpp.s
 
+src/SurpherCallable.o: src/SurpherCallable.cpp.o
+
+.PHONY : src/SurpherCallable.o
+
+# target to build an object file
+src/SurpherCallable.cpp.o:
+	$(MAKE) -f CMakeFiles/Surpher.dir/build.make CMakeFiles/Surpher.dir/src/SurpherCallable.cpp.o
+.PHONY : src/SurpherCallable.cpp.o
+
+src/SurpherCallable.i: src/SurpherCallable.cpp.i
+
+.PHONY : src/SurpherCallable.i
+
+# target to preprocess a source file
+src/SurpherCallable.cpp.i:
+	$(MAKE) -f CMakeFiles/Surpher.dir/build.make CMakeFiles/Surpher.dir/src/SurpherCallable.cpp.i
+.PHONY : src/SurpherCallable.cpp.i
+
+src/SurpherCallable.s: src/SurpherCallable.cpp.s
+
+.PHONY : src/SurpherCallable.s
+
+# target to generate assembly for a file
+src/SurpherCallable.cpp.s:
+	$(MAKE) -f CMakeFiles/Surpher.dir/build.make CMakeFiles/Surpher.dir/src/SurpherCallable.cpp.s
+.PHONY : src/SurpherCallable.cpp.s
+
 src/Token.o: src/Token.cpp.o
 
 .PHONY : src/Token.o
@@ -429,6 +456,9 @@ help:
 	@echo "... src/Surpher.o"
 	@echo "... src/Surpher.i"
 	@echo "... src/Surpher.s"
+	@echo "... src/SurpherCallable.o"
+	@echo "... src/SurpherCallable.i"
+	@echo "... src/SurpherCallable.s"
 	@echo "... src/Token.o"
 	@echo "... src/Token.i"
 	@echo "... src/Token.s"

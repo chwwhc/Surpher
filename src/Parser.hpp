@@ -10,6 +10,10 @@
 #include "Expr.hpp"
 #include "Stmt.hpp"
 
+namespace {
+    uint64_t lambdaCount = 0;
+}
+
 struct ParseError : public std::runtime_error {
     using std::runtime_error::runtime_error;
 };
@@ -24,7 +28,20 @@ class Parser {
             std::shared_ptr<Expr> right = unary();
             return std::shared_ptr<Expr>(new Unary{op, right});
         }
-        return primary();
+        return call();
+    };
+    std::function<std::shared_ptr<Expr>()> call = [this](){
+        std::shared_ptr<Expr> expr = primary();
+
+        while(true){
+            if(match(LEFT_PAREN)){
+                expr = finishCall(expr);
+            }else{
+                break;
+            }
+        }
+
+        return expr;
     };
     std::function<std::shared_ptr<Expr>()> factor = [this]() { return parseBinary(unary, STAR, SLASH, PERCENT); };
     std::function<std::shared_ptr<Expr>()> term = [this]() { return parseBinary(factor, SINGLE_PLUS, MINUS); };
@@ -59,50 +76,7 @@ class Parser {
 
         return expr;
     };
-    std::function<std::shared_ptr<Stmt>()> print_statement = [this]() {
-        std::shared_ptr<Expr> val = expression();
-        consume(SINGLE_SEMICOLON, "Expect ';' after value.");
-        return std::make_shared<Print>(val);
-    };
-    std::function<std::shared_ptr<Stmt>()> expression_statement = [this]() {
-        std::shared_ptr<Expr> expr = expression();
-        consume(SINGLE_SEMICOLON, "Expect ';' after expression.");
-        return std::make_shared<Expression>(expr);
-    };
-    std::function<std::shared_ptr<Stmt>()> var_declaration = [this]() {
-        Token name = consume(IDENTIFIER, "Expect variable name.");
-
-        std::shared_ptr<Expr> initializer;
-        if (match(SINGLE_EQUAL)) {
-            initializer = expression();
-        }
-        consume(SINGLE_SEMICOLON, "Expect ';' after variable declaration.");
-        return std::make_shared<Var>(name, initializer);
-    };
-    std::function<std::shared_ptr<Stmt>()> block_statement = [&, this]() {
-        std::vector<std::shared_ptr<Stmt>> statements;
-
-        while (!isAtEnd() && !check(RIGHT_BRACE)) {
-            statements.emplace_back(declaration());
-        }
-
-        consume(RIGHT_BRACE, "Expect '}' after block.");
-        return std::make_shared<Block>(statements);
-    };
     std::function<std::shared_ptr<Expr>()> expression = [this]() { return assignment(); };
-
-    std::function<std::shared_ptr<Stmt>()> declaration = [this]() {
-        try {
-            if (match(VAR)) {
-                return var_declaration();
-            }
-            return statement();
-        } catch (ParseError &e) {
-            synchronize();
-            return std::shared_ptr<Stmt>();
-        }
-    };
-
     std::function<std::shared_ptr<Expr>()> assignment = [this]() {
         std::shared_ptr<Expr> expr = logical_or();
 
@@ -119,97 +93,32 @@ class Parser {
 
         return expr;
     };
-    std::function<std::shared_ptr<Stmt>()> if_statement = [this](){
-        consume(LEFT_PAREN, "Expect '(' after 'if'.");
-        std::shared_ptr<Expr> condition = expression();
-        consume(RIGHT_PAREN, "Expect ')' after if condition.");
 
-        std::shared_ptr<Stmt> then_branch = statement();
-        std::shared_ptr<Stmt> else_branch;
-        if(match(ELSE)){
-            else_branch = statement();
-        }
+    std::vector<std::shared_ptr<Stmt>> blockStatement();
 
-        return std::make_shared<If>(condition, then_branch, else_branch);
-    };
-    std::function<std::shared_ptr<Stmt>()> while_statement = [this](){
-        consume(LEFT_PAREN, "Expect '(' after 'while'.");
-        std::shared_ptr<Expr> condition = expression();
-        consume(RIGHT_PAREN, "Expect ')' after condition.");
-        std::shared_ptr<Stmt> body = statement();
+    std::shared_ptr<Stmt> declaration();
 
-        return std::make_shared<While>(While{condition, body});
-    };
-    std::function<std::shared_ptr<Stmt>()> for_statement = [this](){
-        consume(LEFT_PAREN, "Expect '(' after 'for'.");
-        std::shared_ptr<Stmt> initializer;
-        if(match(VAR)){
-            initializer = var_declaration();
-        }else if(!match(SINGLE_SEMICOLON)){
-            initializer = expression_statement();
-        }
+    std::shared_ptr<Stmt> varDeclaration();
 
-        std::shared_ptr<Expr> condition;
-        if(!check(SINGLE_SEMICOLON)){
-            condition = expression();
-        }
-        consume(SINGLE_SEMICOLON, "Expect ';' after 'for' condition.");
+    std::shared_ptr<Stmt> ifStatement();
 
-        std::shared_ptr<Expr> increment;
-        if(!check(RIGHT_PAREN)){
-            increment = expression();
-        }
-        consume(RIGHT_PAREN, "Expect ')' after 'for' clauses.");
+    std::shared_ptr<Stmt> whileStatement();
 
-        std::shared_ptr<Stmt> body = statement();
+    std::shared_ptr<Stmt> forStatement();
 
-        if(increment != nullptr){
-            body = std::make_shared<Block>(Block{{body, std::make_shared<Expression>(increment)}});
-        }
-        if(condition == nullptr){
-            condition = std::make_shared<Literal>(true);
-        }
-        body = std::make_shared<While>(While{condition, body});
-        if(initializer != nullptr){
-            body = std::make_shared<Block>(Block{{initializer, body}});
-        }
+    std::shared_ptr<Stmt> breakStatement();
 
-        return body;
-    };
+    std::shared_ptr<Stmt> expressionStatement();
 
-    std::function<std::shared_ptr<Stmt>()> break_statement = [this](){
-        auto break_tok = previous();
-        consume(SINGLE_SEMICOLON, "Expect ';' after 'break'.");
-        return std::make_shared<Break>(break_tok);
-    };
+    std::shared_ptr<Stmt> continueStatement();
 
-    std::function<std::shared_ptr<Stmt>()> continue_statement = [this](){
-        auto continue_tok = previous();
-        consume(SINGLE_SEMICOLON, "Expect ';' after 'continue'.");
-        return std::make_shared<Continue>(continue_tok);
-    };
+    std::shared_ptr<Stmt> printStatement();
 
-    std::function<std::shared_ptr<Stmt>()> statement = [this]() {
-        if (match(PRINT)) {
-            return print_statement();
-        } else if (match(LEFT_BRACE)) {
-            return block_statement();
-        }else if(match(IF)){
-            return if_statement();
-        }else if(match(WHILE)){
-            return while_statement();
-        }else if(match(FOR)){
-            return for_statement();
-        }else if(match(BREAK)){
-            return break_statement();
-        }else if(match(CONTINUE)){
-            return continue_statement();
-        }
-        else {
-            return expression_statement();
-        }
+    std::shared_ptr<Stmt> functionStatement(const std::string& type);
 
-    };
+    std::shared_ptr<Stmt> statement();
+
+    std::shared_ptr<Stmt> returnStatement();
 
     void synchronize();
 
@@ -230,6 +139,8 @@ class Parser {
     std::shared_ptr<Expr> parseBinary(const std::function<std::shared_ptr<Expr>()> &operand, T... types);
 
     std::shared_ptr<Expr> primary();
+
+    std::shared_ptr<Expr> finishCall(const std::shared_ptr<Expr> &callee);
 
     Token consume(TokenType type, std::string_view message);
 

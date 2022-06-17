@@ -39,6 +39,7 @@ enum TokenType {
     IDENTIFIER,
     STRING,
     NUMBER,
+    LAMBDA,
 
     // reserved
     CLASS,

@@ -13,6 +13,8 @@ struct If;
 struct While;
 struct Break;
 struct Continue;
+struct Function;
+struct Return;
 
 struct StmtVisitor {
     virtual std::any visitBlockStmt(const std::shared_ptr<Block> &stmt) = 0;
@@ -31,7 +33,9 @@ struct StmtVisitor {
 
     virtual std::any visitContinueStmt(const std::shared_ptr<Continue> &stmt) = 0;
 
-    virtual ~StmtVisitor() = default;
+    virtual std::any visitFunctionStmt(const std::shared_ptr<Function> &stmt) = 0;
+
+    virtual std::any visitReturnStmt(const std::shared_ptr<Return> &stmt) = 0;
 };
 
 struct Stmt {
@@ -111,6 +115,24 @@ struct Continue : Stmt, public std::enable_shared_from_this<Continue>{
     const Token continue_tok;
 
     explicit Continue(Token continue_tok);
+    std::any accept(StmtVisitor &visitor) override;
+};
+
+struct Function : Stmt, public std::enable_shared_from_this<Function>{
+    const Token name;
+    const std::vector<Token> params;
+    const std::vector<std::shared_ptr<Stmt>> body;
+
+    Function(Token name, std::vector<Token> params, std::vector<std::shared_ptr<Stmt>> body);
+
+    std::any accept(StmtVisitor &visitor) override;
+};
+
+struct Return : Stmt, public std::enable_shared_from_this<Return>{
+    const Token keyword;
+    const std::shared_ptr<Expr> value;
+
+    Return(Token keyword, std::shared_ptr<Expr> value);
     std::any accept(StmtVisitor &visitor) override;
 };
 

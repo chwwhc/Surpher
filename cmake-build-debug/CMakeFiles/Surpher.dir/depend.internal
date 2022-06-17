@@ -26,6 +26,7 @@ CMakeFiles/Surpher.dir/src/Interpreter.cpp.o
  /home/chuhanwen/projects/Surpher/src/Interpreter.cpp
  /home/chuhanwen/projects/Surpher/src/Interpreter.hpp
  /home/chuhanwen/projects/Surpher/src/Stmt.hpp
+ /home/chuhanwen/projects/Surpher/src/SurpherCallable.hpp
  /home/chuhanwen/projects/Surpher/src/Token.hpp
 CMakeFiles/Surpher.dir/src/Lexer.cpp.o
  /home/chuhanwen/projects/Surpher/src/Error.hpp
@@ -54,6 +55,16 @@ CMakeFiles/Surpher.dir/src/Surpher.cpp.o
  /home/chuhanwen/projects/Surpher/src/Parser.hpp
  /home/chuhanwen/projects/Surpher/src/Stmt.hpp
  /home/chuhanwen/projects/Surpher/src/Surpher.cpp
+ /home/chuhanwen/projects/Surpher/src/SurpherCallable.hpp
+ /home/chuhanwen/projects/Surpher/src/Token.hpp
+CMakeFiles/Surpher.dir/src/SurpherCallable.cpp.o
+ /home/chuhanwen/projects/Surpher/src/Environment.hpp
+ /home/chuhanwen/projects/Surpher/src/Error.hpp
+ /home/chuhanwen/projects/Surpher/src/Expr.hpp
+ /home/chuhanwen/projects/Surpher/src/Interpreter.hpp
+ /home/chuhanwen/projects/Surpher/src/Stmt.hpp
+ /home/chuhanwen/projects/Surpher/src/SurpherCallable.cpp
+ /home/chuhanwen/projects/Surpher/src/SurpherCallable.hpp
  /home/chuhanwen/projects/Surpher/src/Token.hpp
 CMakeFiles/Surpher.dir/src/Token.cpp.o
  /home/chuhanwen/projects/Surpher/src/Token.cpp

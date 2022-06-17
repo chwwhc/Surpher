@@ -8,6 +8,7 @@ file(REMOVE_RECURSE
   "CMakeFiles/Surpher.dir/src/Parser.cpp.o"
   "CMakeFiles/Surpher.dir/src/Stmt.cpp.o"
   "CMakeFiles/Surpher.dir/src/Surpher.cpp.o"
+  "CMakeFiles/Surpher.dir/src/SurpherCallable.cpp.o"
   "CMakeFiles/Surpher.dir/src/Token.cpp.o"
   "Surpher"
   "Surpher.pdb"
