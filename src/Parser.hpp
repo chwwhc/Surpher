@@ -77,8 +77,26 @@ class Parser {
         return expr;
     };
     std::function<std::shared_ptr<Expr>()> expression = [this]() { return assignment(); };
+    std::function<std::shared_ptr<Expr>()> ternary = [this](){
+        std::shared_ptr<Expr> condition = logical_or();
+
+        if(match(QUESTION)){
+            Token question = previous();
+            auto true_branch = ternary();
+            if(match(COLON)){
+                Token colon = previous();
+                auto else_branch = ternary();
+                return std::shared_ptr<Expr>(new Ternary{condition, question, true_branch, colon, else_branch});
+            }else{
+                error(previous(), "Expect ':' for ternary expression.");
+            }
+            error(question, "Expect '?' for ternary expression");
+        }
+
+        return condition;
+    };
     std::function<std::shared_ptr<Expr>()> assignment = [this]() {
-        std::shared_ptr<Expr> expr = logical_or();
+        std::shared_ptr<Expr> expr = ternary();
 
         if (match(SINGLE_EQUAL)) {
             Token equals = previous();
@@ -86,7 +104,7 @@ class Parser {
 
             if (auto *var_expr = dynamic_cast<Variable *>(expr.get())) {
                 Token name = var_expr->name;
-                return std::static_pointer_cast<Expr>(std::make_shared<Assign>(std::move(name), value));
+                return std::shared_ptr<Expr>(new Assign{std::move(name), value});
             }
             error(equals, "Invalid assignment target.");
         }

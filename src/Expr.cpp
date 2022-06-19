@@ -66,10 +66,19 @@ std::any Call::accept(ExprVisitor &visitor) {
     return visitor.visitCallExpr(shared_from_this());
 }
 
-Lambda::Lambda(Token name, std::vector<Token> params, std::vector<std::shared_ptr<Stmt>> body) : name(std::move(name)), params(std::move(params)), body(std::move(body)){
+Lambda::Lambda(Token name, std::vector<Token> params, std::shared_ptr<Expr> body) : name(std::move(name)), params(std::move(params)), body(std::move(body)){
 
 }
 
 std::any Lambda::accept(ExprVisitor &visitor) {
     return visitor.visitLambdaExpr(shared_from_this());
+}
+
+Ternary::Ternary(std::shared_ptr<Expr> condition, Token question, std::shared_ptr<Expr> true_branch, Token colon,
+                 std::shared_ptr<Expr> else_branch) :condition(std::move(condition)), question(std::move(question)), true_branch(std::move(true_branch)), colon(std::move(colon)), else_branch(std::move(else_branch)){
+
+}
+
+std::any Ternary::accept(ExprVisitor &visitor) {
+    return visitor.visitTernaryExpr(shared_from_this());
 }

@@ -72,6 +72,8 @@ public:
 
     std::any visitCallExpr(const std::shared_ptr<Call> &expr) override;
 
+    std::any visitTernaryExpr(const std::shared_ptr<Ternary> &expr) override;
+
     std::any visitReturnStmt(const std::shared_ptr<Return> &stmt) override;
 
     Interpreter();

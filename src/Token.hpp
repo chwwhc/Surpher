@@ -34,6 +34,8 @@ enum TokenType {
     GREATER_EQUAL,
     LESS,
     LESS_EQUAL,
+    QUESTION,
+    COLON,
 
     // Literal
     IDENTIFIER,
@@ -53,7 +55,7 @@ enum TokenType {
     SUPER,
     SELF,
     TRUE,
-    VAR,
+    LET,
     WHILE,
     DO,
     MATCH,

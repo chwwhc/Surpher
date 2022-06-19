@@ -20,7 +20,7 @@ std::map<std::string, TokenType> keyWords = {
         {"super",    SUPER},
         {"self",     SELF},
         {"true",     TRUE},
-        {"var",      VAR},
+        {"let",      LET},
         {"while",    WHILE},
         {"do",       DO},
         {"match",    MATCH},
@@ -28,7 +28,6 @@ std::map<std::string, TokenType> keyWords = {
         {"break",    BREAK},
         {"continue", CONTINUE},
         {"newtype",  NEWTYPE},
-        {"lambda", LAMBDA},
         {"print",    PRINT}};
 
 Lexer::Lexer(std::string source_code) : source_code(std::move(source_code)){
@@ -144,118 +143,101 @@ void Lexer::scanToken() {
             if(matchNextChar('*')){
                 skipComment();
             }else{
-                type = LEFT_PAREN;
-                addToken(type);
+                addToken(LEFT_PAREN);
             }
             break;
         case ')':
-            type = RIGHT_PAREN;
-            addToken(type);
+            addToken(RIGHT_PAREN);
             break;
         case '{':
-            type = LEFT_BRACE;
-            addToken(type);
+            addToken(LEFT_BRACE);
             break;
         case '}':
-            type = RIGHT_BRACE;
-            addToken(type);
+            addToken(RIGHT_BRACE);
             break;
         case '[':
-            type = RIGHT_BRACKET;
-            addToken(type);
+            addToken(RIGHT_BRACKET);
             break;
         case ']':
-            type = LEFT_BRACKET;
-            addToken(type);
+            addToken(LEFT_BRACKET);
             break;
         case ',':
-            type = COMMA;
-            addToken(type);
+            addToken(COMMA);
             break;
         case '.':
-            type = DOT;
-            addToken(type);
+            addToken(DOT);
             break;
         case ';':
-            type = SINGLE_SEMICOLON;
-            addToken(type);
+            addToken(SINGLE_SEMICOLON);
             break;
         case '+':
-            type = SINGLE_PLUS;
-            addToken(type);
+            addToken(SINGLE_PLUS);
             break;
         case '-':
-            type = MINUS;
-            addToken(type);
+            addToken(MINUS);
+            break;
+        case '?':
+            addToken(QUESTION);
+            break;
+        case ':':
+            addToken(COLON);
             break;
         case '%':
-            type = PERCENT;
-            addToken(type);
+            addToken(PERCENT);
             break;
         case '*':
-            type = STAR;
-            addToken(type);
+            addToken(STAR);
             break;
         case '/':
-            type = SLASH;
-            addToken(type);
+            if(matchNextChar('\\')){
+                addToken(LAMBDA);
+            }else {
+                addToken(SLASH);
+            }
             break;
         case '|':
             if(matchNextChar('|')){
-                type = DOUBLE_BAR;
-                addToken(type);
+                addToken(DOUBLE_BAR);
             }else{
-                type = SINGLE_BAR;
-                addToken(type);
+                addToken(SINGLE_BAR);
             }
             break;
         case '^':
-            type = CARET;
-            addToken(type);
+            addToken(CARET);
             break;
         case '&':
             if(matchNextChar('&')){
-                type = DOUBLE_AMPERSAND;
-                addToken(type);
+                addToken(DOUBLE_AMPERSAND);
             }else{
-                type = SINGLE_AMPERSAND;
-                addToken(type);
+                addToken(SINGLE_AMPERSAND);
             }
             break;
         case '!':
             if(matchNextChar('=')){
-                type = BANG_EQUAL;
-                addToken(type);
+                addToken(BANG_EQUAL);
             }else{
-                type = BANG;
-                addToken(type);
+                addToken(BANG);
             }
             break;
         case '=':
             if(matchNextChar('=')){
-                type = DOUBLE_EQUAL;
-                addToken(type);
+                addToken(DOUBLE_EQUAL);
             }else{
-                type = SINGLE_EQUAL;
-                addToken(type);
+                addToken(SINGLE_EQUAL);
             }
             break;
         case '>':
             if(matchNextChar('=')){
-                type = GREATER_EQUAL;
-                addToken(type);
+                addToken(GREATER_EQUAL);
             }else{
-                type = GREATER;
-                addToken(type);
+                addToken(GREATER);
             }
             break;
         case '<':
             if(matchNextChar('=')){
-                type = LESS_EQUAL;
-                addToken(type);
+                addToken(LESS_EQUAL);
             }else{
-                type = LESS;
-                addToken(type);
+                addToken(LESS);
             }
             break;
         case ' ':

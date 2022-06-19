@@ -218,6 +218,9 @@ std::string Interpreter::stringify(const std::any &val) {
     if (val.type() == typeid(long long)) {
         return std::to_string(std::any_cast<long long>(val));
     }
+    if (val.type() == typeid(Lambda)){
+        return "<lambda expr: # " + std::to_string(lambdaName) + ">";
+    }
     return "Error in stringify: un-recognized literal type."s;
 }
 
@@ -338,8 +341,13 @@ std::any Interpreter::visitReturnStmt(const std::shared_ptr<Return> &stmt) {
 }
 
 std::any Interpreter::visitLambdaExpr(const std::shared_ptr<Lambda> &expr) {
-    auto function = std::make_shared<SurpherFunction>(std::make_shared<Function>(expr->name, expr->params, expr->body), environment);
+    std::vector<std::shared_ptr<Stmt>> lambdaReturn{std::make_shared<Return>(Token("", {}, RETURN, 1), expr->body)};
+    auto function = std::make_shared<SurpherFunction>(std::make_shared<Function>(expr->name, expr->params, lambdaReturn), environment);
     environment->define(expr->name.lexeme, function);
     return function;
+}
+
+std::any Interpreter::visitTernaryExpr(const std::shared_ptr<Ternary> &expr) {
+    return isTruthy(evaluate(expr->condition)) ? evaluate(expr->true_branch) : evaluate(expr->else_branch);
 }
 

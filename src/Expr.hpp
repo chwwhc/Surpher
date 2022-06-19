@@ -10,6 +10,7 @@
 struct Stmt;
 
 struct Binary;
+struct Ternary;
 struct Group;
 struct Literal;
 struct Unary;
@@ -41,6 +42,8 @@ struct ExprVisitor {
     virtual std::any visitCallExpr(const std::shared_ptr<Call> &expr) = 0;
 
     virtual std::any visitLambdaExpr(const std::shared_ptr<Lambda> &expr) = 0;
+
+    virtual std::any visitTernaryExpr(const std::shared_ptr<Ternary> &expr) = 0;
 };
 
 struct Expr {
@@ -122,9 +125,21 @@ struct Call : Expr, public std::enable_shared_from_this<Call> {
 struct Lambda : Expr, public std::enable_shared_from_this<Lambda> {
     const Token name;
     const std::vector<Token> params;
-    const std::vector<std::shared_ptr<Stmt>> body;
+    const std::shared_ptr<Expr> body;
 
-    Lambda(Token name, std::vector<Token> params, std::vector<std::shared_ptr<Stmt>> body);
+    Lambda(Token name, std::vector<Token> params, std::shared_ptr<Expr> body);
+
+    std::any accept(ExprVisitor &visitor) override;
+};
+
+struct Ternary : Expr, public std::enable_shared_from_this<Ternary> {
+    const std::shared_ptr<Expr> condition;
+    const Token question;
+    const std::shared_ptr<Expr> true_branch;
+    const Token colon;
+    const std::shared_ptr<Expr> else_branch;
+
+    Ternary(std::shared_ptr<Expr> condition, Token question, std::shared_ptr<Expr> true_branch, Token colon, std::shared_ptr<Expr> else_branch);
 
     std::any accept(ExprVisitor &visitor) override;
 };

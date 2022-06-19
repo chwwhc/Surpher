@@ -39,18 +39,14 @@ std::shared_ptr<Expr> Parser::primary() {
         return std::make_shared<Variable>(previous());
     } else if(match(LAMBDA)){
         auto tmp = previous();
-        Token lambdaTok (tmp.lexeme + std::to_string(lambdaCount++), tmp.literal, tmp.token_type, tmp.line);
-        consume(LEFT_PAREN, "Expect '(' after lambda.");
-        std::vector<Token> params;
-        if(!check(RIGHT_PAREN)){
-            do{
-                params.emplace_back(consume(IDENTIFIER, "Expect parameter name."));
-            }while(match(COMMA));
-        }
-        consume(RIGHT_PAREN, "Expect ')' after parameters.");
+        Token lambdaTok (std::to_string(lambdaCount++), tmp.literal, tmp.token_type, tmp.line);
 
-        consume(LEFT_BRACE, "Expect '{' before lambda body.");
-        auto body = blockStatement();
+        std::vector<Token> params;
+        params.emplace_back(consume(IDENTIFIER, "Expect a variable after lambda."));
+
+        consume(DOT, "Expect '.' after lambda variable.");
+
+        auto body = expression();
 
         return std::make_shared<Lambda>(lambdaTok, params, body);
     }
@@ -91,7 +87,7 @@ void Parser::synchronize() {
         switch (peek().token_type) {
             case CLASS:
             case FUN:
-            case VAR:
+            case LET:
             case FOR:
             case IF:
             case WHILE:
@@ -208,7 +204,7 @@ std::shared_ptr<Stmt> Parser::breakStatement() {
 std::shared_ptr<Stmt> Parser::forStatement() {
     consume(LEFT_PAREN, "Expect '(' after 'for'.");
     std::shared_ptr<Stmt> initializer;
-    if(match(VAR)){
+    if(match(LET)){
         initializer = varDeclaration();
     }else if(!match(SINGLE_SEMICOLON)){
         initializer = expressionStatement();
@@ -267,7 +263,7 @@ std::shared_ptr<Stmt> Parser::ifStatement() {
 
 std::shared_ptr<Stmt> Parser::declaration() {
     try {
-        if (match(VAR)) {
+        if (match(LET)) {
             return varDeclaration();
         }
         return statement();
