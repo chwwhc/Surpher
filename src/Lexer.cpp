@@ -20,7 +20,7 @@ std::map<std::string, TokenType> keyWords = {
         {"super",    SUPER},
         {"self",     SELF},
         {"true",     TRUE},
-        {"let",      LET},
+        {"var",      VAR},
         {"while",    WHILE},
         {"do",       DO},
         {"match",    MATCH},

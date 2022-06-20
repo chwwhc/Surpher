@@ -17,6 +17,7 @@ public:
 private:
 
     std::shared_ptr<Environment> environment = globals;
+    std::unordered_map<std::shared_ptr<Expr>, uint32_t> locals;
 
     static bool isTruthy(const std::any &val);
 
@@ -29,6 +30,8 @@ private:
     static void checkZero(const Token &operator_token, const std::vector<double> &operands);
 
     std::any evaluate(const std::shared_ptr<Expr> &expr);
+
+    std::any lookUpVariable(const Token& name, const std::shared_ptr<Expr> &expr);
 
     void execute(const std::shared_ptr<Stmt> &stmt);
 
@@ -75,6 +78,8 @@ public:
     std::any visitTernaryExpr(const std::shared_ptr<Ternary> &expr) override;
 
     std::any visitReturnStmt(const std::shared_ptr<Return> &stmt) override;
+
+    void resolve(std::shared_ptr<Expr> expr, uint32_t depth);
 
     Interpreter();
 

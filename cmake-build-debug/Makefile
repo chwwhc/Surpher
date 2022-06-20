@@ -312,6 +312,33 @@ src/Parser.cpp.s:
 	$(MAKE) -f CMakeFiles/Surpher.dir/build.make CMakeFiles/Surpher.dir/src/Parser.cpp.s
 .PHONY : src/Parser.cpp.s
 
+src/Resolver.o: src/Resolver.cpp.o
+
+.PHONY : src/Resolver.o
+
+# target to build an object file
+src/Resolver.cpp.o:
+	$(MAKE) -f CMakeFiles/Surpher.dir/build.make CMakeFiles/Surpher.dir/src/Resolver.cpp.o
+.PHONY : src/Resolver.cpp.o
+
+src/Resolver.i: src/Resolver.cpp.i
+
+.PHONY : src/Resolver.i
+
+# target to preprocess a source file
+src/Resolver.cpp.i:
+	$(MAKE) -f CMakeFiles/Surpher.dir/build.make CMakeFiles/Surpher.dir/src/Resolver.cpp.i
+.PHONY : src/Resolver.cpp.i
+
+src/Resolver.s: src/Resolver.cpp.s
+
+.PHONY : src/Resolver.s
+
+# target to generate assembly for a file
+src/Resolver.cpp.s:
+	$(MAKE) -f CMakeFiles/Surpher.dir/build.make CMakeFiles/Surpher.dir/src/Resolver.cpp.s
+.PHONY : src/Resolver.cpp.s
+
 src/Stmt.o: src/Stmt.cpp.o
 
 .PHONY : src/Stmt.o
@@ -450,6 +477,9 @@ help:
 	@echo "... src/Parser.o"
 	@echo "... src/Parser.i"
 	@echo "... src/Parser.s"
+	@echo "... src/Resolver.o"
+	@echo "... src/Resolver.i"
+	@echo "... src/Resolver.s"
 	@echo "... src/Stmt.o"
 	@echo "... src/Stmt.i"
 	@echo "... src/Stmt.s"

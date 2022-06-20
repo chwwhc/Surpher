@@ -29,8 +29,8 @@ std::any Var::accept(StmtVisitor &visitor) {
 }
 
 
-If::If(std::shared_ptr<Expr> condition, std::shared_ptr<Stmt> then_branch, std::shared_ptr<Stmt> else_branch)
-        : condition{std::move(condition)}, then_branch{std::move(then_branch)}, else_branch{std::move(else_branch)} {
+If::If(std::shared_ptr<Expr> condition, std::shared_ptr<Stmt> true_branch, std::optional<std::shared_ptr<Stmt>> else_branch)
+        : condition{std::move(condition)}, true_branch{std::move(true_branch)}, else_branch{std::move(else_branch)} {
 
 }
 
@@ -71,7 +71,7 @@ std::any Function::accept(StmtVisitor &visitor) {
     return visitor.visitFunctionStmt(shared_from_this());
 }
 
-Return::Return(Token keyword, std::shared_ptr<Expr> value) : keyword(std::move(keyword)), value(std::move(value)){
+Return::Return(Token keyword, std::optional<std::shared_ptr<Expr>> value) : keyword(std::move(keyword)), value(std::move(value)){
 
 }
 

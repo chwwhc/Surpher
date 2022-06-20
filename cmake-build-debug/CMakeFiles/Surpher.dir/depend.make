@@ -40,6 +40,16 @@ CMakeFiles/Surpher.dir/src/Parser.cpp.o: ../src/Parser.hpp
 CMakeFiles/Surpher.dir/src/Parser.cpp.o: ../src/Stmt.hpp
 CMakeFiles/Surpher.dir/src/Parser.cpp.o: ../src/Token.hpp
 
+CMakeFiles/Surpher.dir/src/Resolver.cpp.o: ../src/Environment.hpp
+CMakeFiles/Surpher.dir/src/Resolver.cpp.o: ../src/Error.hpp
+CMakeFiles/Surpher.dir/src/Resolver.cpp.o: ../src/Expr.hpp
+CMakeFiles/Surpher.dir/src/Resolver.cpp.o: ../src/Interpreter.hpp
+CMakeFiles/Surpher.dir/src/Resolver.cpp.o: ../src/Resolver.cpp
+CMakeFiles/Surpher.dir/src/Resolver.cpp.o: ../src/Resolver.hpp
+CMakeFiles/Surpher.dir/src/Resolver.cpp.o: ../src/Stmt.hpp
+CMakeFiles/Surpher.dir/src/Resolver.cpp.o: ../src/SurpherCallable.hpp
+CMakeFiles/Surpher.dir/src/Resolver.cpp.o: ../src/Token.hpp
+
 CMakeFiles/Surpher.dir/src/Stmt.cpp.o: ../src/Expr.hpp
 CMakeFiles/Surpher.dir/src/Stmt.cpp.o: ../src/Stmt.cpp
 CMakeFiles/Surpher.dir/src/Stmt.cpp.o: ../src/Stmt.hpp
@@ -52,6 +62,7 @@ CMakeFiles/Surpher.dir/src/Surpher.cpp.o: ../src/Expr.hpp
 CMakeFiles/Surpher.dir/src/Surpher.cpp.o: ../src/Interpreter.hpp
 CMakeFiles/Surpher.dir/src/Surpher.cpp.o: ../src/Lexer.hpp
 CMakeFiles/Surpher.dir/src/Surpher.cpp.o: ../src/Parser.hpp
+CMakeFiles/Surpher.dir/src/Surpher.cpp.o: ../src/Resolver.hpp
 CMakeFiles/Surpher.dir/src/Surpher.cpp.o: ../src/Stmt.hpp
 CMakeFiles/Surpher.dir/src/Surpher.cpp.o: ../src/Surpher.cpp
 CMakeFiles/Surpher.dir/src/Surpher.cpp.o: ../src/SurpherCallable.hpp

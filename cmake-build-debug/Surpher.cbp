@@ -126,6 +126,12 @@
 		<Unit filename="/home/chuhanwen/projects/Surpher/src/Parser.hpp">
 			<Option target="Surpher"/>
 		</Unit>
+		<Unit filename="/home/chuhanwen/projects/Surpher/src/Resolver.cpp">
+			<Option target="Surpher"/>
+		</Unit>
+		<Unit filename="/home/chuhanwen/projects/Surpher/src/Resolver.hpp">
+			<Option target="Surpher"/>
+		</Unit>
 		<Unit filename="/home/chuhanwen/projects/Surpher/src/Stmt.cpp">
 			<Option target="Surpher"/>
 		</Unit>

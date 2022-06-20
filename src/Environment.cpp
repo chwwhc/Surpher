@@ -33,3 +33,19 @@ Environment::Environment() = default;
 Environment::Environment(std::shared_ptr<Environment> enclosing) : enclosing{std::move(enclosing)}{
 
 }
+
+std::any Environment::getAt(uint32_t distance, const std::string& name) {
+    return ancestor(distance)->var_val_pairs[name];
+}
+
+std::shared_ptr<Environment> Environment::ancestor(uint32_t distance) {
+    std::shared_ptr<Environment> environment = shared_from_this();
+    for(size_t i = 0; i < distance; i++){
+        environment = environment->enclosing;
+    }
+    return environment;
+}
+
+void Environment::assignAt(uint32_t distance, const Token &name, std::any value) {
+    ancestor(distance)->var_val_pairs[name.lexeme] = std::move(value);
+}

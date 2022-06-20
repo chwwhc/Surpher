@@ -10,6 +10,7 @@
 #include "AstPrinter.hpp"
 #include "Error.hpp"
 #include "Interpreter.hpp"
+#include "Resolver.hpp"
 
 static Interpreter interpreter{};
 
@@ -22,6 +23,14 @@ void run(const std::string &source) {
     if (had_error) {
         return;
     }
+
+    Resolver resolver(interpreter);
+    resolver.resolve(statements);
+
+    if (had_error) {
+        return;
+    }
+
     interpreter.interpret(statements);
 
    // std::cout << ast_printer.printAst(parser_result) << std::endl;
@@ -50,7 +59,7 @@ void runScript(const std::string &path) {
 void runRepl() {
     std::string cmd;
     while (true) {
-        std::cout << "Surpher > ";
+        std::cout << "Surpher> ";
         std::getline(std::cin, cmd);
         if (cmd == "!quit") {
             std::cout << std::endl;

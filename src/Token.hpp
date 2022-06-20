@@ -55,7 +55,7 @@ enum TokenType {
     SUPER,
     SELF,
     TRUE,
-    LET,
+    VAR,
     WHILE,
     DO,
     MATCH,

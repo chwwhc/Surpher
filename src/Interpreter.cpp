@@ -99,9 +99,9 @@ void Interpreter::interpret(const std::vector<std::shared_ptr<Stmt>> &statements
         }
     } catch (RuntimeError &e) {
         runtimeError(e);
-    } catch(BreakError &e){
+    } catch (BreakError &e) {
         breakError(e);
-    }catch (ContinueError &e){
+    } catch (ContinueError &e) {
         continueError(e);
     }
 }
@@ -123,22 +123,29 @@ std::any Interpreter::visitBlockStmt(const std::shared_ptr<Block> &stmt) {
 }
 
 std::any Interpreter::visitVarStmt(const std::shared_ptr<Var> &stmt) {
-    std::any val;
+    std::any value;
     if (stmt->initializer != nullptr) {
-        val = evaluate(stmt->initializer);
+        value = evaluate(stmt->initializer);
     }
-    environment->define(stmt->name.lexeme, val);
+    environment->define(stmt->name.lexeme, std::move(value));
     return {};
 }
 
 std::any Interpreter::visitVariableExpr(const std::shared_ptr<Variable> &expr) {
-    return environment->get(expr->name);
+    return lookUpVariable(expr->name, expr);
 }
 
 std::any Interpreter::visitAssignExpr(const std::shared_ptr<Assign> &expr) {
-    std::any val = evaluate(expr->value);
-    environment->assign(expr->name, val);
-    return val;
+    std::any value = evaluate(expr->value);
+
+    auto elem_iter = locals.find(expr);
+    if(elem_iter != locals.end()){
+        environment->assignAt(elem_iter->second, expr->name, value);
+    }else{
+        globals->assign(expr->name, value);
+    }
+
+    return value;
 }
 
 std::any Interpreter::evaluate(const std::shared_ptr<Expr> &expr) {
@@ -200,9 +207,9 @@ std::string Interpreter::stringify(const std::any &val) {
     if (val.type() == typeid(double)) {
         auto double_val = std::any_cast<double>(val);
         std::string num_str = std::to_string(double_val);
-        if(floor(double_val) == double_val){
+        if (floor(double_val) == double_val) {
             uint32_t point_index = 0;
-            while(point_index < num_str.size() && num_str[point_index] != '.'){
+            while (point_index < num_str.size() && num_str[point_index] != '.') {
                 point_index++;
             }
             return num_str.substr(0, point_index);
@@ -218,7 +225,7 @@ std::string Interpreter::stringify(const std::any &val) {
     if (val.type() == typeid(long long)) {
         return std::to_string(std::any_cast<long long>(val));
     }
-    if (val.type() == typeid(Lambda)){
+    if (val.type() == typeid(std::shared_ptr<Function>)) {
         return "<lambda expr: # " + std::to_string(lambdaName) + ">";
     }
     return "Error in stringify: un-recognized literal type."s;
@@ -253,10 +260,10 @@ void Interpreter::checkZero(const Token &operator_token, const std::vector<doubl
 }
 
 std::any Interpreter::visitIfStmt(const std::shared_ptr<If> &stmt) {
-    if(isTruthy(evaluate(stmt->condition))){
-        execute(stmt->then_branch);
-    }else if(stmt->else_branch != nullptr){
-        execute(stmt->else_branch);
+    if (isTruthy(evaluate(stmt->condition))) {
+        execute(stmt->true_branch);
+    } else if (stmt->else_branch.has_value()) {
+        execute(stmt->else_branch.value());
     }
     return {};
 }
@@ -264,12 +271,12 @@ std::any Interpreter::visitIfStmt(const std::shared_ptr<If> &stmt) {
 std::any Interpreter::visitLogicalExpr(const std::shared_ptr<Logical> &expr) {
     std::any left = evaluate(expr->left);
 
-    if(expr->op.token_type == DOUBLE_BAR){
-        if(isTruthy(left)){
+    if (expr->op.token_type == DOUBLE_BAR) {
+        if (isTruthy(left)) {
             return left;
         }
-    }else{
-        if(!isTruthy(left)){
+    } else {
+        if (!isTruthy(left)) {
             return left;
         }
     }
@@ -278,12 +285,12 @@ std::any Interpreter::visitLogicalExpr(const std::shared_ptr<Logical> &expr) {
 }
 
 std::any Interpreter::visitWhileStmt(const std::shared_ptr<While> &stmt) {
-    while(isTruthy(evaluate(stmt->condition))){
-        try{
+    while (isTruthy(evaluate(stmt->condition))) {
+        try {
             execute(stmt->body);
         } catch (BreakError &e) {
             break;
-        } catch(ContinueError &e){
+        } catch (ContinueError &e) {
             continue;
         }
     }
@@ -302,52 +309,67 @@ std::any Interpreter::visitCallExpr(const std::shared_ptr<Call> &expr) {
     std::any callee = evaluate(expr->callee);
 
     std::vector<std::any> arguments;
-    for(const auto& argument: expr->arguments){
+    for (const auto &argument: expr->arguments) {
         arguments.emplace_back(evaluate(argument));
     }
 
     std::shared_ptr<SurpherCallable> function;
 
-    if(callee.type() == typeid(std::shared_ptr<SurpherFunction>)){
+    if (callee.type() == typeid(std::shared_ptr<SurpherFunction>)) {
         function = std::any_cast<std::shared_ptr<SurpherFunction>>(callee);
-    }else{
+    } else {
         throw RuntimeError(expr->paren, "Can only call functions and classes.");
     }
 
-    if(arguments.size() != function->arity()){
-        throw RuntimeError(expr->paren, "Expected " + std::to_string(function->arity()) + " arguments but got " + std::to_string(arguments.size()) + ".");
+    if (arguments.size() != function->arity()) {
+        throw RuntimeError(expr->paren, "Expected " + std::to_string(function->arity()) + " arguments but got " +
+                                        std::to_string(arguments.size()) + ".");
     }
 
-    return function->call(*this, arguments);
+    return function->call(*this, std::move(arguments));
 }
 
-Interpreter::Interpreter() : globals(new Environment){
+Interpreter::Interpreter() : globals(new Environment) {
     globals->define("clock", std::shared_ptr<Clock>{});
 }
 
 std::any Interpreter::visitFunctionStmt(const std::shared_ptr<Function> &stmt) {
     auto function = std::make_shared<SurpherFunction>(stmt, environment);
-    environment->define(stmt->name.lexeme, function);
+    environment->define(stmt->name.lexeme, std::move(function));
     return {};
 }
 
 std::any Interpreter::visitReturnStmt(const std::shared_ptr<Return> &stmt) {
     std::any value{};
-    if(stmt->value != nullptr){
-        value = evaluate(stmt->value);
+    if (stmt->value.has_value()) {
+        value = evaluate(stmt->value.value());
     }
 
     throw ReturnError(value);
 }
 
 std::any Interpreter::visitLambdaExpr(const std::shared_ptr<Lambda> &expr) {
-    std::vector<std::shared_ptr<Stmt>> lambdaReturn{std::make_shared<Return>(Token("", {}, RETURN, 1), expr->body)};
-    auto function = std::make_shared<SurpherFunction>(std::make_shared<Function>(expr->name, expr->params, lambdaReturn), environment);
+    std::vector<std::shared_ptr<Stmt>> lambda_return{std::make_shared<Return>(Token("", {}, RETURN, 1), expr->body)};
+    auto function = std::make_shared<SurpherFunction>(
+            std::make_shared<Function>(expr->name, expr->params, std::move(lambda_return)), environment);
     environment->define(expr->name.lexeme, function);
     return function;
 }
 
 std::any Interpreter::visitTernaryExpr(const std::shared_ptr<Ternary> &expr) {
     return isTruthy(evaluate(expr->condition)) ? evaluate(expr->true_branch) : evaluate(expr->else_branch);
+}
+
+void Interpreter::resolve(std::shared_ptr<Expr> expr, uint32_t depth) {
+    locals[expr] = depth;
+}
+
+std::any Interpreter::lookUpVariable(const Token& name, const std::shared_ptr<Expr> &expr) {
+    auto elem_iter = locals.find(expr);
+    if(elem_iter != locals.end()){
+        return environment->getAt(elem_iter->second, name.lexeme);
+    }else{
+        return globals->get(name);
+    }
 }
 

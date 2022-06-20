@@ -30,13 +30,13 @@ class Parser {
         }
         return call();
     };
-    std::function<std::shared_ptr<Expr>()> call = [this](){
+    std::function<std::shared_ptr<Expr>()> call = [this]() {
         std::shared_ptr<Expr> expr = primary();
 
-        while(true){
-            if(match(LEFT_PAREN)){
+        while (true) {
+            if (match(LEFT_PAREN)) {
                 expr = finishCall(expr);
-            }else{
+            } else {
                 break;
             }
         }
@@ -57,7 +57,7 @@ class Parser {
     std::function<std::shared_ptr<Expr>()> logical_and = [this]() {
         std::shared_ptr<Expr> expr = bit_wise_or();
 
-        while(match(DOUBLE_AMPERSAND)){
+        while (match(DOUBLE_AMPERSAND)) {
             Token op = previous();
             std::shared_ptr<Expr> right = bit_wise_or();
             expr = std::make_shared<Logical>(expr, op, right);
@@ -68,7 +68,7 @@ class Parser {
     std::function<std::shared_ptr<Expr>()> logical_or = [this]() {
         std::shared_ptr<Expr> expr = logical_and();
 
-        while(match(DOUBLE_BAR)){
+        while (match(DOUBLE_BAR)) {
             Token op = previous();
             std::shared_ptr<Expr> right = logical_and();
             expr = std::make_shared<Logical>(expr, op, right);
@@ -77,17 +77,17 @@ class Parser {
         return expr;
     };
     std::function<std::shared_ptr<Expr>()> expression = [this]() { return assignment(); };
-    std::function<std::shared_ptr<Expr>()> ternary = [this](){
+    std::function<std::shared_ptr<Expr>()> ternary = [this]() {
         std::shared_ptr<Expr> condition = logical_or();
 
-        if(match(QUESTION)){
+        if (match(QUESTION)) {
             Token question = previous();
             auto true_branch = ternary();
-            if(match(COLON)){
+            if (match(COLON)) {
                 Token colon = previous();
                 auto else_branch = ternary();
                 return std::shared_ptr<Expr>(new Ternary{condition, question, true_branch, colon, else_branch});
-            }else{
+            } else {
                 error(previous(), "Expect ':' for ternary expression.");
             }
             error(question, "Expect '?' for ternary expression");
@@ -132,7 +132,7 @@ class Parser {
 
     std::shared_ptr<Stmt> printStatement();
 
-    std::shared_ptr<Stmt> functionStatement(const std::string& type);
+    std::shared_ptr<Stmt> functionStatement(const std::string &type);
 
     std::shared_ptr<Stmt> statement();
 

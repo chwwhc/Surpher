@@ -6,6 +6,7 @@ file(REMOVE_RECURSE
   "CMakeFiles/Surpher.dir/src/Interpreter.cpp.o"
   "CMakeFiles/Surpher.dir/src/Lexer.cpp.o"
   "CMakeFiles/Surpher.dir/src/Parser.cpp.o"
+  "CMakeFiles/Surpher.dir/src/Resolver.cpp.o"
   "CMakeFiles/Surpher.dir/src/Stmt.cpp.o"
   "CMakeFiles/Surpher.dir/src/Surpher.cpp.o"
   "CMakeFiles/Surpher.dir/src/SurpherCallable.cpp.o"

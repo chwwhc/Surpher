@@ -3,6 +3,7 @@
 
 
 #include <vector>
+#include <optional>
 #include "Expr.hpp"
 
 struct Block;
@@ -87,10 +88,10 @@ struct Var : Stmt, public std::enable_shared_from_this<Var> {
 
 struct If : Stmt, public std::enable_shared_from_this<If> {
     const std::shared_ptr<Expr> condition;
-    const std::shared_ptr<Stmt> then_branch;
-    const std::shared_ptr<Stmt> else_branch;
+    const std::shared_ptr<Stmt> true_branch;
+    const std::optional<std::shared_ptr<Stmt>> else_branch;
 
-    If(std::shared_ptr<Expr> condition, std::shared_ptr<Stmt> then_branch, std::shared_ptr<Stmt> else_branch);
+    If(std::shared_ptr<Expr> condition, std::shared_ptr<Stmt> true_branch, std::optional<std::shared_ptr<Stmt>> else_branch);
 
     std::any accept(StmtVisitor &visitor) override;
 };
@@ -130,9 +131,9 @@ struct Function : Stmt, public std::enable_shared_from_this<Function>{
 
 struct Return : Stmt, public std::enable_shared_from_this<Return>{
     const Token keyword;
-    const std::shared_ptr<Expr> value;
+    const std::optional<std::shared_ptr<Expr>> value;
 
-    Return(Token keyword, std::shared_ptr<Expr> value);
+    Return(Token keyword, std::optional<std::shared_ptr<Expr>> value);
     std::any accept(StmtVisitor &visitor) override;
 };
 
