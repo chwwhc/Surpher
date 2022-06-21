@@ -9,9 +9,9 @@
 #include <memory>
 #include "Stmt.hpp"
 #include "Environment.hpp"
+#include "SurpherInstance.hpp"
 
 class Interpreter;
-class SurpherInstance;
 
 struct SurpherCallable{
     virtual uint32_t arity() = 0;
@@ -19,24 +19,27 @@ struct SurpherCallable{
     virtual std::string SurpherCallableToString() = 0;
 };
 
-class SurpherFunction : public SurpherCallable{
-    const std::shared_ptr<Function> declaration;
-    const std::shared_ptr<Environment> closure;
+struct SurpherFunction : SurpherCallable{
     const bool is_initializer;
-public:
+    const std::shared_ptr<Environment> closure;
+    const std::shared_ptr<Function> declaration;
+
     SurpherFunction(std::shared_ptr<Function> declaration, std::shared_ptr<Environment> closure, bool is_initializer);
     uint32_t arity() override;
     std::any call(Interpreter &interpreter, const std::vector<std::any> &arguments) override;
     std::string SurpherCallableToString() override;
+
     std::shared_ptr<SurpherFunction> bind(const std::shared_ptr<SurpherInstance> &instance);
 };
 
-struct SurpherClass : SurpherCallable, public std::enable_shared_from_this<SurpherClass>{
+struct SurpherClass : SurpherCallable, SurpherInstance {
     const std::string name;
 
-    std::unordered_map<std::string, std::shared_ptr<SurpherFunction>> methods;
+    std::unordered_map<std::string, std::shared_ptr<SurpherFunction>> instance_methods;
 
-    SurpherClass(std::string name, std::unordered_map<std::string, std::shared_ptr<SurpherFunction>> methods);
+    std::unordered_map<std::string, std::shared_ptr<SurpherFunction>> class_methods;
+
+    SurpherClass(std::string name, std::unordered_map<std::string, std::shared_ptr<SurpherFunction>> instance_methods, std::unordered_map<std::string, std::shared_ptr<SurpherFunction>> class_methods);
 
     uint32_t arity() override;
 
@@ -44,7 +47,9 @@ struct SurpherClass : SurpherCallable, public std::enable_shared_from_this<Surph
 
     std::string SurpherCallableToString() override;
 
-    std::shared_ptr<SurpherFunction> findMethod(const std::string& methodName);
+    std::shared_ptr<SurpherFunction> findInstanceMethod(const std::string& methodName);
+
+    std::shared_ptr<SurpherFunction> findClassMethod(const std::string& methodName);
 };
 
 struct Clock : public SurpherCallable {

@@ -205,7 +205,7 @@ std::string Interpreter::stringify(const std::any &val) {
     if (val.type() == typeid(void)) {
         return "none"s;
     }
-    if (val.type() == typeid(double)) {
+    else if (val.type() == typeid(double)) {
         auto double_val = std::any_cast<double>(val);
         std::string num_str = std::to_string(double_val);
         if (floor(double_val) == double_val) {
@@ -217,17 +217,20 @@ std::string Interpreter::stringify(const std::any &val) {
         }
         return num_str;
     }
-    if (val.type() == typeid(std::string)) {
+    else if (val.type() == typeid(std::string)) {
         return std::any_cast<std::string>(val);
     }
-    if (val.type() == typeid(bool)) {
+    else if (val.type() == typeid(bool)) {
         return std::any_cast<bool>(val) ? "true"s : "false"s;
     }
-    if (val.type() == typeid(long long)) {
+    else if (val.type() == typeid(long long)) {
         return std::to_string(std::any_cast<long long>(val));
     }
-    if (val.type() == typeid(std::shared_ptr<SurpherFunction>)) {
-        return (std::any_cast<std::shared_ptr<SurpherFunction>>(val))->SurpherCallableToString();
+    else if (val.type() == typeid(std::shared_ptr<SurpherCallable>)) {
+        return (std::any_cast<std::shared_ptr<SurpherCallable>>(val))->SurpherCallableToString();
+    }
+    else if(val.type() == typeid(std::shared_ptr<SurpherInstance>)){
+        return (std::any_cast<std::shared_ptr<SurpherInstance>>(val))->SurpherInstanceToString();
     }
     return "Error in stringify: un-recognized literal type."s;
 }
@@ -381,13 +384,18 @@ std::any Interpreter::lookUpVariable(const Token &name, const std::shared_ptr<Ex
 std::any Interpreter::visitClassStmt(const std::shared_ptr<Class> &stmt) {
     environment->define(stmt->name.lexeme, {});
 
-    std::unordered_map<std::string, std::shared_ptr<SurpherFunction>> methods;
-    for (const auto &method: stmt->methods) {
-        auto function = std::make_shared<SurpherFunction>(method, environment, method->name.lexeme == "init");
-        methods[method->name.lexeme] = function;
+    std::unordered_map<std::string, std::shared_ptr<SurpherFunction>> instance_methods;
+    std::unordered_map<std::string, std::shared_ptr<SurpherFunction>> class_methods;
+    for (const auto &i: stmt->instance_methods) {
+        auto function = std::make_shared<SurpherFunction>(i, environment, i->name.lexeme == "init");
+        instance_methods[i->name.lexeme] = function;
+    }
+    for(const auto &c: stmt->class_methods){
+        auto function = std::make_shared<SurpherFunction>(c, environment, false);
+        class_methods[c->name.lexeme] = function;
     }
 
-    auto surpher_class = std::make_shared<SurpherClass>(stmt->name.lexeme, methods);
+    auto surpher_class = std::make_shared<SurpherClass>(stmt->name.lexeme, instance_methods, class_methods);
     environment->assign(stmt->name, surpher_class);
     return {};
 }
@@ -396,6 +404,9 @@ std::any Interpreter::visitGetExpr(const std::shared_ptr<Get> &expr) {
     std::any object = evaluate(expr->object);
     if (object.type() == typeid(std::shared_ptr<SurpherInstance>)) {
         return (std::any_cast<std::shared_ptr<SurpherInstance>>(object))->get(expr->name);
+    }else if(object.type() == typeid(std::shared_ptr<SurpherClass>)){
+        auto tmp_instance = (std::any_cast<std::shared_ptr<SurpherClass>>)(object);
+         return std::static_pointer_cast<SurpherInstance>(tmp_instance)->get(expr->name);
     }
     throw RuntimeError(expr->name, "Only instances have properties.");
 }

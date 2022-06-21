@@ -318,14 +318,20 @@ std::shared_ptr<Stmt> Parser::classDeclaration() {
     Token name = consume(IDENTIFIER, "Expect class name.");
     consume(LEFT_BRACE, "Expect '{' before class body.");
 
-    std::vector<std::shared_ptr<Function>> methods;
+    std::vector<std::shared_ptr<Function>> class_methods;
+    std::vector<std::shared_ptr<Function>> instance_methods;
     while(!isAtEnd() && !check(RIGHT_BRACE)){
-        methods.emplace_back(functionStatement("method"));
+        if(check(CLASS)){
+            anyToken();
+            class_methods.emplace_back(functionStatement("class_method"));
+            continue;
+        }
+        instance_methods.emplace_back(functionStatement("instance_method"));
     }
 
     consume(RIGHT_BRACE, "Expect '}' after class body.");
 
-    return std::make_shared<Class>(name, methods);
+    return std::make_shared<Class>(name, instance_methods, class_methods);
 }
 
 std::shared_ptr<Expr> Parser::assignment() {

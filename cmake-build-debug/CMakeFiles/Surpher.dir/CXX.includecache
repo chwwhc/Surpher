@@ -83,14 +83,20 @@ Stmt.hpp
 /home/chuhanwen/projects/Surpher/src/Stmt.hpp
 Environment.hpp
 /home/chuhanwen/projects/Surpher/src/Environment.hpp
+SurpherInstance.hpp
+/home/chuhanwen/projects/Surpher/src/SurpherInstance.hpp
 
 /home/chuhanwen/projects/Surpher/src/SurpherInstance.hpp
 unordered_map
 -
 vector
 -
-SurpherCallable.hpp
-/home/chuhanwen/projects/Surpher/src/SurpherCallable.hpp
+memory
+-
+any
+-
+Token.hpp
+/home/chuhanwen/projects/Surpher/src/Token.hpp
 
 /home/chuhanwen/projects/Surpher/src/Token.hpp
 string

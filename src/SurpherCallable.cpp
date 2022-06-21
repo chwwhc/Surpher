@@ -1,5 +1,6 @@
 #include "SurpherCallable.hpp"
 
+
 #include <utility>
 #include "Interpreter.hpp"
 
@@ -43,13 +44,14 @@ std::shared_ptr<SurpherFunction> SurpherFunction::bind(const std::shared_ptr<Sur
 }
 
 
-SurpherClass::SurpherClass(std::string  name, std::unordered_map<std::string, std::shared_ptr<SurpherFunction>> methods) :name(std::move(name)), methods(std::move(methods)){
+SurpherClass::SurpherClass(std::string  name, std::unordered_map<std::string, std::shared_ptr<SurpherFunction>> instance_methods, std::unordered_map<std::string, std::shared_ptr<SurpherFunction>> class_methods) : SurpherInstance(
+        std::shared_ptr<SurpherClass>(this)), name(std::move(name)), instance_methods(std::move(instance_methods)), class_methods(std::move(class_methods)){
 
 }
 
 std::any SurpherClass::call(Interpreter &interpreter, const std::vector<std::any> &arguments) {
-    auto instance = std::make_shared<SurpherInstance>(shared_from_this());
-    auto initializer = findMethod("init");
+    auto instance = std::make_shared<SurpherInstance>(std::static_pointer_cast<SurpherClass>(shared_from_this()));
+    auto initializer = findInstanceMethod("init");
     if(initializer != nullptr){
         initializer->bind(instance)->call(interpreter, arguments);
     }
@@ -58,7 +60,7 @@ std::any SurpherClass::call(Interpreter &interpreter, const std::vector<std::any
 }
 
 uint32_t SurpherClass::arity() {
-    auto initializer = findMethod("init");
+    auto initializer = findInstanceMethod("init");
     if(initializer == nullptr){
         return 0;
     }
@@ -69,13 +71,22 @@ std::string SurpherClass::SurpherCallableToString() {
     return name;
 }
 
-std::shared_ptr<SurpherFunction> SurpherClass::findMethod(const std::string& methodName) {
-    if(methods.find(methodName) != methods.end()){
-        return methods[methodName];
+std::shared_ptr<SurpherFunction> SurpherClass::findInstanceMethod(const std::string& methodName) {
+    if(instance_methods.find(methodName) != instance_methods.end()){
+        return instance_methods[methodName];
     }
 
     return {};
 }
+
+std::shared_ptr<SurpherFunction> SurpherClass::findClassMethod(const std::string &methodName) {
+    if(class_methods.find(methodName) != class_methods.end()){
+        return class_methods[methodName];
+    }
+
+    return {};
+}
+
 
 uint32_t Clock::arity() {
     return 0;

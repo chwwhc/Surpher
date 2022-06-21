@@ -1,4 +1,5 @@
 #include "SurpherInstance.hpp"
+#include "SurpherCallable.hpp"
 
 #include <utility>
 
@@ -16,14 +17,30 @@ std::any SurpherInstance::get(const Token &name) {
         return fields[name.lexeme];
     }
 
-    auto method = surpher_class->findMethod(name.lexeme);
-    if(method != nullptr){
-        return method->bind(shared_from_this());
+    if(surpher_class != shared_from_this()){
+        auto method = surpher_class->findInstanceMethod(name.lexeme);
+        if(method != nullptr){
+            return method->bind(shared_from_this());
+        }
+
+        throw RuntimeError(name, "Undefined property '" + name.lexeme + "'.");
+    }else{
+        auto method = surpher_class->findClassMethod(name.lexeme);
+        if(method != nullptr){
+            return method;
+        }
+
+        throw RuntimeError(name, "Undefined class method '" + name.lexeme + "'.");
     }
 
-    throw RuntimeError(name, "Undefined property '" + name.lexeme + "'.");
+
+
 }
 
 void SurpherInstance::set(const Token& name, const std::any &value) {
+    if(surpher_class == shared_from_this()){
+        throw RuntimeError(name, "Cannot set property to a class.");
+    }
+
     fields[name.lexeme] = value;
 }

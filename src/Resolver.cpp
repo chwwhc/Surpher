@@ -236,12 +236,20 @@ std::any Resolver::visitClassStmt(const std::shared_ptr<Class> &stmt) {
     beginScope();
     scopes.top()["this"] = true;
 
-    for(const auto &method : stmt->methods){
+    for(const auto &i : stmt->instance_methods){
         FunctionType declaration = FunctionType::METHOD;
-        if(method->name.lexeme == "init"){
+        if(i->name.lexeme == "init"){
             declaration = FunctionType::INITIALIZER;
         }
-        resolveFunction(method, declaration);
+        resolveFunction(i, declaration);
+    }
+
+    for(const auto &c: stmt->class_methods){
+        FunctionType declaration = FunctionType::METHOD;
+        if(c->name.lexeme == "init"){
+            error(c->name, "'init' can't be a class method.");
+        }
+        resolveFunction(c, declaration);
     }
 
     endScope();

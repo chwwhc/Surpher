@@ -1,6 +1,6 @@
 
 
-/*caonima
+/*casdawd
 
 asda
 
@@ -10,16 +10,22 @@ asdsad
 sdada asdasd*/
 
 class Bacon {
-    init(caonima){
-    this.name = caonima;
+    init(sa){
+    this.nd = sa;
     }
   eat() {
     print "Crunch crunch crunch!";
   }
+  class classmethod(a, b){
+    return a - b;
+  }
+
+  classmethod(a, b){
+  print this.a + a + b;
+  }
 }
 
-var my_bacon = Bacon("minzi");
-print my_bacon.name;
+print Bacon.classmethod(3, 2);
 
 /* asd */
-//caonima
+//ca
