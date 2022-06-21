@@ -1,10 +1,25 @@
-var a = "global";
-{
-  fun showA() {
-    print a;
-  }
 
-  showA();
-  var a = "block";
-  showA();
+
+/*caonima
+
+asda
+
+asda
+asdsad
+
+sdada asdasd*/
+
+class Bacon {
+    init(caonima){
+    this.name = caonima;
+    }
+  eat() {
+    print "Crunch crunch crunch!";
+  }
 }
+
+var my_bacon = Bacon("minzi");
+print my_bacon.name;
+
+/* asd */
+//caonima

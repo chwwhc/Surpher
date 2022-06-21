@@ -32,6 +32,14 @@ vector
 Token.hpp
 /home/chuhanwen/projects/Surpher/src/Token.hpp
 
+/home/chuhanwen/projects/Surpher/src/Interpreter.cpp
+cmath
+-
+memory
+-
+Interpreter.hpp
+/home/chuhanwen/projects/Surpher/src/Interpreter.hpp
+
 /home/chuhanwen/projects/Surpher/src/Interpreter.hpp
 functional
 -
@@ -47,30 +55,8 @@ Stmt.hpp
 /home/chuhanwen/projects/Surpher/src/Stmt.hpp
 SurpherCallable.hpp
 /home/chuhanwen/projects/Surpher/src/SurpherCallable.hpp
-
-/home/chuhanwen/projects/Surpher/src/Resolver.cpp
-Resolver.hpp
-/home/chuhanwen/projects/Surpher/src/Resolver.hpp
-memory
--
-
-/home/chuhanwen/projects/Surpher/src/Resolver.hpp
-stack
--
-vector
--
-map
--
-utility
--
-Expr.hpp
-/home/chuhanwen/projects/Surpher/src/Expr.hpp
-Stmt.hpp
-/home/chuhanwen/projects/Surpher/src/Stmt.hpp
-Interpreter.hpp
-/home/chuhanwen/projects/Surpher/src/Interpreter.hpp
-Error.hpp
-/home/chuhanwen/projects/Surpher/src/Error.hpp
+SurpherInstance.hpp
+/home/chuhanwen/projects/Surpher/src/SurpherInstance.hpp
 
 /home/chuhanwen/projects/Surpher/src/Stmt.hpp
 vector
@@ -97,6 +83,14 @@ Stmt.hpp
 /home/chuhanwen/projects/Surpher/src/Stmt.hpp
 Environment.hpp
 /home/chuhanwen/projects/Surpher/src/Environment.hpp
+
+/home/chuhanwen/projects/Surpher/src/SurpherInstance.hpp
+unordered_map
+-
+vector
+-
+SurpherCallable.hpp
+/home/chuhanwen/projects/Surpher/src/SurpherCallable.hpp
 
 /home/chuhanwen/projects/Surpher/src/Token.hpp
 string

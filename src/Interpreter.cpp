@@ -1,4 +1,5 @@
 #include <cmath>
+#include <memory>
 
 #include "Interpreter.hpp"
 
@@ -139,9 +140,9 @@ std::any Interpreter::visitAssignExpr(const std::shared_ptr<Assign> &expr) {
     std::any value = evaluate(expr->value);
 
     auto elem_iter = locals.find(expr);
-    if(elem_iter != locals.end()){
+    if (elem_iter != locals.end()) {
         environment->assignAt(elem_iter->second, expr->name, value);
-    }else{
+    } else {
         globals->assign(expr->name, value);
     }
 
@@ -225,8 +226,8 @@ std::string Interpreter::stringify(const std::any &val) {
     if (val.type() == typeid(long long)) {
         return std::to_string(std::any_cast<long long>(val));
     }
-    if (val.type() == typeid(std::shared_ptr<Function>)) {
-        return "<lambda expr: # " + std::to_string(lambdaName) + ">";
+    if (val.type() == typeid(std::shared_ptr<SurpherFunction>)) {
+        return (std::any_cast<std::shared_ptr<SurpherFunction>>(val))->SurpherCallableToString();
     }
     return "Error in stringify: un-recognized literal type."s;
 }
@@ -313,20 +314,24 @@ std::any Interpreter::visitCallExpr(const std::shared_ptr<Call> &expr) {
         arguments.emplace_back(evaluate(argument));
     }
 
-    std::shared_ptr<SurpherCallable> function;
+    std::shared_ptr<SurpherCallable> callable;
 
     if (callee.type() == typeid(std::shared_ptr<SurpherFunction>)) {
-        function = std::any_cast<std::shared_ptr<SurpherFunction>>(callee);
+        callable = std::any_cast<std::shared_ptr<SurpherFunction>>(callee);
+    } else if (callee.type() == typeid(std::shared_ptr<SurpherClass>)) {
+        callable = std::any_cast<std::shared_ptr<SurpherClass>>(callee);
+    } else if(callee.type() == typeid(std::shared_ptr<Clock>)){
+        callable = std::make_shared<Clock>();
     } else {
         throw RuntimeError(expr->paren, "Can only call functions and classes.");
     }
 
-    if (arguments.size() != function->arity()) {
-        throw RuntimeError(expr->paren, "Expected " + std::to_string(function->arity()) + " arguments but got " +
+    if (arguments.size() != callable->arity()) {
+        throw RuntimeError(expr->paren, "Expected " + std::to_string(callable->arity()) + " arguments but got " +
                                         std::to_string(arguments.size()) + ".");
     }
 
-    return function->call(*this, std::move(arguments));
+    return callable->call(*this, arguments);
 }
 
 Interpreter::Interpreter() : globals(new Environment) {
@@ -334,7 +339,7 @@ Interpreter::Interpreter() : globals(new Environment) {
 }
 
 std::any Interpreter::visitFunctionStmt(const std::shared_ptr<Function> &stmt) {
-    auto function = std::make_shared<SurpherFunction>(stmt, environment);
+    auto function = std::make_shared<SurpherFunction>(stmt, environment, false);
     environment->define(stmt->name.lexeme, std::move(function));
     return {};
 }
@@ -351,7 +356,7 @@ std::any Interpreter::visitReturnStmt(const std::shared_ptr<Return> &stmt) {
 std::any Interpreter::visitLambdaExpr(const std::shared_ptr<Lambda> &expr) {
     std::vector<std::shared_ptr<Stmt>> lambda_return{std::make_shared<Return>(Token("", {}, RETURN, 1), expr->body)};
     auto function = std::make_shared<SurpherFunction>(
-            std::make_shared<Function>(expr->name, expr->params, std::move(lambda_return)), environment);
+            std::make_shared<Function>(expr->name, expr->params, std::move(lambda_return)), environment, false);
     environment->define(expr->name.lexeme, function);
     return function;
 }
@@ -360,16 +365,54 @@ std::any Interpreter::visitTernaryExpr(const std::shared_ptr<Ternary> &expr) {
     return isTruthy(evaluate(expr->condition)) ? evaluate(expr->true_branch) : evaluate(expr->else_branch);
 }
 
-void Interpreter::resolve(std::shared_ptr<Expr> expr, uint32_t depth) {
+void Interpreter::resolve(const std::shared_ptr<Expr> &expr, uint32_t depth) {
     locals[expr] = depth;
 }
 
-std::any Interpreter::lookUpVariable(const Token& name, const std::shared_ptr<Expr> &expr) {
+std::any Interpreter::lookUpVariable(const Token &name, const std::shared_ptr<Expr> &expr) {
     auto elem_iter = locals.find(expr);
-    if(elem_iter != locals.end()){
+    if (elem_iter != locals.end()) {
         return environment->getAt(elem_iter->second, name.lexeme);
-    }else{
+    } else {
         return globals->get(name);
     }
+}
+
+std::any Interpreter::visitClassStmt(const std::shared_ptr<Class> &stmt) {
+    environment->define(stmt->name.lexeme, {});
+
+    std::unordered_map<std::string, std::shared_ptr<SurpherFunction>> methods;
+    for (const auto &method: stmt->methods) {
+        auto function = std::make_shared<SurpherFunction>(method, environment, method->name.lexeme == "init");
+        methods[method->name.lexeme] = function;
+    }
+
+    auto surpher_class = std::make_shared<SurpherClass>(stmt->name.lexeme, methods);
+    environment->assign(stmt->name, surpher_class);
+    return {};
+}
+
+std::any Interpreter::visitGetExpr(const std::shared_ptr<Get> &expr) {
+    std::any object = evaluate(expr->object);
+    if (object.type() == typeid(std::shared_ptr<SurpherInstance>)) {
+        return (std::any_cast<std::shared_ptr<SurpherInstance>>(object))->get(expr->name);
+    }
+    throw RuntimeError(expr->name, "Only instances have properties.");
+}
+
+std::any Interpreter::visitSetExpr(const std::shared_ptr<Set> &expr) {
+    std::any object = evaluate(expr->object);
+
+    if (!(object.type() == typeid(std::shared_ptr<SurpherInstance>))) {
+        throw RuntimeError(expr->name, "Only instances have fields.");
+    }
+
+    std::any value = evaluate(expr->value);
+    (std::any_cast<std::shared_ptr<SurpherInstance>>(object))->set(expr->name, value);
+    return value;
+}
+
+std::any Interpreter::visitThisExpr(const std::shared_ptr<This> &expr) {
+    return lookUpVariable(expr->keyword, expr);
 }
 

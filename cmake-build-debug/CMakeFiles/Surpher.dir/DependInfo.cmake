@@ -15,6 +15,7 @@ set(CMAKE_DEPENDS_CHECK_CXX
   "/home/chuhanwen/projects/Surpher/src/Stmt.cpp" "/home/chuhanwen/projects/Surpher/cmake-build-debug/CMakeFiles/Surpher.dir/src/Stmt.cpp.o"
   "/home/chuhanwen/projects/Surpher/src/Surpher.cpp" "/home/chuhanwen/projects/Surpher/cmake-build-debug/CMakeFiles/Surpher.dir/src/Surpher.cpp.o"
   "/home/chuhanwen/projects/Surpher/src/SurpherCallable.cpp" "/home/chuhanwen/projects/Surpher/cmake-build-debug/CMakeFiles/Surpher.dir/src/SurpherCallable.cpp.o"
+  "/home/chuhanwen/projects/Surpher/src/SurpherInstance.cpp" "/home/chuhanwen/projects/Surpher/cmake-build-debug/CMakeFiles/Surpher.dir/src/SurpherInstance.cpp.o"
   "/home/chuhanwen/projects/Surpher/src/Token.cpp" "/home/chuhanwen/projects/Surpher/cmake-build-debug/CMakeFiles/Surpher.dir/src/Token.cpp.o"
   )
 set(CMAKE_CXX_COMPILER_ID "GNU")

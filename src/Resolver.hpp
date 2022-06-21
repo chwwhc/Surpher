@@ -12,12 +12,19 @@
 
 class Resolver : ExprVisitor, StmtVisitor{
     enum class FunctionType{
-        NONE,
-        FUNCTION
+        NONE = 0,
+        FUNCTION,
+        METHOD,
+        INITIALIZER
+    };
+    enum class ClassType{
+        NONE = 0,
+        CLASS
     };
     std::stack<std::unordered_map<std::string, bool>> scopes;
     Interpreter &interpreter;
     FunctionType current_function = FunctionType::NONE;
+    ClassType current_class = ClassType::NONE;
 
     void resolve(const std::shared_ptr<Expr>& expr);
 
@@ -56,6 +63,8 @@ public:
 
      std::any visitReturnStmt(const std::shared_ptr<Return> &stmt) override;
 
+     std::any visitClassStmt(const std::shared_ptr<Class> &stmt) override;
+
      std::any visitBinaryExpr(const std::shared_ptr<Binary> &expr) override;
 
    std::any visitGroupExpr(const std::shared_ptr<Group> &expr) override;
@@ -75,6 +84,12 @@ public:
      std::any visitLambdaExpr(const std::shared_ptr<Lambda> &expr) override;
 
      std::any visitTernaryExpr(const std::shared_ptr<Ternary> &expr) override;
+
+     std::any visitGetExpr(const std::shared_ptr<Get> &expr) override;
+
+     std::any visitSetExpr(const std::shared_ptr<Set> &expr) override;
+
+     std::any visitThisExpr(const std::shared_ptr<This> &expr) override;
 
      void resolve(const std::vector<std::shared_ptr<Stmt>>& statements);
 

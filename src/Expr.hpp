@@ -19,10 +19,9 @@ struct Variable;
 struct Logical;
 struct Call;
 struct Lambda;
-
-namespace {
-    uint64_t lambdaName = 0;
-}
+struct Get;
+struct Set;
+struct This;
 
 struct ExprVisitor {
     virtual std::any visitBinaryExpr(const std::shared_ptr<Binary> &expr) = 0;
@@ -44,6 +43,12 @@ struct ExprVisitor {
     virtual std::any visitLambdaExpr(const std::shared_ptr<Lambda> &expr) = 0;
 
     virtual std::any visitTernaryExpr(const std::shared_ptr<Ternary> &expr) = 0;
+
+    virtual std::any visitGetExpr(const std::shared_ptr<Get> &expr) = 0;
+
+    virtual std::any visitSetExpr(const std::shared_ptr<Set> &expr) = 0;
+
+    virtual std::any visitThisExpr(const std::shared_ptr<This> &expr) = 0;
 };
 
 struct Expr {
@@ -140,6 +145,33 @@ struct Ternary : Expr, public std::enable_shared_from_this<Ternary> {
     const std::shared_ptr<Expr> else_branch;
 
     Ternary(std::shared_ptr<Expr> condition, Token question, std::shared_ptr<Expr> true_branch, Token colon, std::shared_ptr<Expr> else_branch);
+
+    std::any accept(ExprVisitor &visitor) override;
+};
+
+struct Get : Expr, public std::enable_shared_from_this<Get> {
+    const std::shared_ptr<Expr> object;
+    const Token name;
+
+    Get(std::shared_ptr<Expr> object, Token name);
+
+    std::any accept(ExprVisitor &visitor) override;
+};
+
+struct Set : Expr, public std::enable_shared_from_this<Set>{
+    const std::shared_ptr<Expr> object;
+    const Token name;
+    const std::shared_ptr<Expr> value;
+
+    Set(std::shared_ptr<Expr> object, Token name, std::shared_ptr<Expr> value);
+
+    std::any accept(ExprVisitor &visitor) override;
+};
+
+struct This : Expr, public std::enable_shared_from_this<This>{
+    const Token keyword;
+
+    explicit This(Token keyword);
 
     std::any accept(ExprVisitor &visitor) override;
 };

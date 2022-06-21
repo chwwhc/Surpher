@@ -161,6 +161,10 @@ std::any Resolver::visitReturnStmt(const std::shared_ptr<Return> &stmt) {
     }
 
     if(stmt->value.has_value()){
+        if(current_function == FunctionType::INITIALIZER){
+            error(stmt->keyword, "Can't return a value from an initializer.");
+        }
+
         resolve(stmt->value.value());
     }
     return {};
@@ -219,4 +223,50 @@ std::any Resolver::visitLambdaExpr(const std::shared_ptr<Lambda> &expr) {
     std::vector<std::shared_ptr<Stmt>> lambda_return{std::make_shared<Return>(Token("", {}, RETURN, 1), expr->body)};
     std::shared_ptr<Function> lambda_fun = std::make_shared<Function>(expr->name, expr->params, lambda_return);
     return visitFunctionStmt(lambda_fun);
+}
+
+std::any Resolver::visitClassStmt(const std::shared_ptr<Class> &stmt) {
+    auto enclosing_class = current_class;
+    current_class = ClassType::CLASS;
+
+
+    declare(stmt->name);
+    define(stmt->name);
+
+    beginScope();
+    scopes.top()["this"] = true;
+
+    for(const auto &method : stmt->methods){
+        FunctionType declaration = FunctionType::METHOD;
+        if(method->name.lexeme == "init"){
+            declaration = FunctionType::INITIALIZER;
+        }
+        resolveFunction(method, declaration);
+    }
+
+    endScope();
+
+    current_class = enclosing_class;
+    return {};
+}
+
+std::any Resolver::visitGetExpr(const std::shared_ptr<Get> &expr) {
+    resolve(expr->object);
+    return {};
+}
+
+std::any Resolver::visitSetExpr(const std::shared_ptr<Set> &expr) {
+    resolve(expr->value);
+    resolve(expr->object);
+    return {};
+}
+
+std::any Resolver::visitThisExpr(const std::shared_ptr<This> &expr) {
+    if(current_class == ClassType::NONE){
+        error(expr->keyword, "Can't use 'this' outside of a class.");
+        return {};
+    }
+
+    resolveLocal(expr, expr->keyword);
+    return {};
 }

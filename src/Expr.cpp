@@ -82,3 +82,27 @@ Ternary::Ternary(std::shared_ptr<Expr> condition, Token question, std::shared_pt
 std::any Ternary::accept(ExprVisitor &visitor) {
     return visitor.visitTernaryExpr(shared_from_this());
 }
+
+Get::Get(std::shared_ptr<Expr> object, Token name) : object(std::move(object)), name(std::move(name)){
+
+}
+
+std::any Get::accept(ExprVisitor &visitor) {
+    return visitor.visitGetExpr(shared_from_this());
+}
+
+Set::Set(std::shared_ptr<Expr> object, Token name, std::shared_ptr<Expr> value) : object(std::move(object)), name(std::move(name)), value(std::move(value)){
+
+}
+
+std::any Set::accept(ExprVisitor &visitor) {
+    return visitor.visitSetExpr(shared_from_this());
+}
+
+This::This(Token keyword) : keyword(std::move(keyword)){
+
+}
+
+std::any This::accept(ExprVisitor &visitor) {
+    return visitor.visitThisExpr(shared_from_this());
+}

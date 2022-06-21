@@ -12,13 +12,13 @@ std::map<std::string, TokenType> keyWords = {
         {"class",    CLASS},
         {"else",     ELSE},
         {"false",    FALSE},
-        {"fun",     FUN},
+        {"fun",      FUN},
         {"for",      FOR},
         {"if",       IF},
         {"none",     NONE},
         {"return",   RETURN},
         {"super",    SUPER},
-        {"self",     SELF},
+        {"this",     THIS},
         {"true",     TRUE},
         {"var",      VAR},
         {"while",    WHILE},
@@ -30,7 +30,7 @@ std::map<std::string, TokenType> keyWords = {
         {"newtype",  NEWTYPE},
         {"print",    PRINT}};
 
-Lexer::Lexer(std::string source_code) : source_code(std::move(source_code)){
+Lexer::Lexer(std::string source_code) : source_code(std::move(source_code)) {
 }
 
 char Lexer::anyChar() {
@@ -45,7 +45,7 @@ bool Lexer::matchNextChar(const char &expected) {
     return true;
 }
 
-void Lexer::addToken(const TokenType &type, const std::any& literal) {
+void Lexer::addToken(const TokenType &type, const std::any &literal) {
     token_list.emplace_back(Token(source_code.substr(start, current - start), literal, type, line));
 }
 
@@ -117,19 +117,21 @@ void Lexer::matchIdentifierOrReserved() {
 void Lexer::skipComment() {
     uint32_t flag = 1;
 
-    while(flag != 0 && !isAtEnd()){
-        if(matchNextChar('(') && matchNextChar('*')){
+    while (flag != 0 && !isAtEnd()) {
+        if (matchNextChar('/') && matchNextChar('*')) {
             flag++;
-        }else if(matchNextChar('*') && matchNextChar(')')){
+        } else if (matchNextChar('*') && matchNextChar('/')) {
             flag--;
-            if(isAtEnd()){
+            if (isAtEnd()) {
                 return;
             }
         }
-        if(isAtEnd() ){
+        if (isAtEnd()) {
             ::error(line, "Unterminated comment.");
             return;
-        }else{
+        } else if (matchNextChar('\n')) {
+            line++;
+        } else {
             anyChar();
         }
     }
@@ -138,13 +140,9 @@ void Lexer::skipComment() {
 void Lexer::scanToken() {
     char next_char = anyChar();
     TokenType type;
-    switch(next_char){
+    switch (next_char) {
         case '(':
-            if(matchNextChar('*')){
-                skipComment();
-            }else{
-                addToken(LEFT_PAREN);
-            }
+            addToken(LEFT_PAREN);
             break;
         case ')':
             addToken(RIGHT_PAREN);
@@ -189,16 +187,23 @@ void Lexer::scanToken() {
             addToken(STAR);
             break;
         case '/':
-            if(matchNextChar('\\')){
+            if (matchNextChar('\\')) {
                 addToken(LAMBDA);
-            }else {
+            } else if (matchNextChar('/')) {
+                while (!isAtEnd() && !matchNextChar('\n')) {
+                    anyChar();
+                }
+                line++;
+            } else if (matchNextChar('*')) {
+                skipComment();
+            } else {
                 addToken(SLASH);
             }
             break;
         case '|':
-            if(matchNextChar('|')){
+            if (matchNextChar('|')) {
                 addToken(DOUBLE_BAR);
-            }else{
+            } else {
                 addToken(SINGLE_BAR);
             }
             break;
@@ -206,37 +211,37 @@ void Lexer::scanToken() {
             addToken(CARET);
             break;
         case '&':
-            if(matchNextChar('&')){
+            if (matchNextChar('&')) {
                 addToken(DOUBLE_AMPERSAND);
-            }else{
+            } else {
                 addToken(SINGLE_AMPERSAND);
             }
             break;
         case '!':
-            if(matchNextChar('=')){
+            if (matchNextChar('=')) {
                 addToken(BANG_EQUAL);
-            }else{
+            } else {
                 addToken(BANG);
             }
             break;
         case '=':
-            if(matchNextChar('=')){
+            if (matchNextChar('=')) {
                 addToken(DOUBLE_EQUAL);
-            }else{
+            } else {
                 addToken(SINGLE_EQUAL);
             }
             break;
         case '>':
-            if(matchNextChar('=')){
+            if (matchNextChar('=')) {
                 addToken(GREATER_EQUAL);
-            }else{
+            } else {
                 addToken(GREATER);
             }
             break;
         case '<':
-            if(matchNextChar('=')){
+            if (matchNextChar('=')) {
                 addToken(LESS_EQUAL);
-            }else{
+            } else {
                 addToken(LESS);
             }
             break;
@@ -251,18 +256,18 @@ void Lexer::scanToken() {
             line++;
             break;
         default:
-            if(isDigit(next_char)){
+            if (isDigit(next_char)) {
                 matchNumber();
-            }else if(isAlpha(next_char)){
+            } else if (isAlpha(next_char)) {
                 matchIdentifierOrReserved();
-            }else{
+            } else {
                 ::error(current, "invalid character");
             }
     }
 }
 
 std::vector<Token> Lexer::scanTokens() {
-    while(!isAtEnd()){
+    while (!isAtEnd()) {
         start = current;
         scanToken();
     }
@@ -281,7 +286,7 @@ bool Lexer::isDigit(const char &c) {
 }
 
 bool Lexer::isAlpha(const char &c) {
-    return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z');
+    return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || (c == '_');
 }
 
 bool Lexer::isAlphaNumeric(const char &c) {

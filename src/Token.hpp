@@ -53,7 +53,7 @@ enum TokenType {
     NONE,
     RETURN,
     SUPER,
-    SELF,
+    THIS,
     TRUE,
     VAR,
     WHILE,

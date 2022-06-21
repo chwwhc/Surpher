@@ -78,3 +78,11 @@ Return::Return(Token keyword, std::optional<std::shared_ptr<Expr>> value) : keyw
 std::any Return::accept(StmtVisitor &visitor) {
     return visitor.visitReturnStmt(shared_from_this());
 }
+
+Class::Class(Token name, std::vector<std::shared_ptr<Function>> methods) : name(std::move(name)), methods(std::move(methods)){
+
+}
+
+std::any Class::accept(StmtVisitor &visitor) {
+    return visitor.visitClassStmt(shared_from_this());
+}

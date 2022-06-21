@@ -16,6 +16,7 @@ struct Break;
 struct Continue;
 struct Function;
 struct Return;
+struct Class;
 
 struct StmtVisitor {
     virtual std::any visitBlockStmt(const std::shared_ptr<Block> &stmt) = 0;
@@ -37,6 +38,8 @@ struct StmtVisitor {
     virtual std::any visitFunctionStmt(const std::shared_ptr<Function> &stmt) = 0;
 
     virtual std::any visitReturnStmt(const std::shared_ptr<Return> &stmt) = 0;
+
+    virtual std::any visitClassStmt(const std::shared_ptr<Class> &stmt) = 0;
 };
 
 struct Stmt {
@@ -134,6 +137,15 @@ struct Return : Stmt, public std::enable_shared_from_this<Return>{
     const std::optional<std::shared_ptr<Expr>> value;
 
     Return(Token keyword, std::optional<std::shared_ptr<Expr>> value);
+    std::any accept(StmtVisitor &visitor) override;
+};
+
+struct Class : Stmt, public std::enable_shared_from_this<Class>{
+    const Token name;
+    const std::vector<std::shared_ptr<Function>> methods;
+
+    Class(Token name, std::vector<std::shared_ptr<Function>> methods);
+
     std::any accept(StmtVisitor &visitor) override;
 };
 

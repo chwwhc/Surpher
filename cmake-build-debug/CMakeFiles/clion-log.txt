@@ -2,8 +2,3 @@ C:\WINDOWS\system32\wsl.exe --distribution Ubuntu20.04LTS --exec /bin/bash -c "e
 -- Configuring done
 -- Generating done
 -- Build files have been written to: /home/chuhanwen/projects/Surpher/cmake-build-debug
-
-Cannot get compiler information:
-	Compiler exited with error code 1: \usr\bin\c++ -xc++ -g -std=gnu++17 -fpch-preprocess -v -dD -E
-	
-	

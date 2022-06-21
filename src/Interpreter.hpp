@@ -8,6 +8,7 @@
 #include "Error.hpp"
 #include "Stmt.hpp"
 #include "SurpherCallable.hpp"
+#include "SurpherInstance.hpp"
 
 using namespace std::string_literals;
 
@@ -79,7 +80,15 @@ public:
 
     std::any visitReturnStmt(const std::shared_ptr<Return> &stmt) override;
 
-    void resolve(std::shared_ptr<Expr> expr, uint32_t depth);
+    std::any visitClassStmt(const std::shared_ptr<Class> &stmt) override;
+
+    std::any visitGetExpr(const std::shared_ptr<Get> &expr) override;
+
+    std::any visitSetExpr(const std::shared_ptr<Set> &expr) override;
+
+    std::any visitThisExpr(const std::shared_ptr<This> &expr) override;
+
+    void resolve(const std::shared_ptr<Expr>& expr, uint32_t depth);
 
     Interpreter();
 
