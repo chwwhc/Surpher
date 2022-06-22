@@ -142,10 +142,12 @@ struct Return : Stmt, public std::enable_shared_from_this<Return>{
 
 struct Class : Stmt, public std::enable_shared_from_this<Class>{
     const Token name;
+    const std::shared_ptr<Variable> superclass;
     const std::vector<std::shared_ptr<Function>> instance_methods;
     const std::vector<std::shared_ptr<Function>> class_methods;
 
-    Class(Token name, std::vector<std::shared_ptr<Function>> instance_methods, std::vector<std::shared_ptr<Function>> class_methods);
+    Class(Token name, std::vector<std::shared_ptr<Function>> instance_methods,
+          std::vector<std::shared_ptr<Function>> class_methods, std::shared_ptr<Variable> superclass);
 
     std::any accept(StmtVisitor &visitor) override;
 };

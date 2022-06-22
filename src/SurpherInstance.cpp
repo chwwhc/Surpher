@@ -4,7 +4,8 @@
 #include <utility>
 
 
-SurpherInstance::SurpherInstance(std::shared_ptr<SurpherClass> surpher_class) : surpher_class(std::move(surpher_class)){
+SurpherInstance::SurpherInstance(std::shared_ptr<SurpherClass> surpher_class) : surpher_class(
+        std::move(surpher_class)) {
 
 }
 
@@ -13,20 +14,20 @@ std::string SurpherInstance::SurpherInstanceToString() {
 }
 
 std::any SurpherInstance::get(const Token &name) {
-    if(fields.find(name.lexeme) != fields.end()){
+    if (fields.find(name.lexeme) != fields.end()) {
         return fields[name.lexeme];
     }
 
-    if(surpher_class != shared_from_this()){
+    if (surpher_class != shared_from_this()) {
         auto method = surpher_class->findInstanceMethod(name.lexeme);
-        if(method != nullptr){
+        if (method != nullptr) {
             return method->bind(shared_from_this());
         }
 
         throw RuntimeError(name, "Undefined property '" + name.lexeme + "'.");
-    }else{
+    } else {
         auto method = surpher_class->findClassMethod(name.lexeme);
-        if(method != nullptr){
+        if (method != nullptr) {
             return method;
         }
 
@@ -34,11 +35,10 @@ std::any SurpherInstance::get(const Token &name) {
     }
 
 
-
 }
 
-void SurpherInstance::set(const Token& name, const std::any &value) {
-    if(surpher_class == shared_from_this()){
+void SurpherInstance::set(const Token &name, const std::any &value) {
+    if (surpher_class == shared_from_this()) {
         throw RuntimeError(name, "Cannot set property to a class.");
     }
 

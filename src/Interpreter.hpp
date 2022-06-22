@@ -32,7 +32,7 @@ private:
 
     std::any evaluate(const std::shared_ptr<Expr> &expr);
 
-    std::any lookUpVariable(const Token& name, const std::shared_ptr<Expr> &expr);
+    std::any lookUpVariable(const Token &name, const std::shared_ptr<Expr> &expr);
 
     void execute(const std::shared_ptr<Stmt> &stmt);
 
@@ -88,7 +88,9 @@ public:
 
     std::any visitThisExpr(const std::shared_ptr<This> &expr) override;
 
-    void resolve(const std::shared_ptr<Expr>& expr, uint32_t depth);
+    std::any visitSuperExpr(const std::shared_ptr<Super> &expr) override;
+
+    void resolve(const std::shared_ptr<Expr> &expr, uint32_t depth);
 
     Interpreter();
 

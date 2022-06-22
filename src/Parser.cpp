@@ -29,7 +29,7 @@ std::shared_ptr<Expr> Parser::primary() {
         return std::make_shared<Literal>(false);
     } else if (match(TRUE)) {
         return std::make_shared<Literal>(true);
-    } else if (match(NONE)) {
+    } else if (match(NIL)) {
         return std::make_shared<Literal>(nullptr);
     } else if (match(NUMBER, STRING)) {
         return std::make_shared<Literal>(previous().literal);
@@ -39,9 +39,9 @@ std::shared_ptr<Expr> Parser::primary() {
         return std::make_shared<Group>(expr_in);
     } else if (match(IDENTIFIER)) {
         return std::make_shared<Variable>(previous());
-    } else if(match(LAMBDA)){
+    } else if (match(LAMBDA)) {
         auto tmp = previous();
-        Token lambdaTok ("lambda" + std::to_string(lambdaCount++), tmp.literal, tmp.token_type, tmp.line);
+        Token lambdaTok("lambda" + std::to_string(lambdaCount++), tmp.literal, tmp.token_type, tmp.line);
 
         std::vector<Token> params;
         auto param = consume(IDENTIFIER, "Expect a variable after lambda.");
@@ -52,8 +52,13 @@ std::shared_ptr<Expr> Parser::primary() {
         auto body = expression();
 
         return std::make_shared<Lambda>(lambdaTok, params, body);
-    }else if(match(THIS)){
+    } else if (match(THIS)) {
         return std::make_shared<This>(previous());
+    } else if (match(SUPER)) {
+        Token keyword = previous();
+        consume(DOT, "Expect '.' after 'super'.");
+        Token method = consume(IDENTIFIER, "Expect superclass method name.");
+        return std::make_shared<Super>(keyword, method);
     }
     throw error(peek(), "Expected expression.");
 }
@@ -130,12 +135,12 @@ Token Parser::anyToken() {
     return previous();
 }
 
-std::shared_ptr<Expr> Parser::finishCall(const std::shared_ptr<Expr>& callee) {
+std::shared_ptr<Expr> Parser::finishCall(const std::shared_ptr<Expr> &callee) {
     std::vector<std::shared_ptr<Expr>> arguments;
-    if(!check(RIGHT_PAREN)){
-        do{
+    if (!check(RIGHT_PAREN)) {
+        do {
             arguments.emplace_back(expression());
-        }while(match(COMMA));
+        } while (match(COMMA));
     }
 
     Token paren = consume(RIGHT_PAREN, "Expect ')' after arguments.");
@@ -148,31 +153,31 @@ std::shared_ptr<Stmt> Parser::statement() {
         return printStatement();
     } else if (match(LEFT_BRACE)) {
         return std::make_shared<Block>(blockStatement());
-    }else if(match(IF)){
+    } else if (match(IF)) {
         return ifStatement();
-    }else if(match(WHILE)){
+    } else if (match(WHILE)) {
         return whileStatement();
-    }else if(match(FOR)){
+    } else if (match(FOR)) {
         return forStatement();
-    }else if(match(BREAK)){
+    } else if (match(BREAK)) {
         return breakStatement();
-    }else if(match(CONTINUE)){
+    } else if (match(CONTINUE)) {
         return continueStatement();
-    }else if(match(RETURN)){
+    } else if (match(RETURN)) {
         return returnStatement();
-    }else {
+    } else {
         return expressionStatement();
     }
 }
 
-std::shared_ptr<Function> Parser::functionStatement(const std::string& type) {
+std::shared_ptr<Function> Parser::functionStatement(const std::string &type) {
     Token name = consume(IDENTIFIER, "Expect " + type + " name.");
     consume(LEFT_PAREN, "Expect '(' after " + type + " name.");
     std::vector<Token> params;
-    if(!check(RIGHT_PAREN)){
-        do{
+    if (!check(RIGHT_PAREN)) {
+        do {
             params.emplace_back(consume(IDENTIFIER, "Expect parameter name."));
-        }while(match(COMMA));
+        } while (match(COMMA));
     }
     consume(RIGHT_PAREN, "Expect ')' after parameters.");
 
@@ -184,7 +189,7 @@ std::shared_ptr<Function> Parser::functionStatement(const std::string& type) {
 std::shared_ptr<Stmt> Parser::returnStatement() {
     Token keyword = previous();
     std::shared_ptr<Expr> value;
-    if(!check(SINGLE_SEMICOLON)){
+    if (!check(SINGLE_SEMICOLON)) {
         value = expression();
     }
 
@@ -207,34 +212,34 @@ std::shared_ptr<Stmt> Parser::breakStatement() {
 std::shared_ptr<Stmt> Parser::forStatement() {
     consume(LEFT_PAREN, "Expect '(' after 'for'.");
     std::shared_ptr<Stmt> initializer;
-    if(match(VAR)){
+    if (match(VAR)) {
         initializer = varDeclaration();
-    }else if(!match(SINGLE_SEMICOLON)){
+    } else if (!match(SINGLE_SEMICOLON)) {
         initializer = expressionStatement();
     }
 
     std::shared_ptr<Expr> condition;
-    if(!check(SINGLE_SEMICOLON)){
+    if (!check(SINGLE_SEMICOLON)) {
         condition = expression();
     }
     consume(SINGLE_SEMICOLON, "Expect ';' after 'for' condition.");
 
     std::shared_ptr<Expr> increment;
-    if(!check(RIGHT_PAREN)){
+    if (!check(RIGHT_PAREN)) {
         increment = expression();
     }
     consume(RIGHT_PAREN, "Expect ')' after 'for' clauses.");
 
     std::shared_ptr<Stmt> body = statement();
 
-    if(increment != nullptr){
+    if (increment != nullptr) {
         body = std::make_shared<Block>(Block{{body, std::make_shared<Expression>(increment)}});
     }
-    if(condition == nullptr){
+    if (condition == nullptr) {
         condition = std::make_shared<Literal>(true);
     }
     body = std::make_shared<While>(While{condition, body});
-    if(initializer != nullptr){
+    if (initializer != nullptr) {
         body = std::make_shared<Block>(Block{{initializer, body}});
     }
 
@@ -257,7 +262,7 @@ std::shared_ptr<Stmt> Parser::ifStatement() {
 
     std::shared_ptr<Stmt> then_branch = statement();
     std::shared_ptr<Stmt> else_branch;
-    if(match(ELSE)){
+    if (match(ELSE)) {
         else_branch = statement();
     }
 
@@ -268,9 +273,9 @@ std::shared_ptr<Stmt> Parser::declaration() {
     try {
         if (match(FUN)) {
             return functionStatement("function");
-        }else if(match(VAR)){
+        } else if (match(VAR)) {
             return varDeclaration();
-        }else if(match(CLASS)){
+        } else if (match(CLASS)) {
             return classDeclaration();
         }
         return statement();
@@ -316,12 +321,19 @@ std::shared_ptr<Stmt> Parser::printStatement() {
 
 std::shared_ptr<Stmt> Parser::classDeclaration() {
     Token name = consume(IDENTIFIER, "Expect class name.");
+
+    std::shared_ptr<Variable> superclass;
+    if (match(LESS)) {
+        consume(IDENTIFIER, "Expect superclass name.");
+        superclass = std::make_shared<Variable>(previous());
+    }
+
     consume(LEFT_BRACE, "Expect '{' before class body.");
 
     std::vector<std::shared_ptr<Function>> class_methods;
     std::vector<std::shared_ptr<Function>> instance_methods;
-    while(!isAtEnd() && !check(RIGHT_BRACE)){
-        if(check(CLASS)){
+    while (!isAtEnd() && !check(RIGHT_BRACE)) {
+        if (check(CLASS)) {
             anyToken();
             class_methods.emplace_back(functionStatement("class_method"));
             continue;
@@ -331,7 +343,7 @@ std::shared_ptr<Stmt> Parser::classDeclaration() {
 
     consume(RIGHT_BRACE, "Expect '}' after class body.");
 
-    return std::make_shared<Class>(name, instance_methods, class_methods);
+    return std::make_shared<Class>(name, instance_methods, class_methods, superclass);
 }
 
 std::shared_ptr<Expr> Parser::assignment() {
@@ -344,7 +356,7 @@ std::shared_ptr<Expr> Parser::assignment() {
         if (auto *var_expr = dynamic_cast<Variable *>(expr.get())) {
             Token name = var_expr->name;
             return std::make_shared<Assign>(std::move(name), value);
-        }else if(auto *get = dynamic_cast<Get *>(expr.get())){
+        } else if (auto *get = dynamic_cast<Get *>(expr.get())) {
             return std::make_shared<Set>(get->object, get->name, value);
         }
         error(equals, "Invalid assignment target.");
@@ -402,10 +414,10 @@ std::shared_ptr<Expr> Parser::call() {
     while (true) {
         if (match(LEFT_PAREN)) {
             expr = finishCall(expr);
-        } else if(match(DOT)) {
+        } else if (match(DOT)) {
             Token name = consume(IDENTIFIER, "Expect property name after '.'.");
             expr = std::make_shared<Get>(expr, name);
-        }else {
+        } else {
             break;
         }
     }

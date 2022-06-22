@@ -29,22 +29,24 @@ void runtimeError(const RuntimeError &error) {
               "\n[line " << error.token.line << "]\n";
     had_runtime_error = true;
 }
-void continueError(const ContinueError &error){
+
+void continueError(const ContinueError &error) {
     std::cerr << error.what() << "\n[line " << error.continue_tok.line << "]\n";
     had_runtime_error = true;
 }
 
-void breakError(const BreakError &error){
+void breakError(const BreakError &error) {
     std::cerr << error.what() << "\n[line " << error.break_tok.line << "]\n";
     had_runtime_error = true;
 }
 
-BreakError::BreakError(Token token, const std::string_view &message) : std::runtime_error(message.data()), break_tok{std::move(token)}{
+BreakError::BreakError(Token token, const std::string_view &message) : std::runtime_error(message.data()),
+                                                                       break_tok{std::move(token)} {
 
 }
 
 ContinueError::ContinueError(Token token, const std::string_view &message) : std::runtime_error(message.data()),
-                                                                             continue_tok{std::move(token)}{
+                                                                             continue_tok{std::move(token)} {
 
 }
 

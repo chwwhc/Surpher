@@ -203,9 +203,8 @@ bool Interpreter::isEqual(const std::any &a, const std::any &b) {
 
 std::string Interpreter::stringify(const std::any &value) {
     if (value.type() == typeid(void)) {
-        return "none"s;
-    }
-    else if (value.type() == typeid(double)) {
+        return "nil"s;
+    } else if (value.type() == typeid(double)) {
         auto double_val = std::any_cast<double>(value);
         std::string num_str = std::to_string(double_val);
         if (floor(double_val) == double_val) {
@@ -216,20 +215,15 @@ std::string Interpreter::stringify(const std::any &value) {
             return num_str.substr(0, point_index);
         }
         return num_str;
-    }
-    else if (value.type() == typeid(std::string)) {
+    } else if (value.type() == typeid(std::string)) {
         return std::any_cast<std::string>(value);
-    }
-    else if (value.type() == typeid(bool)) {
+    } else if (value.type() == typeid(bool)) {
         return std::any_cast<bool>(value) ? "true"s : "false"s;
-    }
-    else if (value.type() == typeid(long long)) {
+    } else if (value.type() == typeid(long long)) {
         return std::to_string(std::any_cast<long long>(value));
-    }
-    else if (value.type() == typeid(std::shared_ptr<SurpherCallable>)) {
+    } else if (value.type() == typeid(std::shared_ptr<SurpherCallable>)) {
         return (std::any_cast<std::shared_ptr<SurpherCallable>>(value))->SurpherCallableToString();
-    }
-    else if(value.type() == typeid(std::shared_ptr<SurpherInstance>)){
+    } else if (value.type() == typeid(std::shared_ptr<SurpherInstance>)) {
         return (std::any_cast<std::shared_ptr<SurpherInstance>>(value))->SurpherInstanceToString();
     }
     return "Error in stringify: un-recognized literal type."s;
@@ -323,7 +317,7 @@ std::any Interpreter::visitCallExpr(const std::shared_ptr<Call> &expr) {
         callable = std::any_cast<std::shared_ptr<SurpherFunction>>(callee);
     } else if (callee.type() == typeid(std::shared_ptr<SurpherClass>)) {
         callable = std::any_cast<std::shared_ptr<SurpherClass>>(callee);
-    } else if(callee.type() == typeid(std::shared_ptr<Clock>)){
+    } else if (callee.type() == typeid(std::shared_ptr<Clock>)) {
         callable = std::make_shared<Clock>();
     } else {
         throw RuntimeError(expr->paren, "Can only call functions and classes.");
@@ -382,7 +376,20 @@ std::any Interpreter::lookUpVariable(const Token &name, const std::shared_ptr<Ex
 }
 
 std::any Interpreter::visitClassStmt(const std::shared_ptr<Class> &stmt) {
+    std::any superclass = std::shared_ptr<SurpherClass>();
+    if (stmt->superclass != nullptr) {
+        superclass = evaluate(stmt->superclass);
+        if (superclass.type() != typeid(std::shared_ptr<SurpherClass>)) {
+            throw RuntimeError(stmt->superclass->name, "Superclass must be a class.");
+        }
+    }
+
     environment->define(stmt->name.lexeme, {});
+
+    if (stmt->superclass != nullptr) {
+        environment = std::make_shared<Environment>(environment);
+        environment->define("super", superclass);
+    }
 
     std::unordered_map<std::string, std::shared_ptr<SurpherFunction>> instance_methods;
     std::unordered_map<std::string, std::shared_ptr<SurpherFunction>> class_methods;
@@ -390,12 +397,18 @@ std::any Interpreter::visitClassStmt(const std::shared_ptr<Class> &stmt) {
         auto function = std::make_shared<SurpherFunction>(i, environment, i->name.lexeme == "init");
         instance_methods[i->name.lexeme] = function;
     }
-    for(const auto &c: stmt->class_methods){
+    for (const auto &c: stmt->class_methods) {
         auto function = std::make_shared<SurpherFunction>(c, environment, false);
         class_methods[c->name.lexeme] = function;
     }
 
-    auto surpher_class = std::make_shared<SurpherClass>(stmt->name.lexeme, instance_methods, class_methods);
+    auto surpher_class = std::make_shared<SurpherClass>(stmt->name.lexeme, instance_methods, class_methods,
+                                                        std::any_cast<std::shared_ptr<SurpherClass>>(superclass));
+
+    if (stmt->superclass != nullptr) {
+        environment = environment->getEnclosing();
+    }
+
     environment->assign(stmt->name, surpher_class);
     return {};
 }
@@ -404,9 +417,9 @@ std::any Interpreter::visitGetExpr(const std::shared_ptr<Get> &expr) {
     std::any object = evaluate(expr->object);
     if (object.type() == typeid(std::shared_ptr<SurpherInstance>)) {
         return (std::any_cast<std::shared_ptr<SurpherInstance>>(object))->get(expr->name);
-    }else if(object.type() == typeid(std::shared_ptr<SurpherClass>)){
+    } else if (object.type() == typeid(std::shared_ptr<SurpherClass>)) {
         auto tmp_instance = (std::any_cast<std::shared_ptr<SurpherClass>>)(object);
-         return std::static_pointer_cast<SurpherInstance>(tmp_instance)->get(expr->name);
+        return std::static_pointer_cast<SurpherInstance>(tmp_instance)->get(expr->name);
     }
     throw RuntimeError(expr->name, "Only instances have properties.");
 }
@@ -425,5 +438,23 @@ std::any Interpreter::visitSetExpr(const std::shared_ptr<Set> &expr) {
 
 std::any Interpreter::visitThisExpr(const std::shared_ptr<This> &expr) {
     return lookUpVariable(expr->keyword, expr);
+}
+
+std::any Interpreter::visitSuperExpr(const std::shared_ptr<Super> &expr) {
+    auto distance = locals[expr];
+    auto superclass = std::any_cast<std::shared_ptr<SurpherClass>>(environment->getAt(distance, "super"));
+
+    auto object = std::any_cast<std::shared_ptr<SurpherInstance>>(environment->getAt(distance - 1, "this"));
+
+    auto method = superclass->findInstanceMethod(expr->method.lexeme);
+    if (method == nullptr) {
+        method = superclass->findClassMethod(expr->method.lexeme);
+    }
+
+    if (method == nullptr) {
+        throw RuntimeError(expr->method, "Undefined property '" + expr->method.lexeme + "'.");
+    }
+
+    return method->bind(object);
 }
 

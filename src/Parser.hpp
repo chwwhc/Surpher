@@ -33,7 +33,7 @@ class Parser {
 
     std::function<std::shared_ptr<Expr>()> expression = [this]() { return assignment(); };
 
-    std::function<std::shared_ptr<Expr>()> unary = [this](){
+    std::function<std::shared_ptr<Expr>()> unary = [this]() {
         if (match(BANG, MINUS)) {
             Token op = previous();
             std::shared_ptr<Expr> right = unary();

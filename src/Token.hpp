@@ -50,7 +50,7 @@ enum TokenType {
     FUN,
     FOR,
     IF,
-    NONE,
+    NIL,
     RETURN,
     SUPER,
     THIS,
@@ -74,7 +74,7 @@ typedef struct Token {
     const TokenType token_type;
     const uint32_t line;
 
-    Token(std::string  lexeme, std::any literal, const enum TokenType &token_type, const uint32_t &line);
+    Token(std::string lexeme, std::any literal, const enum TokenType &token_type, const uint32_t &line);
 
 } Token;
 

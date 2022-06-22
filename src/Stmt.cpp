@@ -29,7 +29,8 @@ std::any Var::accept(StmtVisitor &visitor) {
 }
 
 
-If::If(std::shared_ptr<Expr> condition, std::shared_ptr<Stmt> true_branch, std::optional<std::shared_ptr<Stmt>> else_branch)
+If::If(std::shared_ptr<Expr> condition, std::shared_ptr<Stmt> true_branch,
+       std::optional<std::shared_ptr<Stmt>> else_branch)
         : condition{std::move(condition)}, true_branch{std::move(true_branch)}, else_branch{std::move(else_branch)} {
 
 }
@@ -51,7 +52,7 @@ std::any Break::accept(StmtVisitor &visitor) {
     return visitor.visitBreakStmt(shared_from_this());
 }
 
-Break::Break(Token break_tok) : break_tok{std::move(break_tok)}{
+Break::Break(Token break_tok) : break_tok{std::move(break_tok)} {
 
 }
 
@@ -59,11 +60,12 @@ std::any Continue::accept(StmtVisitor &visitor) {
     return visitor.visitContinueStmt(shared_from_this());
 }
 
-Continue::Continue(Token continue_tok) : continue_tok{std::move(continue_tok)}{
+Continue::Continue(Token continue_tok) : continue_tok{std::move(continue_tok)} {
 
 }
 
-Function::Function(Token name, std::vector<Token> params, std::vector<std::shared_ptr<Stmt>> body) : name(std::move(name)), params(std::move(params)), body(std::move(body)){
+Function::Function(Token name, std::vector<Token> params, std::vector<std::shared_ptr<Stmt>> body) : name(
+        std::move(name)), params(std::move(params)), body(std::move(body)) {
 
 }
 
@@ -71,7 +73,8 @@ std::any Function::accept(StmtVisitor &visitor) {
     return visitor.visitFunctionStmt(shared_from_this());
 }
 
-Return::Return(Token keyword, std::optional<std::shared_ptr<Expr>> value) : keyword(std::move(keyword)), value(std::move(value)){
+Return::Return(Token keyword, std::optional<std::shared_ptr<Expr>> value) : keyword(std::move(keyword)),
+                                                                            value(std::move(value)) {
 
 }
 
@@ -79,7 +82,18 @@ std::any Return::accept(StmtVisitor &visitor) {
     return visitor.visitReturnStmt(shared_from_this());
 }
 
-Class::Class(Token name, std::vector<std::shared_ptr<Function>> instance_methods, std::vector<std::shared_ptr<Function>> class_methods) : name(std::move(name)), instance_methods(std::move(instance_methods)), class_methods(std::move(class_methods)){
+Class::Class(Token name, std::vector<std::shared_ptr<Function>> instance_methods,
+             std::vector<std::shared_ptr<Function>> class_methods, std::shared_ptr<Variable> superclass) : name(
+        std::move(name)),
+                                                                                                           instance_methods(
+                                                                                                                   std::move(
+                                                                                                                           instance_methods)),
+                                                                                                           class_methods(
+                                                                                                                   std::move(
+                                                                                                                           class_methods)),
+                                                                                                           superclass(
+                                                                                                                   std::move(
+                                                                                                                           superclass)) {
 
 }
 

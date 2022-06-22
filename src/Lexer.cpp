@@ -15,7 +15,7 @@ std::map<std::string, TokenType> keyWords = {
         {"fun",      FUN},
         {"for",      FOR},
         {"if",       IF},
-        {"none",     NONE},
+        {"nil",      NIL},
         {"return",   RETURN},
         {"super",    SUPER},
         {"this",     THIS},

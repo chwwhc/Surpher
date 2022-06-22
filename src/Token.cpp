@@ -4,8 +4,9 @@
 
 #include "Token.hpp"
 
-Token::Token(std::string  lexeme, std::any literal, const enum TokenType &token_type,
-             const uint32_t &line) : lexeme(std::move(lexeme)), literal(std::move(literal)), token_type(token_type), line(line){
+Token::Token(std::string lexeme, std::any literal, const enum TokenType &token_type,
+             const uint32_t &line) : lexeme(std::move(lexeme)), literal(std::move(literal)), token_type(token_type),
+                                     line(line) {
 }
 
 std::ostream &operator<<(std::ostream &strm, const Token &tok) {
@@ -29,7 +30,7 @@ std::ostream &operator<<(std::ostream &strm, const Token &tok) {
             literal_str = tok.lexeme;
             break;
         default:
-            literal_str = "none";
+            literal_str = "nil";
     }
     return strm << "lexical type: " + std::to_string(tok.token_type) + " , lexeme: " + tok.lexeme + ", Literal: " +
                    literal_str;

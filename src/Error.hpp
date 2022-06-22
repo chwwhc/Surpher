@@ -20,19 +20,19 @@ struct RuntimeError : public std::runtime_error {
     RuntimeError(Token token, const std::string_view &message);
 };
 
-struct BreakError : public std::runtime_error{
+struct BreakError : public std::runtime_error {
     const Token break_tok;
 
     BreakError(Token token, const std::string_view &message);
 };
 
-struct ContinueError : public std::runtime_error{
+struct ContinueError : public std::runtime_error {
     const Token continue_tok;
 
     ContinueError(Token token, const std::string_view &message);
 };
 
-struct ReturnError : public std::runtime_error{
+struct ReturnError : public std::runtime_error {
     const std::any value;
 
     explicit ReturnError(std::any value);

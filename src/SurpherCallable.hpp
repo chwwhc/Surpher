@@ -39,7 +39,11 @@ struct SurpherClass : SurpherCallable, SurpherInstance {
 
     std::unordered_map<std::string, std::shared_ptr<SurpherFunction>> class_methods;
 
-    SurpherClass(std::string name, std::unordered_map<std::string, std::shared_ptr<SurpherFunction>> instance_methods, std::unordered_map<std::string, std::shared_ptr<SurpherFunction>> class_methods);
+    const std::shared_ptr<SurpherClass> superclass;
+
+    SurpherClass(std::string name, std::unordered_map<std::string, std::shared_ptr<SurpherFunction>> instance_methods,
+                 std::unordered_map<std::string, std::shared_ptr<SurpherFunction>> class_methods,
+                 std::shared_ptr<SurpherClass> superclass);
 
     uint32_t arity() override;
 

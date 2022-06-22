@@ -32,14 +32,12 @@ void run(const std::string &source) {
     }
 
     interpreter.interpret(statements);
-
-   // std::cout << ast_printer.printAst(parser_result) << std::endl;
 }
 
 void runScript(const std::string &path) {
 
     std::ifstream input_file(path);
-    if(input_file.fail()){
+    if (input_file.fail()) {
         std::cerr << "Failed to open file " << path << ": " << std::endl;
         std::exit(74);
     }
@@ -49,9 +47,9 @@ void runScript(const std::string &path) {
 
 
     run(source_code.str());
-    if(had_error){
+    if (had_error) {
         std::exit(65);
-    }else if(had_runtime_error){
+    } else if (had_runtime_error) {
         std::exit(70);
     }
 }
@@ -65,9 +63,9 @@ void runRepl() {
             std::cout << std::endl;
             std::cout << "Bye!!!" << std::endl;
             std::exit(0);
-        }else if(cmd.substr(0, 4) == "!run"){
+        } else if (cmd.substr(0, 4) == "!run") {
             uint32_t curr = 4;
-            while(curr < cmd.size() && cmd[curr] == ' '){
+            while (curr < cmd.size() && cmd[curr] == ' ') {
                 curr++;
             }
             std::string file_path = cmd.substr(curr, cmd.size() - curr);
@@ -90,8 +88,8 @@ int main(int argc, char *argv[]) {
     } else {
      */
 
-        runRepl();
-        /*
-    }
-         */
+    runRepl();
+    /*
+}
+     */
 }

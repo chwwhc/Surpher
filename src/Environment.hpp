@@ -6,10 +6,12 @@
 #include "Token.hpp"
 #include "Error.hpp"
 
-class Environment : public std::enable_shared_from_this<Environment>{
+class Environment : public std::enable_shared_from_this<Environment> {
     std::unordered_map<std::string, std::any> var_val_pairs;
     std::shared_ptr<Environment> enclosing;
 public:
+    std::shared_ptr<Environment> getEnclosing();
+
     void define(const std::string &var, std::any val);
 
     void assign(const Token &name, std::any value);
@@ -18,11 +20,12 @@ public:
 
     std::any get(const Token &name);
 
-    std::any getAt(uint32_t distance, const std::string& name);
+    std::any getAt(uint32_t distance, const std::string &name);
 
     std::shared_ptr<Environment> ancestor(uint32_t distance);
 
     Environment();
+
     explicit Environment(std::shared_ptr<Environment> enclosing);
 };
 
