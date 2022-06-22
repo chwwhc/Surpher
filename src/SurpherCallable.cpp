@@ -93,7 +93,7 @@ uint32_t Clock::arity() {
 }
 
 std::any Clock::call(Interpreter &interpreter, const std::vector<std::any> &arguments) {
-    return std::chrono::duration<double>{std::chrono::system_clock::now().time_since_epoch()}.count() / 1000.0;
+    return std::chrono::duration<double>{std::chrono::system_clock::now().time_since_epoch()}.count();
 }
 
 std::string Clock::SurpherCallableToString() {

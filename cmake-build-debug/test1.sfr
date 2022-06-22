@@ -1,31 +1,31 @@
+var y_combinator = /\f. (/\x. x(x))(/\x. f(/\y. x(x)(y)));
 
+var factorial = /\f. (/\x. (x if x == 1 else x * f(x - 1)));
 
-/*casdawd
+var fibonacci = /\f. (/\x. (x if x < 2 else f(x - 1) + f(x - 2)));
 
-asda
-
-asda
-asdsad
-
-sdada asdasd*/
-
-class Bacon {
-    init(sa){
-    this.nd = sa;
+fun tr_fibonacci(n){
+    fun tr_fibonacci_aux(prev, curr, n){
+        return curr if n == 0 else tr_fibonacci_aux(curr, prev + curr, n - 1);
     }
-  eat() {
-    print "Crunch crunch crunch!";
-  }
-  class classmethod(a, b){
-    return a - b;
-  }
 
-  classmethod(a, b){
-  print this.a + a + b;
-  }
+    return 0 if n == 0 else tr_fibonacci_aux(0, 1, n - 1);
 }
 
-print Bacon.classmethod(3, 2);
 
-/* asd */
-//ca
+var timer = clock();
+print "calculating 100! using y combinator:";
+print y_combinator(factorial)(100);
+print "time used: " + (clock() - timer);
+print "";
+
+timer = clock();
+print "calculating fibonacci(20) using y combinator:";
+print y_combinator(fibonacci)(20);
+print "time used: " + (clock() - timer);
+print "";
+
+timer = clock();
+print "calculating fibonacci(1000) using tail-recursion:";
+print tr_fibonacci(1000);
+print "time used: " + (clock() - timer);

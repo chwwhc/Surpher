@@ -354,22 +354,22 @@ std::shared_ptr<Expr> Parser::assignment() {
 }
 
 std::shared_ptr<Expr> Parser::ternary() {
-    std::shared_ptr<Expr> condition = logicalOr();
+    std::shared_ptr<Expr> true_branch = logicalOr();
 
-    if (match(QUESTION)) {
+    if (match(IF)) {
         Token question = previous();
-        auto true_branch = ternary();
-        if (match(COLON)) {
+        auto condition = ternary();
+        if (match(ELSE)) {
             Token colon = previous();
             auto else_branch = ternary();
             return std::shared_ptr<Expr>(new Ternary{condition, question, true_branch, colon, else_branch});
         } else {
-            error(previous(), "Expect ':' for ternary expression.");
+            error(previous(), "Expect 'else' for ternary expression.");
         }
-        error(question, "Expect '?' for ternary expression");
+        error(question, "Expect 'if' for ternary expression");
     }
 
-    return condition;
+    return true_branch;
 }
 
 std::shared_ptr<Expr> Parser::logicalOr() {

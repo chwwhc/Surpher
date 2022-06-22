@@ -45,9 +45,9 @@ std::any Interpreter::visitBinaryExpr(const std::shared_ptr<Binary> &expr) {
             if (left.type() == typeid(double) && right.type() == typeid(double)) {
                 return std::any_cast<double>(left) +
                        std::any_cast<double>(right);
-            } else if (left.type() == typeid(std::string) && right.type() == typeid(std::string)) {
-                return std::any_cast<std::string>(left) +
-                       std::any_cast<std::string>(right);
+            } else if (left.type() == typeid(std::string) || right.type() == typeid(std::string)) {
+                return stringify(left) +
+                       stringify(right);
             } else {
                 throw RuntimeError(expr->op, "Operands must be two numbers or two strings.");
             }
@@ -113,8 +113,8 @@ std::any Interpreter::visitExpressionStmt(const std::shared_ptr<Expression> &stm
 }
 
 std::any Interpreter::visitPrintStmt(const std::shared_ptr<Print> &stmt) {
-    std::any val = evaluate(stmt->expression);
-    std::cout << stringify(val) << std::endl;
+    std::any value = evaluate(stmt->expression);
+    std::cout << stringify(value) << std::endl;
     return {};
 }
 
@@ -172,12 +172,12 @@ void Interpreter::executeBlock(const std::vector<std::shared_ptr<Stmt>> &stmts,
     this->environment = previous;
 }
 
-bool Interpreter::isTruthy(const std::any &val) {
-    if (val.type() == typeid(nullptr)) {
+bool Interpreter::isTruthy(const std::any &value) {
+    if (value.type() == typeid(nullptr)) {
         return false;
     }
-    if (val.type() == typeid(bool)) {
-        return std::any_cast<bool>(val);
+    if (value.type() == typeid(bool)) {
+        return std::any_cast<bool>(value);
     }
     return true;
 }
@@ -201,12 +201,12 @@ bool Interpreter::isEqual(const std::any &a, const std::any &b) {
     return false;
 }
 
-std::string Interpreter::stringify(const std::any &val) {
-    if (val.type() == typeid(void)) {
+std::string Interpreter::stringify(const std::any &value) {
+    if (value.type() == typeid(void)) {
         return "none"s;
     }
-    else if (val.type() == typeid(double)) {
-        auto double_val = std::any_cast<double>(val);
+    else if (value.type() == typeid(double)) {
+        auto double_val = std::any_cast<double>(value);
         std::string num_str = std::to_string(double_val);
         if (floor(double_val) == double_val) {
             uint32_t point_index = 0;
@@ -217,20 +217,20 @@ std::string Interpreter::stringify(const std::any &val) {
         }
         return num_str;
     }
-    else if (val.type() == typeid(std::string)) {
-        return std::any_cast<std::string>(val);
+    else if (value.type() == typeid(std::string)) {
+        return std::any_cast<std::string>(value);
     }
-    else if (val.type() == typeid(bool)) {
-        return std::any_cast<bool>(val) ? "true"s : "false"s;
+    else if (value.type() == typeid(bool)) {
+        return std::any_cast<bool>(value) ? "true"s : "false"s;
     }
-    else if (val.type() == typeid(long long)) {
-        return std::to_string(std::any_cast<long long>(val));
+    else if (value.type() == typeid(long long)) {
+        return std::to_string(std::any_cast<long long>(value));
     }
-    else if (val.type() == typeid(std::shared_ptr<SurpherCallable>)) {
-        return (std::any_cast<std::shared_ptr<SurpherCallable>>(val))->SurpherCallableToString();
+    else if (value.type() == typeid(std::shared_ptr<SurpherCallable>)) {
+        return (std::any_cast<std::shared_ptr<SurpherCallable>>(value))->SurpherCallableToString();
     }
-    else if(val.type() == typeid(std::shared_ptr<SurpherInstance>)){
-        return (std::any_cast<std::shared_ptr<SurpherInstance>>(val))->SurpherInstanceToString();
+    else if(value.type() == typeid(std::shared_ptr<SurpherInstance>)){
+        return (std::any_cast<std::shared_ptr<SurpherInstance>>(value))->SurpherInstanceToString();
     }
     return "Error in stringify: un-recognized literal type."s;
 }
