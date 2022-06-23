@@ -100,6 +100,9 @@
   }
 }]]></component>
   <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="\\wsl$\Ubuntu-20.04\home\han3816\projects\Surpher" />
+    </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="\\wsl$\Ubuntu20.04LTS\home\chuhanwen\projects\Surpher\cmake-build-debug" />
       <recent name="\\wsl$\Ubuntu20.04LTS\home\chuhanwen\projects\Surpher" />
@@ -154,7 +157,7 @@
       <workItem from="1655927253865" duration="2707000" />
       <workItem from="1655930061433" duration="4856000" />
       <workItem from="1655937113403" duration="1045000" />
-      <workItem from="1655948692049" duration="12791000" />
+      <workItem from="1655948692049" duration="16947000" />
     </task>
     <servers />
   </component>

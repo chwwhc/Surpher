@@ -269,7 +269,7 @@ std::any Interpreter::visitIfStmt(const std::shared_ptr<If> &stmt) {
 std::any Interpreter::visitLogicalExpr(const std::shared_ptr<Logical> &expr) {
     std::any left = evaluate(expr->left);
 
-    if (expr->op.token_type == DOUBLE_BAR) {
+    if (expr->op.token_type == OR) {
         if (isTruthy(left)) {
             return left;
         }

@@ -366,28 +366,28 @@ std::shared_ptr<Expr> Parser::assignment() {
 }
 
 std::shared_ptr<Expr> Parser::ternary() {
-    std::shared_ptr<Expr> true_branch = logicalOr();
+    std::shared_ptr<Expr> condition = logicalOr();
 
-    if (match(IF)) {
+    if (match(QUESTION)) {
         Token question = previous();
-        auto condition = ternary();
-        if (match(ELSE)) {
+        auto true_branch = ternary();
+        if (match(COLON)) {
             Token colon = previous();
             auto else_branch = ternary();
             return std::shared_ptr<Expr>(new Ternary{condition, question, true_branch, colon, else_branch});
         } else {
-            error(previous(), "Expect 'else' for ternary expression.");
+            error(previous(), "Expect ':' for ternary expression.");
         }
-        error(question, "Expect 'if' for ternary expression");
+        error(question, "Expect '?' for ternary expression");
     }
 
-    return true_branch;
+    return condition;
 }
 
 std::shared_ptr<Expr> Parser::logicalOr() {
     std::shared_ptr<Expr> expr = logicalAnd();
 
-    while (match(DOUBLE_BAR)) {
+    while (match(OR)) {
         Token op = previous();
         std::shared_ptr<Expr> right = logicalAnd();
         expr = std::make_shared<Logical>(expr, op, right);
@@ -399,7 +399,7 @@ std::shared_ptr<Expr> Parser::logicalOr() {
 std::shared_ptr<Expr> Parser::logicalAnd() {
     std::shared_ptr<Expr> expr = bit_wise_or();
 
-    while (match(DOUBLE_AMPERSAND)) {
+    while (match(AND)) {
         Token op = previous();
         std::shared_ptr<Expr> right = bit_wise_or();
         expr = std::make_shared<Logical>(expr, op, right);

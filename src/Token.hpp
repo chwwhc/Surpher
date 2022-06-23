@@ -22,10 +22,8 @@ enum TokenType {
     STAR,
     SLASH,
     SINGLE_BAR,
-    DOUBLE_BAR,
     CARET,
     SINGLE_AMPERSAND,
-    DOUBLE_AMPERSAND,
     BANG,
     BANG_EQUAL,
     SINGLE_EQUAL,
@@ -64,6 +62,8 @@ enum TokenType {
     CONTINUE,
     NEWTYPE,
     PRINT,
+    AND,
+    OR,
 
     EOF_TOKEN
 };

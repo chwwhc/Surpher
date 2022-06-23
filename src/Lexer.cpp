@@ -28,7 +28,9 @@ std::map<std::string, TokenType> keyWords = {
         {"break",    BREAK},
         {"continue", CONTINUE},
         {"newtype",  NEWTYPE},
-        {"print",    PRINT}};
+        {"print",    PRINT},
+        {"and", AND},
+        {"or", OR}};
 
 Lexer::Lexer(std::string source_code) : source_code(std::move(source_code)) {
 }
@@ -201,21 +203,13 @@ void Lexer::scanToken() {
             }
             break;
         case '|':
-            if (matchNextChar('|')) {
-                addToken(DOUBLE_BAR);
-            } else {
-                addToken(SINGLE_BAR);
-            }
+            addToken(SINGLE_BAR);
             break;
         case '^':
             addToken(CARET);
             break;
         case '&':
-            if (matchNextChar('&')) {
-                addToken(DOUBLE_AMPERSAND);
-            } else {
-                addToken(SINGLE_AMPERSAND);
-            }
+            addToken(SINGLE_AMPERSAND);
             break;
         case '!':
             if (matchNextChar('=')) {

@@ -1,18 +1,173 @@
-## Getting Started
+# Surpher
 
-Welcome to the VS Code Java world. Here is a guideline to help you get started to write Java code in Visual Studio Code.
+## Introduction
+This repo contains my C++ implementation of Robert Nystrom's programming language `Lox` (link to the original book: [Crafting Interpreters](https://craftinginterpreters.com/), 
+link to the GitHub repo: [craftinginterpreters](https://github.com/munificent/craftinginterpreters)). I started this project to learn C++ and, more importantly, to have fun! Because this is my first time using C++ in a serious project (sort of?), 
+there are bound to be lots of bad codes. Refer
+to them at your own risk ;)
 
-## Folder Structure
+## Overview of the Surpher language
+Surpher is a dynamically typed, 
+interpreted language that supports object-oriented
+programming and first-class functions. The current Surpher interpreter
+is a tree-walk interpreter implemented in C++17.
 
-The workspace contains two folders by default, where:
+## How to use
+Run the following command to open the REPL:
+```
+./Surpher
+```
+In the REPL session, 
+run the following command to execute a script that's in the same directory:
+```
+!run ./some_script.sfr
+```
+In the REPL session,
+run the following command to exit:
+```
+!quit
+```
 
-- `src`: the folder to maintain sources
-- `lib`: the folder to maintain dependencies
+## Full grammar specification
+``` 
+program        → declaration* EOF ;
 
-Meanwhile, the compiled output files will be generated in the `bin` folder by default.
+declaration    → classDecl
+               | funDecl
+               | varDecl
+               | statement ;
 
-> If you want to customize the folder structure, open `.vscode/settings.json` and update the related settings there.
+classDecl      → "class" IDENTIFIER ( "<" IDENTIFIER )?
+                 "{" function* "}" ;
+funDecl        → "fun" function ;
+varDecl        → "var" IDENTIFIER ( "=" expression )? ";" ;
 
-## Dependency Management
+statement      → exprStmt
+               | forStmt
+               | ifStmt
+               | printStmt
+               | returnStmt
+               | whileStmt
+               | continueStmt
+               | breakStmt
+               | block ;
 
-The `JAVA PROJECTS` view allows you to manage your dependencies. More details can be found [here](https://github.com/microsoft/vscode-java-dependency#manage-dependencies).
+exprStmt       → expression ";" ;
+forStmt        → "for" "(" ( varDecl | exprStmt | ";" )
+                           expression? ";"
+                           expression? ")" statement ;
+ifStmt         → "if" "(" expression ")" statement
+                 ( "else" statement )? ;
+printStmt      → "print" expression ";" ;
+returnStmt     → "return" expression? ";" ;
+whileStmt      → "while" "(" expression ")" statement ;
+continueStmt   → "continue" ";";
+breakStmt      → "break" ";";
+block          → "{" declaration* "}" ;
+
+expression     → assignment ;
+
+assignment     → ( call "." )? IDENTIFIER "=" assignment
+               | ternary ;
+             
+ternary        → logical_or "?" ternary ":" ternary ;
+
+logic_or       → logic_and ( "or" logic_and )* ;
+logic_and      → bit_wise_or ( "and" bit_wise_or )* ;
+bit_wise_or    → bit_wise_xor ( "|" bit_wise_xor )* ;
+bit_wise_xor   → bit_wise_and ( "^" bit_wise_and )* ;
+bit_wise_and   → equality ( "&" equality )* ;
+equality       → comparison ( ( "!=" | "==" ) comparison )* ;
+comparison     → term ( ( ">" | ">=" | "<" | "<=" ) term )* ;
+term           → factor ( ( "-" | "+" ) factor )* ;
+factor         → unary ( ( "/" | "*" | "%" ) unary )* ;
+
+unary          → ( "!" | "-" ) unary | call ;
+call           → primary ( "(" arguments? ")" | "." IDENTIFIER )* ;
+primary        → "true" | "false" | "nil" | "this"
+               | NUMBER | STRING | IDENTIFIER | "(" expression ")"
+               | "super" "." IDENTIFIER | "/\" IDENTIFIER "." expression ;
+               
+function       → IDENTIFIER "(" parameters? ")" block ;
+parameters     → IDENTIFIER ( "," IDENTIFIER )* ;
+arguments      → expression ( "," expression )* ;
+
+NUMBER         → DIGIT+ ( "." DIGIT+ )? ;
+STRING         → "\"" <any char except "\"">* "\"" ;
+IDENTIFIER     → ALPHA ( ALPHA | DIGIT )* ;
+ALPHA          → "a" ... "z" | "A" ... "Z" | "_" ;
+DIGIT          → "0" ... "9" ;
+```
+
+## Example programs
+### 1. Implementing Y-combinator
+``` 
+// Y-combinator as a lambda expression
+var y_combinator = /\f. (/\x. x(x))(/\x. f(/\y. x(x)(y)));
+
+// fibonacci function as a lambda expression
+var fibonacci = /\f. (/\x. (x if x < 2 else f(x - 1) + f(x - 2)));
+
+// compute fibonacci(20) via Y-combinator
+print y_combinator(fibonacci)(20);
+```
+
+### 2. Class inheritance
+```  
+// this example is taken from the original book
+
+// base class
+class Doughnut {
+  cook() {
+    print "Fry until golden brown.";
+  }
+}
+
+// derived class
+class BostonCream < Doughnut {
+  cook() {
+    super.cook();
+    print "Pipe full of custard and coat with chocolate.";
+  }
+}
+
+BostonCream().cook();
+```
+
+### 3. Curried function
+```   
+// original function that takes 3 inputs
+fun original_fun(a, b, c){
+    return a + b + c;
+}
+
+/* 
+    partial1 is the same as
+    fun partial1(b, c){
+        return 1 + b + c;
+    }
+*/
+var partial1 = original_fun(1);
+
+/*
+    partial2 is the same as 
+    fun partial2(c){
+        return 1 + 2 + c;
+    }
+*/
+var partial2 = partial1(2);
+
+print partial2(3);
+```
+
+## Features that could be included
+- [ ] exception handling
+- [ ] module
+- [ ] switch...case...
+- [ ] atomic container types(list, set...)
+- [ ] a standard library
+
+Well, you know how these personal projects usually end up with.
+I doubt I'll do them at all.
+
+
