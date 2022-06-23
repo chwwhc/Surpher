@@ -106,7 +106,7 @@ DIGIT          → "0" ... "9" ;
 var y_combinator = /\f. (/\x. x(x))(/\x. f(/\y. x(x)(y)));
 
 // fibonacci function as a lambda expression
-var fibonacci = /\f. (/\x. (x if x < 2 else f(x - 1) + f(x - 2)));
+var fibonacci = /\f. (/\x. (x < 2 ? x : f(x - 1) + f(x - 2)));
 
 // compute fibonacci(20) via Y-combinator
 print y_combinator(fibonacci)(20);
