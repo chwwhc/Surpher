@@ -5,13 +5,14 @@
 #include "Interpreter.hpp"
 
 SurpherFunction::SurpherFunction(std::shared_ptr<Function> declaration, std::shared_ptr<Environment> closure,
-                                 bool is_initializer) : declaration(std::move(declaration)),
-                                                        closure(std::move(closure)), is_initializer(is_initializer) {
+                                 bool is_initializer, bool is_partial) : declaration(std::move(declaration)),
+                                                        closure(std::move(closure)), is_initializer(is_initializer),
+                                                        is_partial(is_partial) {
 
 }
 
 std::any SurpherFunction::call(Interpreter &interpreter, const std::vector<std::any> &arguments) {
-    std::shared_ptr<Environment> environment = std::make_shared<Environment>(closure);
+    std::shared_ptr<Environment> environment = is_partial ? closure : std::make_shared<Environment>(closure);
     for (size_t i = 0; i < declaration->params.size(); i++) {
         environment->define(declaration->params[i].lexeme, arguments[i]);
     }
@@ -42,7 +43,7 @@ std::string SurpherFunction::SurpherCallableToString() {
 std::shared_ptr<SurpherFunction> SurpherFunction::bind(const std::shared_ptr<SurpherInstance> &instance) {
     auto environment = std::make_shared<Environment>(closure);
     environment->define("this", instance);
-    return std::make_shared<SurpherFunction>(declaration, environment, is_initializer);
+    return std::make_shared<SurpherFunction>(declaration, environment, is_initializer, is_partial);
 }
 
 

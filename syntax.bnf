@@ -1,6 +1,0 @@
-<expr> ::= <literal> | <unary op> <expr> | <expr> <binary op> <expr> | grouping
-<literal> ::= INT | FLOAT | STRING | "true" | "false" |  "none" ;
-<grouping> ::= "(" <expression> ")" ;
-<unary op> ::= "-" | "!" ;
-<binary op> ::= "+" | "-" | "*" | "/" | "&&" | "&" | "|" | "||" | "^" | "%"
-                | ">" | ">=" | "<" | "<=" | "==" | "!="

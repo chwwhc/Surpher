@@ -1,5 +1,4 @@
 file(REMOVE_RECURSE
-  "CMakeFiles/Surpher.dir/src/AstPrinter.cpp.o"
   "CMakeFiles/Surpher.dir/src/Environment.cpp.o"
   "CMakeFiles/Surpher.dir/src/Error.cpp.o"
   "CMakeFiles/Surpher.dir/src/Expr.cpp.o"

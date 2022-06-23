@@ -7,7 +7,6 @@
 
 #include "Lexer.hpp"
 #include "Parser.hpp"
-#include "AstPrinter.hpp"
 #include "Error.hpp"
 #include "Interpreter.hpp"
 #include "Resolver.hpp"

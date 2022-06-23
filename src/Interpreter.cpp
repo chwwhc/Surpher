@@ -315,12 +315,29 @@ std::any Interpreter::visitCallExpr(const std::shared_ptr<Call> &expr) {
 
     if (callee.type() == typeid(std::shared_ptr<SurpherFunction>)) {
         callable = std::any_cast<std::shared_ptr<SurpherFunction>>(callee);
+
+        if (arguments.size() > callable->arity()) {
+            throw RuntimeError(expr->paren, "Expected " + std::to_string(callable->arity()) + " arguments but got " +
+                                            std::to_string(arguments.size()) + ".");
+        }else if (arguments.size() < callable->arity()) {
+            std::shared_ptr<SurpherFunction> old_fun = std::static_pointer_cast<SurpherFunction>(callable);
+            std::shared_ptr<Function> partial_fun = std::make_shared<Function>(Token("0" + old_fun->declaration->name.lexeme, old_fun->declaration->name.literal, old_fun->declaration->name.token_type, old_fun->declaration->name.line),
+                                                                               std::vector<Token>{old_fun->declaration->params.begin() + arguments.size(), old_fun->declaration->params.end()},
+                                                          old_fun->declaration->body);
+            for (size_t i = 0; i < arguments.size(); i++) {
+                old_fun->closure->define(old_fun->declaration->params[i].lexeme, arguments[i]);
+            }
+            auto new_fun = std::make_shared<SurpherFunction>(partial_fun, old_fun->closure, old_fun->is_initializer, true);
+            return new_fun;
+        }else{
+            return callable->call(*this, arguments);
+        }
     } else if (callee.type() == typeid(std::shared_ptr<SurpherClass>)) {
         callable = std::any_cast<std::shared_ptr<SurpherClass>>(callee);
     } else if (callee.type() == typeid(std::shared_ptr<Clock>)) {
         callable = std::make_shared<Clock>();
     } else {
-        throw RuntimeError(expr->paren, "Can only call functions and classes.");
+        throw RuntimeError(expr->paren, "Not a callable instance.");
     }
 
     if (arguments.size() != callable->arity()) {
@@ -336,7 +353,7 @@ Interpreter::Interpreter() : globals(new Environment) {
 }
 
 std::any Interpreter::visitFunctionStmt(const std::shared_ptr<Function> &stmt) {
-    auto function = std::make_shared<SurpherFunction>(stmt, environment, false);
+    auto function = std::make_shared<SurpherFunction>(stmt, environment, false, false);
     environment->define(stmt->name.lexeme, std::move(function));
     return {};
 }
@@ -351,10 +368,9 @@ std::any Interpreter::visitReturnStmt(const std::shared_ptr<Return> &stmt) {
 }
 
 std::any Interpreter::visitLambdaExpr(const std::shared_ptr<Lambda> &expr) {
-    std::vector<std::shared_ptr<Stmt>> lambda_return{std::make_shared<Return>(Token("", {}, RETURN, 1), expr->body)};
+    std::vector<std::shared_ptr<Stmt>> lambda_return{std::make_shared<Return>(Token("return", {}, RETURN, expr->name.line), expr->body)};
     auto function = std::make_shared<SurpherFunction>(
-            std::make_shared<Function>(expr->name, expr->params, std::move(lambda_return)), environment, false);
-    environment->define(expr->name.lexeme, function);
+            std::make_shared<Function>(expr->name, expr->params, std::move(lambda_return)), environment, false, false);
     return function;
 }
 
@@ -394,11 +410,11 @@ std::any Interpreter::visitClassStmt(const std::shared_ptr<Class> &stmt) {
     std::unordered_map<std::string, std::shared_ptr<SurpherFunction>> instance_methods;
     std::unordered_map<std::string, std::shared_ptr<SurpherFunction>> class_methods;
     for (const auto &i: stmt->instance_methods) {
-        auto function = std::make_shared<SurpherFunction>(i, environment, i->name.lexeme == "init");
+        auto function = std::make_shared<SurpherFunction>(i, environment, i->name.lexeme == "init", false);
         instance_methods[i->name.lexeme] = function;
     }
     for (const auto &c: stmt->class_methods) {
-        auto function = std::make_shared<SurpherFunction>(c, environment, false);
+        auto function = std::make_shared<SurpherFunction>(c, environment, false, false);
         class_methods[c->name.lexeme] = function;
     }
 

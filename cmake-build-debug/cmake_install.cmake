@@ -1,4 +1,4 @@
-# Install script for directory: /home/chuhanwen/projects/Surpher
+# Install script for directory: /home/han3816/projects/Surpher
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -45,5 +45,5 @@ endif()
 
 string(REPLACE ";" "\n" CMAKE_INSTALL_MANIFEST_CONTENT
        "${CMAKE_INSTALL_MANIFEST_FILES}")
-file(WRITE "/home/chuhanwen/projects/Surpher/cmake-build-debug/${CMAKE_INSTALL_MANIFEST}"
+file(WRITE "/home/han3816/projects/Surpher/cmake-build-debug/${CMAKE_INSTALL_MANIFEST}"
      "${CMAKE_INSTALL_MANIFEST_CONTENT}")

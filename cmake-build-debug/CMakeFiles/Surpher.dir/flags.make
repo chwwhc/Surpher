@@ -6,5 +6,5 @@ CXX_FLAGS =  -static-libstdc++ -static-libgcc -g   -std=gnu++17
 
 CXX_DEFINES = 
 
-CXX_INCLUDES = -I/home/chuhanwen/projects/Surpher/src 
+CXX_INCLUDES = -I/home/han3816/projects/Surpher/src 
 

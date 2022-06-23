@@ -48,10 +48,10 @@ RM = /usr/bin/cmake -E remove -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/chuhanwen/projects/Surpher
+CMAKE_SOURCE_DIR = /home/han3816/projects/Surpher
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/chuhanwen/projects/Surpher/cmake-build-debug
+CMAKE_BINARY_DIR = /home/han3816/projects/Surpher/cmake-build-debug
 
 #=============================================================================
 # Targets provided globally by CMake.
@@ -80,9 +80,9 @@ edit_cache/fast: edit_cache
 
 # The main all target
 all: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/chuhanwen/projects/Surpher/cmake-build-debug/CMakeFiles /home/chuhanwen/projects/Surpher/cmake-build-debug/CMakeFiles/progress.marks
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/han3816/projects/Surpher/cmake-build-debug/CMakeFiles /home/han3816/projects/Surpher/cmake-build-debug/CMakeFiles/progress.marks
 	$(MAKE) -f CMakeFiles/Makefile2 all
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/chuhanwen/projects/Surpher/cmake-build-debug/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/han3816/projects/Surpher/cmake-build-debug/CMakeFiles 0
 .PHONY : all
 
 # The main clean target
@@ -122,33 +122,6 @@ Surpher: cmake_check_build_system
 Surpher/fast:
 	$(MAKE) -f CMakeFiles/Surpher.dir/build.make CMakeFiles/Surpher.dir/build
 .PHONY : Surpher/fast
-
-src/AstPrinter.o: src/AstPrinter.cpp.o
-
-.PHONY : src/AstPrinter.o
-
-# target to build an object file
-src/AstPrinter.cpp.o:
-	$(MAKE) -f CMakeFiles/Surpher.dir/build.make CMakeFiles/Surpher.dir/src/AstPrinter.cpp.o
-.PHONY : src/AstPrinter.cpp.o
-
-src/AstPrinter.i: src/AstPrinter.cpp.i
-
-.PHONY : src/AstPrinter.i
-
-# target to preprocess a source file
-src/AstPrinter.cpp.i:
-	$(MAKE) -f CMakeFiles/Surpher.dir/build.make CMakeFiles/Surpher.dir/src/AstPrinter.cpp.i
-.PHONY : src/AstPrinter.cpp.i
-
-src/AstPrinter.s: src/AstPrinter.cpp.s
-
-.PHONY : src/AstPrinter.s
-
-# target to generate assembly for a file
-src/AstPrinter.cpp.s:
-	$(MAKE) -f CMakeFiles/Surpher.dir/build.make CMakeFiles/Surpher.dir/src/AstPrinter.cpp.s
-.PHONY : src/AstPrinter.cpp.s
 
 src/Environment.o: src/Environment.cpp.o
 
@@ -483,9 +456,6 @@ help:
 	@echo "... rebuild_cache"
 	@echo "... edit_cache"
 	@echo "... Surpher"
-	@echo "... src/AstPrinter.o"
-	@echo "... src/AstPrinter.i"
-	@echo "... src/AstPrinter.s"
 	@echo "... src/Environment.o"
 	@echo "... src/Environment.i"
 	@echo "... src/Environment.s"

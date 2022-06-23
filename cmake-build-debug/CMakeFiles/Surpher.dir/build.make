@@ -43,10 +43,10 @@ RM = /usr/bin/cmake -E remove -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/chuhanwen/projects/Surpher
+CMAKE_SOURCE_DIR = /home/han3816/projects/Surpher
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/chuhanwen/projects/Surpher/cmake-build-debug
+CMAKE_BINARY_DIR = /home/han3816/projects/Surpher/cmake-build-debug
 
 # Include any dependencies generated for this target.
 include CMakeFiles/Surpher.dir/depend.make
@@ -59,172 +59,159 @@ include CMakeFiles/Surpher.dir/flags.make
 
 CMakeFiles/Surpher.dir/src/Lexer.cpp.o: CMakeFiles/Surpher.dir/flags.make
 CMakeFiles/Surpher.dir/src/Lexer.cpp.o: ../src/Lexer.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/chuhanwen/projects/Surpher/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/Surpher.dir/src/Lexer.cpp.o"
-	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/Surpher.dir/src/Lexer.cpp.o -c /home/chuhanwen/projects/Surpher/src/Lexer.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/han3816/projects/Surpher/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/Surpher.dir/src/Lexer.cpp.o"
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/Surpher.dir/src/Lexer.cpp.o -c /home/han3816/projects/Surpher/src/Lexer.cpp
 
 CMakeFiles/Surpher.dir/src/Lexer.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/Surpher.dir/src/Lexer.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/chuhanwen/projects/Surpher/src/Lexer.cpp > CMakeFiles/Surpher.dir/src/Lexer.cpp.i
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/han3816/projects/Surpher/src/Lexer.cpp > CMakeFiles/Surpher.dir/src/Lexer.cpp.i
 
 CMakeFiles/Surpher.dir/src/Lexer.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/Surpher.dir/src/Lexer.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/chuhanwen/projects/Surpher/src/Lexer.cpp -o CMakeFiles/Surpher.dir/src/Lexer.cpp.s
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/han3816/projects/Surpher/src/Lexer.cpp -o CMakeFiles/Surpher.dir/src/Lexer.cpp.s
 
 CMakeFiles/Surpher.dir/src/Surpher.cpp.o: CMakeFiles/Surpher.dir/flags.make
 CMakeFiles/Surpher.dir/src/Surpher.cpp.o: ../src/Surpher.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/chuhanwen/projects/Surpher/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/Surpher.dir/src/Surpher.cpp.o"
-	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/Surpher.dir/src/Surpher.cpp.o -c /home/chuhanwen/projects/Surpher/src/Surpher.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/han3816/projects/Surpher/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/Surpher.dir/src/Surpher.cpp.o"
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/Surpher.dir/src/Surpher.cpp.o -c /home/han3816/projects/Surpher/src/Surpher.cpp
 
 CMakeFiles/Surpher.dir/src/Surpher.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/Surpher.dir/src/Surpher.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/chuhanwen/projects/Surpher/src/Surpher.cpp > CMakeFiles/Surpher.dir/src/Surpher.cpp.i
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/han3816/projects/Surpher/src/Surpher.cpp > CMakeFiles/Surpher.dir/src/Surpher.cpp.i
 
 CMakeFiles/Surpher.dir/src/Surpher.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/Surpher.dir/src/Surpher.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/chuhanwen/projects/Surpher/src/Surpher.cpp -o CMakeFiles/Surpher.dir/src/Surpher.cpp.s
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/han3816/projects/Surpher/src/Surpher.cpp -o CMakeFiles/Surpher.dir/src/Surpher.cpp.s
 
 CMakeFiles/Surpher.dir/src/Token.cpp.o: CMakeFiles/Surpher.dir/flags.make
 CMakeFiles/Surpher.dir/src/Token.cpp.o: ../src/Token.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/chuhanwen/projects/Surpher/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/Surpher.dir/src/Token.cpp.o"
-	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/Surpher.dir/src/Token.cpp.o -c /home/chuhanwen/projects/Surpher/src/Token.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/han3816/projects/Surpher/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/Surpher.dir/src/Token.cpp.o"
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/Surpher.dir/src/Token.cpp.o -c /home/han3816/projects/Surpher/src/Token.cpp
 
 CMakeFiles/Surpher.dir/src/Token.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/Surpher.dir/src/Token.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/chuhanwen/projects/Surpher/src/Token.cpp > CMakeFiles/Surpher.dir/src/Token.cpp.i
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/han3816/projects/Surpher/src/Token.cpp > CMakeFiles/Surpher.dir/src/Token.cpp.i
 
 CMakeFiles/Surpher.dir/src/Token.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/Surpher.dir/src/Token.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/chuhanwen/projects/Surpher/src/Token.cpp -o CMakeFiles/Surpher.dir/src/Token.cpp.s
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/han3816/projects/Surpher/src/Token.cpp -o CMakeFiles/Surpher.dir/src/Token.cpp.s
 
 CMakeFiles/Surpher.dir/src/Expr.cpp.o: CMakeFiles/Surpher.dir/flags.make
 CMakeFiles/Surpher.dir/src/Expr.cpp.o: ../src/Expr.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/chuhanwen/projects/Surpher/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object CMakeFiles/Surpher.dir/src/Expr.cpp.o"
-	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/Surpher.dir/src/Expr.cpp.o -c /home/chuhanwen/projects/Surpher/src/Expr.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/han3816/projects/Surpher/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object CMakeFiles/Surpher.dir/src/Expr.cpp.o"
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/Surpher.dir/src/Expr.cpp.o -c /home/han3816/projects/Surpher/src/Expr.cpp
 
 CMakeFiles/Surpher.dir/src/Expr.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/Surpher.dir/src/Expr.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/chuhanwen/projects/Surpher/src/Expr.cpp > CMakeFiles/Surpher.dir/src/Expr.cpp.i
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/han3816/projects/Surpher/src/Expr.cpp > CMakeFiles/Surpher.dir/src/Expr.cpp.i
 
 CMakeFiles/Surpher.dir/src/Expr.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/Surpher.dir/src/Expr.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/chuhanwen/projects/Surpher/src/Expr.cpp -o CMakeFiles/Surpher.dir/src/Expr.cpp.s
-
-CMakeFiles/Surpher.dir/src/AstPrinter.cpp.o: CMakeFiles/Surpher.dir/flags.make
-CMakeFiles/Surpher.dir/src/AstPrinter.cpp.o: ../src/AstPrinter.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/chuhanwen/projects/Surpher/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building CXX object CMakeFiles/Surpher.dir/src/AstPrinter.cpp.o"
-	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/Surpher.dir/src/AstPrinter.cpp.o -c /home/chuhanwen/projects/Surpher/src/AstPrinter.cpp
-
-CMakeFiles/Surpher.dir/src/AstPrinter.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/Surpher.dir/src/AstPrinter.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/chuhanwen/projects/Surpher/src/AstPrinter.cpp > CMakeFiles/Surpher.dir/src/AstPrinter.cpp.i
-
-CMakeFiles/Surpher.dir/src/AstPrinter.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/Surpher.dir/src/AstPrinter.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/chuhanwen/projects/Surpher/src/AstPrinter.cpp -o CMakeFiles/Surpher.dir/src/AstPrinter.cpp.s
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/han3816/projects/Surpher/src/Expr.cpp -o CMakeFiles/Surpher.dir/src/Expr.cpp.s
 
 CMakeFiles/Surpher.dir/src/Parser.cpp.o: CMakeFiles/Surpher.dir/flags.make
 CMakeFiles/Surpher.dir/src/Parser.cpp.o: ../src/Parser.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/chuhanwen/projects/Surpher/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Building CXX object CMakeFiles/Surpher.dir/src/Parser.cpp.o"
-	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/Surpher.dir/src/Parser.cpp.o -c /home/chuhanwen/projects/Surpher/src/Parser.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/han3816/projects/Surpher/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building CXX object CMakeFiles/Surpher.dir/src/Parser.cpp.o"
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/Surpher.dir/src/Parser.cpp.o -c /home/han3816/projects/Surpher/src/Parser.cpp
 
 CMakeFiles/Surpher.dir/src/Parser.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/Surpher.dir/src/Parser.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/chuhanwen/projects/Surpher/src/Parser.cpp > CMakeFiles/Surpher.dir/src/Parser.cpp.i
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/han3816/projects/Surpher/src/Parser.cpp > CMakeFiles/Surpher.dir/src/Parser.cpp.i
 
 CMakeFiles/Surpher.dir/src/Parser.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/Surpher.dir/src/Parser.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/chuhanwen/projects/Surpher/src/Parser.cpp -o CMakeFiles/Surpher.dir/src/Parser.cpp.s
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/han3816/projects/Surpher/src/Parser.cpp -o CMakeFiles/Surpher.dir/src/Parser.cpp.s
 
 CMakeFiles/Surpher.dir/src/Error.cpp.o: CMakeFiles/Surpher.dir/flags.make
 CMakeFiles/Surpher.dir/src/Error.cpp.o: ../src/Error.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/chuhanwen/projects/Surpher/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Building CXX object CMakeFiles/Surpher.dir/src/Error.cpp.o"
-	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/Surpher.dir/src/Error.cpp.o -c /home/chuhanwen/projects/Surpher/src/Error.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/han3816/projects/Surpher/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Building CXX object CMakeFiles/Surpher.dir/src/Error.cpp.o"
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/Surpher.dir/src/Error.cpp.o -c /home/han3816/projects/Surpher/src/Error.cpp
 
 CMakeFiles/Surpher.dir/src/Error.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/Surpher.dir/src/Error.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/chuhanwen/projects/Surpher/src/Error.cpp > CMakeFiles/Surpher.dir/src/Error.cpp.i
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/han3816/projects/Surpher/src/Error.cpp > CMakeFiles/Surpher.dir/src/Error.cpp.i
 
 CMakeFiles/Surpher.dir/src/Error.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/Surpher.dir/src/Error.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/chuhanwen/projects/Surpher/src/Error.cpp -o CMakeFiles/Surpher.dir/src/Error.cpp.s
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/han3816/projects/Surpher/src/Error.cpp -o CMakeFiles/Surpher.dir/src/Error.cpp.s
 
 CMakeFiles/Surpher.dir/src/Interpreter.cpp.o: CMakeFiles/Surpher.dir/flags.make
 CMakeFiles/Surpher.dir/src/Interpreter.cpp.o: ../src/Interpreter.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/chuhanwen/projects/Surpher/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_8) "Building CXX object CMakeFiles/Surpher.dir/src/Interpreter.cpp.o"
-	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/Surpher.dir/src/Interpreter.cpp.o -c /home/chuhanwen/projects/Surpher/src/Interpreter.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/han3816/projects/Surpher/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Building CXX object CMakeFiles/Surpher.dir/src/Interpreter.cpp.o"
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/Surpher.dir/src/Interpreter.cpp.o -c /home/han3816/projects/Surpher/src/Interpreter.cpp
 
 CMakeFiles/Surpher.dir/src/Interpreter.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/Surpher.dir/src/Interpreter.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/chuhanwen/projects/Surpher/src/Interpreter.cpp > CMakeFiles/Surpher.dir/src/Interpreter.cpp.i
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/han3816/projects/Surpher/src/Interpreter.cpp > CMakeFiles/Surpher.dir/src/Interpreter.cpp.i
 
 CMakeFiles/Surpher.dir/src/Interpreter.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/Surpher.dir/src/Interpreter.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/chuhanwen/projects/Surpher/src/Interpreter.cpp -o CMakeFiles/Surpher.dir/src/Interpreter.cpp.s
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/han3816/projects/Surpher/src/Interpreter.cpp -o CMakeFiles/Surpher.dir/src/Interpreter.cpp.s
 
 CMakeFiles/Surpher.dir/src/Stmt.cpp.o: CMakeFiles/Surpher.dir/flags.make
 CMakeFiles/Surpher.dir/src/Stmt.cpp.o: ../src/Stmt.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/chuhanwen/projects/Surpher/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_9) "Building CXX object CMakeFiles/Surpher.dir/src/Stmt.cpp.o"
-	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/Surpher.dir/src/Stmt.cpp.o -c /home/chuhanwen/projects/Surpher/src/Stmt.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/han3816/projects/Surpher/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_8) "Building CXX object CMakeFiles/Surpher.dir/src/Stmt.cpp.o"
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/Surpher.dir/src/Stmt.cpp.o -c /home/han3816/projects/Surpher/src/Stmt.cpp
 
 CMakeFiles/Surpher.dir/src/Stmt.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/Surpher.dir/src/Stmt.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/chuhanwen/projects/Surpher/src/Stmt.cpp > CMakeFiles/Surpher.dir/src/Stmt.cpp.i
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/han3816/projects/Surpher/src/Stmt.cpp > CMakeFiles/Surpher.dir/src/Stmt.cpp.i
 
 CMakeFiles/Surpher.dir/src/Stmt.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/Surpher.dir/src/Stmt.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/chuhanwen/projects/Surpher/src/Stmt.cpp -o CMakeFiles/Surpher.dir/src/Stmt.cpp.s
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/han3816/projects/Surpher/src/Stmt.cpp -o CMakeFiles/Surpher.dir/src/Stmt.cpp.s
 
 CMakeFiles/Surpher.dir/src/Environment.cpp.o: CMakeFiles/Surpher.dir/flags.make
 CMakeFiles/Surpher.dir/src/Environment.cpp.o: ../src/Environment.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/chuhanwen/projects/Surpher/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_10) "Building CXX object CMakeFiles/Surpher.dir/src/Environment.cpp.o"
-	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/Surpher.dir/src/Environment.cpp.o -c /home/chuhanwen/projects/Surpher/src/Environment.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/han3816/projects/Surpher/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_9) "Building CXX object CMakeFiles/Surpher.dir/src/Environment.cpp.o"
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/Surpher.dir/src/Environment.cpp.o -c /home/han3816/projects/Surpher/src/Environment.cpp
 
 CMakeFiles/Surpher.dir/src/Environment.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/Surpher.dir/src/Environment.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/chuhanwen/projects/Surpher/src/Environment.cpp > CMakeFiles/Surpher.dir/src/Environment.cpp.i
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/han3816/projects/Surpher/src/Environment.cpp > CMakeFiles/Surpher.dir/src/Environment.cpp.i
 
 CMakeFiles/Surpher.dir/src/Environment.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/Surpher.dir/src/Environment.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/chuhanwen/projects/Surpher/src/Environment.cpp -o CMakeFiles/Surpher.dir/src/Environment.cpp.s
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/han3816/projects/Surpher/src/Environment.cpp -o CMakeFiles/Surpher.dir/src/Environment.cpp.s
 
 CMakeFiles/Surpher.dir/src/SurpherCallable.cpp.o: CMakeFiles/Surpher.dir/flags.make
 CMakeFiles/Surpher.dir/src/SurpherCallable.cpp.o: ../src/SurpherCallable.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/chuhanwen/projects/Surpher/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_11) "Building CXX object CMakeFiles/Surpher.dir/src/SurpherCallable.cpp.o"
-	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/Surpher.dir/src/SurpherCallable.cpp.o -c /home/chuhanwen/projects/Surpher/src/SurpherCallable.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/han3816/projects/Surpher/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_10) "Building CXX object CMakeFiles/Surpher.dir/src/SurpherCallable.cpp.o"
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/Surpher.dir/src/SurpherCallable.cpp.o -c /home/han3816/projects/Surpher/src/SurpherCallable.cpp
 
 CMakeFiles/Surpher.dir/src/SurpherCallable.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/Surpher.dir/src/SurpherCallable.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/chuhanwen/projects/Surpher/src/SurpherCallable.cpp > CMakeFiles/Surpher.dir/src/SurpherCallable.cpp.i
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/han3816/projects/Surpher/src/SurpherCallable.cpp > CMakeFiles/Surpher.dir/src/SurpherCallable.cpp.i
 
 CMakeFiles/Surpher.dir/src/SurpherCallable.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/Surpher.dir/src/SurpherCallable.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/chuhanwen/projects/Surpher/src/SurpherCallable.cpp -o CMakeFiles/Surpher.dir/src/SurpherCallable.cpp.s
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/han3816/projects/Surpher/src/SurpherCallable.cpp -o CMakeFiles/Surpher.dir/src/SurpherCallable.cpp.s
 
 CMakeFiles/Surpher.dir/src/Resolver.cpp.o: CMakeFiles/Surpher.dir/flags.make
 CMakeFiles/Surpher.dir/src/Resolver.cpp.o: ../src/Resolver.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/chuhanwen/projects/Surpher/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_12) "Building CXX object CMakeFiles/Surpher.dir/src/Resolver.cpp.o"
-	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/Surpher.dir/src/Resolver.cpp.o -c /home/chuhanwen/projects/Surpher/src/Resolver.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/han3816/projects/Surpher/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_11) "Building CXX object CMakeFiles/Surpher.dir/src/Resolver.cpp.o"
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/Surpher.dir/src/Resolver.cpp.o -c /home/han3816/projects/Surpher/src/Resolver.cpp
 
 CMakeFiles/Surpher.dir/src/Resolver.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/Surpher.dir/src/Resolver.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/chuhanwen/projects/Surpher/src/Resolver.cpp > CMakeFiles/Surpher.dir/src/Resolver.cpp.i
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/han3816/projects/Surpher/src/Resolver.cpp > CMakeFiles/Surpher.dir/src/Resolver.cpp.i
 
 CMakeFiles/Surpher.dir/src/Resolver.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/Surpher.dir/src/Resolver.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/chuhanwen/projects/Surpher/src/Resolver.cpp -o CMakeFiles/Surpher.dir/src/Resolver.cpp.s
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/han3816/projects/Surpher/src/Resolver.cpp -o CMakeFiles/Surpher.dir/src/Resolver.cpp.s
 
 CMakeFiles/Surpher.dir/src/SurpherInstance.cpp.o: CMakeFiles/Surpher.dir/flags.make
 CMakeFiles/Surpher.dir/src/SurpherInstance.cpp.o: ../src/SurpherInstance.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/chuhanwen/projects/Surpher/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_13) "Building CXX object CMakeFiles/Surpher.dir/src/SurpherInstance.cpp.o"
-	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/Surpher.dir/src/SurpherInstance.cpp.o -c /home/chuhanwen/projects/Surpher/src/SurpherInstance.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/han3816/projects/Surpher/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_12) "Building CXX object CMakeFiles/Surpher.dir/src/SurpherInstance.cpp.o"
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/Surpher.dir/src/SurpherInstance.cpp.o -c /home/han3816/projects/Surpher/src/SurpherInstance.cpp
 
 CMakeFiles/Surpher.dir/src/SurpherInstance.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/Surpher.dir/src/SurpherInstance.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/chuhanwen/projects/Surpher/src/SurpherInstance.cpp > CMakeFiles/Surpher.dir/src/SurpherInstance.cpp.i
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/han3816/projects/Surpher/src/SurpherInstance.cpp > CMakeFiles/Surpher.dir/src/SurpherInstance.cpp.i
 
 CMakeFiles/Surpher.dir/src/SurpherInstance.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/Surpher.dir/src/SurpherInstance.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/chuhanwen/projects/Surpher/src/SurpherInstance.cpp -o CMakeFiles/Surpher.dir/src/SurpherInstance.cpp.s
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/han3816/projects/Surpher/src/SurpherInstance.cpp -o CMakeFiles/Surpher.dir/src/SurpherInstance.cpp.s
 
 # Object files for target Surpher
 Surpher_OBJECTS = \
@@ -232,7 +219,6 @@ Surpher_OBJECTS = \
 "CMakeFiles/Surpher.dir/src/Surpher.cpp.o" \
 "CMakeFiles/Surpher.dir/src/Token.cpp.o" \
 "CMakeFiles/Surpher.dir/src/Expr.cpp.o" \
-"CMakeFiles/Surpher.dir/src/AstPrinter.cpp.o" \
 "CMakeFiles/Surpher.dir/src/Parser.cpp.o" \
 "CMakeFiles/Surpher.dir/src/Error.cpp.o" \
 "CMakeFiles/Surpher.dir/src/Interpreter.cpp.o" \
@@ -249,7 +235,6 @@ Surpher: CMakeFiles/Surpher.dir/src/Lexer.cpp.o
 Surpher: CMakeFiles/Surpher.dir/src/Surpher.cpp.o
 Surpher: CMakeFiles/Surpher.dir/src/Token.cpp.o
 Surpher: CMakeFiles/Surpher.dir/src/Expr.cpp.o
-Surpher: CMakeFiles/Surpher.dir/src/AstPrinter.cpp.o
 Surpher: CMakeFiles/Surpher.dir/src/Parser.cpp.o
 Surpher: CMakeFiles/Surpher.dir/src/Error.cpp.o
 Surpher: CMakeFiles/Surpher.dir/src/Interpreter.cpp.o
@@ -260,7 +245,7 @@ Surpher: CMakeFiles/Surpher.dir/src/Resolver.cpp.o
 Surpher: CMakeFiles/Surpher.dir/src/SurpherInstance.cpp.o
 Surpher: CMakeFiles/Surpher.dir/build.make
 Surpher: CMakeFiles/Surpher.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/chuhanwen/projects/Surpher/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_14) "Linking CXX executable Surpher"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/han3816/projects/Surpher/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_13) "Linking CXX executable Surpher"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/Surpher.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.
@@ -273,6 +258,6 @@ CMakeFiles/Surpher.dir/clean:
 .PHONY : CMakeFiles/Surpher.dir/clean
 
 CMakeFiles/Surpher.dir/depend:
-	cd /home/chuhanwen/projects/Surpher/cmake-build-debug && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/chuhanwen/projects/Surpher /home/chuhanwen/projects/Surpher /home/chuhanwen/projects/Surpher/cmake-build-debug /home/chuhanwen/projects/Surpher/cmake-build-debug /home/chuhanwen/projects/Surpher/cmake-build-debug/CMakeFiles/Surpher.dir/DependInfo.cmake --color=$(COLOR)
+	cd /home/han3816/projects/Surpher/cmake-build-debug && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/han3816/projects/Surpher /home/han3816/projects/Surpher /home/han3816/projects/Surpher/cmake-build-debug /home/han3816/projects/Surpher/cmake-build-debug /home/han3816/projects/Surpher/cmake-build-debug/CMakeFiles/Surpher.dir/DependInfo.cmake --color=$(COLOR)
 .PHONY : CMakeFiles/Surpher.dir/depend
 

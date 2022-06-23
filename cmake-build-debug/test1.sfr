@@ -20,8 +20,8 @@ print "time used: " + (clock() - timer);
 print "";
 
 timer = clock();
-print "calculating fibonacci(40) using y combinator:";
-print y_combinator(fibonacci)(40);
+print "calculating fibonacci(20) using y combinator:";
+print y_combinator(fibonacci)(20);
 print "time used: " + (clock() - timer);
 print "";
 
