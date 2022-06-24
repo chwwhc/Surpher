@@ -1,5 +1,5 @@
-#ifndef CPPSURPHER_PARSER_HPP
-#define CPPSURPHER_PARSER_HPP
+#ifndef SURPHER_PARSER_HPP
+#define SURPHER_PARSER_HPP
 
 #include <memory>
 #include <vector>
@@ -112,4 +112,4 @@ public:
     std::vector<std::shared_ptr<Stmt>> parse();
 };
 
-#endif //CPPSURPHER_PARSER_HPP
+#endif //SURPHER_PARSER_HPP

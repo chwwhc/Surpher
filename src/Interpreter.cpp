@@ -221,10 +221,12 @@ std::string Interpreter::stringify(const std::any &value) {
         return std::any_cast<bool>(value) ? "true"s : "false"s;
     } else if (value.type() == typeid(long long)) {
         return std::to_string(std::any_cast<long long>(value));
-    } else if (value.type() == typeid(std::shared_ptr<SurpherCallable>)) {
-        return (std::any_cast<std::shared_ptr<SurpherCallable>>(value))->SurpherCallableToString();
+    } else if (value.type() == typeid(std::shared_ptr<SurpherFunction>)) {
+        return (std::any_cast<std::shared_ptr<SurpherFunction>>(value))->SurpherCallableToString();
     } else if (value.type() == typeid(std::shared_ptr<SurpherInstance>)) {
         return (std::any_cast<std::shared_ptr<SurpherInstance>>(value))->SurpherInstanceToString();
+    } else if (value.type() == typeid(std::shared_ptr<SurpherClass>)){
+        return (std::any_cast<std::shared_ptr<SurpherClass>>(value))->SurpherCallableToString();
     }
     return "Error in stringify: un-recognized literal type."s;
 }

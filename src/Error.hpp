@@ -1,5 +1,5 @@
-#ifndef CPPSURPHER_ERROR_HPP
-#define CPPSURPHER_ERROR_HPP
+#ifndef SURPHER_ERROR_HPP
+#define SURPHER_ERROR_HPP
 
 #include <string_view>
 
@@ -45,4 +45,4 @@ void continueError(const ContinueError &error);
 void breakError(const BreakError &error);
 
 
-#endif //CPPSURPHER_ERROR_HPP
+#endif //SURPHER_ERROR_HPP

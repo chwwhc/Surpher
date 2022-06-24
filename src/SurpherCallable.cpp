@@ -76,7 +76,7 @@ uint32_t SurpherClass::arity() {
 }
 
 std::string SurpherClass::SurpherCallableToString() {
-    return name;
+    return "<class " + name + ">";
 }
 
 std::shared_ptr<SurpherFunction> SurpherClass::findInstanceMethod(const std::string &methodName) {

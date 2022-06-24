@@ -1,5 +1,5 @@
-#ifndef CPPSURPHER_LEXER_HPP
-#define CPPSURPHER_LEXER_HPP
+#ifndef SURPHER_LEXER_HPP
+#define SURPHER_LEXER_HPP
 
 #include <string>
 #include <vector>
@@ -48,4 +48,4 @@ public:
     std::vector<Token> scanTokens();
 };
 
-#endif // CPPSURPHER_LEXER_HPP
+#endif // SURPHER_LEXER_HPP

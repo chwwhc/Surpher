@@ -1,5 +1,5 @@
-#ifndef CPPSURPHER_INTERPRETER_HPP
-#define CPPSURPHER_INTERPRETER_HPP
+#ifndef SURPHER_INTERPRETER_HPP
+#define SURPHER_INTERPRETER_HPP
 
 #include <functional>
 #include <numeric>
@@ -97,4 +97,4 @@ public:
     void interpret(const std::vector<std::shared_ptr<Stmt>> &statements);
 };
 
-#endif //CPPSURPHER_INTERPRETER_HPP
+#endif //SURPHER_INTERPRETER_HPP

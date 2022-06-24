@@ -1,5 +1,5 @@
-#ifndef CPPSURPHER_TOKEN_HPP
-#define CPPSURPHER_TOKEN_HPP
+#ifndef SURPHER_TOKEN_HPP
+#define SURPHER_TOKEN_HPP
 
 #include <string>
 #include <iostream>
@@ -80,4 +80,4 @@ typedef struct Token {
 
 std::ostream &operator<<(std::ostream &strm, const Token &tok);
 
-#endif // CPPSURPHER_TOKEN_HPP
+#endif // SURPHER_TOKEN_HPP

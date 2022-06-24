@@ -1,5 +1,5 @@
-#ifndef CPPSURPHER_EXPR_HPP
-#define CPPSURPHER_EXPR_HPP
+#ifndef SURPHER_EXPR_HPP
+#define SURPHER_EXPR_HPP
 
 #include <memory>
 #include <any>
@@ -188,4 +188,4 @@ struct Super : Expr, public std::enable_shared_from_this<Super>{
     std::any accept(ExprVisitor &visitor) override;
 };
 
-#endif //CPPSURPHER_EXPR_HPP
+#endif //SURPHER_EXPR_HPP
