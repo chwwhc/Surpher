@@ -28,7 +28,8 @@ std::map<std::string, TokenType> keyWords = {
         {"newtype",  NEWTYPE},
         {"print",    PRINT},
         {"and", AND},
-        {"or", OR}};
+        {"or", OR},
+        {"virtual", VIRTUAL}};
 
 Lexer::Lexer(std::string source_code) : source_code(std::move(source_code)) {
 }
@@ -154,10 +155,10 @@ void Lexer::scanToken() {
             addToken(RIGHT_BRACE);
             break;
         case '[':
-            addToken(RIGHT_BRACKET);
+            addToken(LEFT_BRACKET);
             break;
         case ']':
-            addToken(LEFT_BRACKET);
+            addToken(RIGHT_BRACKET);
             break;
         case ',':
             addToken(COMMA);

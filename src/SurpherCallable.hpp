@@ -21,6 +21,7 @@ struct SurpherCallable{
 struct SurpherFunction : SurpherCallable{
     const bool is_initializer;
     const bool is_partial;
+    const bool is_virtual;
     const std::shared_ptr<Environment> closure;
     const std::shared_ptr<Function> declaration;
 

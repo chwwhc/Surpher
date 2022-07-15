@@ -64,6 +64,7 @@ enum TokenType {
     PRINT,
     AND,
     OR,
+    VIRTUAL,
 
     EOF_TOKEN
 };

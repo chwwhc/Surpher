@@ -224,7 +224,7 @@ std::any Resolver::visitTernaryExpr(const std::shared_ptr<Ternary> &expr) {
 
 std::any Resolver::visitLambdaExpr(const std::shared_ptr<Lambda> &expr) {
     std::vector<std::shared_ptr<Stmt>> lambda_return{std::make_shared<Return>(Token("", {}, RETURN, 1), expr->body)};
-    std::shared_ptr<Function> lambda_fun = std::make_shared<Function>(expr->name, expr->params, lambda_return);
+    std::shared_ptr<Function> lambda_fun = std::make_shared<Function>(expr->name, expr->params, lambda_return, false);
     return visitFunctionStmt(lambda_fun);
 }
 
@@ -255,6 +255,8 @@ std::any Resolver::visitClassStmt(const std::shared_ptr<Class> &stmt) {
     scopes.top()["this"] = true;
 
     for (const auto &i: stmt->instance_methods) {
+        if(i->is_virtual) continue;
+
         FunctionType declaration = FunctionType::METHOD;
         if (i->name.lexeme == "init") {
             declaration = FunctionType::INITIALIZER;
@@ -263,6 +265,8 @@ std::any Resolver::visitClassStmt(const std::shared_ptr<Class> &stmt) {
     }
 
     for (const auto &c: stmt->class_methods) {
+        if(c->is_virtual) continue;
+
         FunctionType declaration = FunctionType::METHOD;
         if (c->name.lexeme == "init") {
             error(c->name, "'init' can't be a class method.");

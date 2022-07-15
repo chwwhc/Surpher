@@ -16,6 +16,8 @@ Some add-on features to vanilla Lox:
 <ul>
 <li>Runtime optimization for recursive functions by caching</li>
 <li>Maximum recursion depth of 4096 to avoid stackoverflow error</li>
+<li>Virtual methods in classes</li>
+<li>Static and non-static methods in classes</li>
 </ul>
 
 ## How to use
@@ -94,7 +96,7 @@ primary        → "true" | "false" | "nil" | "this"
                | NUMBER | STRING | IDENTIFIER | "(" expression ")"
                | "super" "." IDENTIFIER | "/\" IDENTIFIER "." expression ;
                
-function       → IDENTIFIER "(" parameters? ")" block ;
+function       → "virtual"? "class"? IDENTIFIER "(" parameters? ")" block ;
 parameters     → IDENTIFIER ( "," IDENTIFIER )* ;
 arguments      → expression ( "," expression )* ;
 

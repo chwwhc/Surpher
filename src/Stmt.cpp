@@ -31,7 +31,7 @@ std::any Var::accept(StmtVisitor &visitor) {
 
 If::If(std::shared_ptr<Expr> condition, std::shared_ptr<Stmt> true_branch,
        std::optional<std::shared_ptr<Stmt>> else_branch)
-        : condition{std::move(condition)}, true_branch{std::move(true_branch)}, else_branch{std::move(else_branch)} {
+        : condition(std::move(condition)), true_branch(std::move(true_branch)), else_branch(std::move(else_branch)) {
 
 }
 
@@ -39,8 +39,8 @@ std::any If::accept(StmtVisitor &visitor) {
     return visitor.visitIfStmt(shared_from_this());
 }
 
-While::While(std::shared_ptr<Expr> condition, std::shared_ptr<Stmt> body) : condition{std::move(condition)},
-                                                                            body{std::move(body)} {
+While::While(std::shared_ptr<Expr> condition, std::shared_ptr<Stmt> body) : condition(std::move(condition)),
+                                                                            body(std::move(body)) {
 
 }
 
@@ -64,8 +64,9 @@ Continue::Continue(Token continue_tok) : continue_tok{std::move(continue_tok)} {
 
 }
 
-Function::Function(Token name, std::vector<Token> params, std::vector<std::shared_ptr<Stmt>> body) : name(
-        std::move(name)), params(std::move(params)), body(std::move(body)) {
+Function::Function(Token name, std::vector<Token> params, std::vector<std::shared_ptr<Stmt>> body, bool is_virtual)
+        : name(
+        std::move(name)), params(std::move(params)), body(std::move(body)), is_virtual(is_virtual) {
 
 }
 

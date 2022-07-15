@@ -323,14 +323,19 @@ std::any Interpreter::visitCallExpr(const std::shared_ptr<Call> &expr) {
 
     if (callee.type() == typeid(std::shared_ptr<SurpherFunction>)) {
         auto fun_callable = std::static_pointer_cast<SurpherFunction>(std::any_cast<std::shared_ptr<SurpherFunction>>(callee));
+        if(fun_callable->is_virtual){
+            throw RuntimeError(fun_callable->declaration->name, "Cannot invoke a virtual method.");
+        }
 
         if (arguments.size() > fun_callable->arity()) {
             throw RuntimeError(expr->paren, "Expected " + std::to_string(fun_callable->arity()) + " arguments but got " +
                                             std::to_string(arguments.size()) + ".");
         }else if (arguments.size() < fun_callable->arity()) {
-            std::shared_ptr<Function> partial_fun = std::make_shared<Function>(Token("0" + fun_callable->declaration->name.lexeme, fun_callable->declaration->name.literal, fun_callable->declaration->name.token_type, fun_callable->declaration->name.line),
-                                                                               std::vector<Token>(fun_callable->declaration->params.begin() + arguments.size(), fun_callable->declaration->params.end()),
-                                                          fun_callable->declaration->body);
+            std::shared_ptr<Function> partial_fun = std::make_shared<Function>(Token("0" + fun_callable->declaration->name.lexeme, fun_callable->declaration->name.literal,
+                                                                                     fun_callable->declaration->name.token_type, fun_callable->declaration->name.line),
+                                                                               std::vector<Token>(fun_callable->declaration->params.begin() + arguments.size(),
+                                                                                                  fun_callable->declaration->params.end()),
+                                                                                fun_callable->declaration->body, fun_callable->is_virtual);
             for (size_t i = 0; i < arguments.size(); i++) {
                 fun_callable->closure->define(fun_callable->declaration->params[i].lexeme, arguments[i]);
             }
@@ -387,7 +392,7 @@ std::any Interpreter::visitReturnStmt(const std::shared_ptr<Return> &stmt) {
 std::any Interpreter::visitLambdaExpr(const std::shared_ptr<Lambda> &expr) {
     std::vector<std::shared_ptr<Stmt>> lambda_return{std::make_shared<Return>(Token("return", {}, RETURN, expr->name.line), expr->body)};
     auto function = std::make_shared<SurpherFunction>(
-            std::make_shared<Function>(expr->name, expr->params, std::move(lambda_return)), environment, false, false);
+            std::make_shared<Function>(expr->name, expr->params, std::move(lambda_return), false), environment, false, false);
     return function;
 }
 
@@ -409,41 +414,67 @@ std::any Interpreter::lookUpVariable(const Token &name, const std::shared_ptr<Ex
 }
 
 std::any Interpreter::visitClassStmt(const std::shared_ptr<Class> &stmt) {
-    std::any superclass = std::shared_ptr<SurpherClass>();
-    if (stmt->superclass.has_value()) {
-        superclass = evaluate(stmt->superclass.value());
-        if (superclass.type() != typeid(std::shared_ptr<SurpherClass>)) {
-            throw RuntimeError(stmt->superclass.value()->name, "Superclass must be a class.");
+    try {
+        globals->get(stmt->name);
+    } catch (RuntimeError& e) {
+
+        std::any superclass = std::shared_ptr<SurpherClass>();
+        std::unordered_map<std::string, std::shared_ptr<SurpherFunction>> superclass_instance_methods;
+        std::unordered_map<std::string, std::shared_ptr<SurpherFunction>> superclass_class_methods;
+
+        if (stmt->superclass.has_value()) {
+            superclass = evaluate(stmt->superclass.value());
+            if (superclass.type() != typeid(std::shared_ptr<SurpherClass>)) {
+                throw RuntimeError(stmt->superclass.value()->name, "Superclass must be a class.");
+            }
+
+            auto superclass_cast = std::any_cast<std::shared_ptr<SurpherClass>>(superclass);
+            superclass_class_methods = superclass_cast->class_methods;
+            superclass_instance_methods = superclass_cast->instance_methods;
         }
+
+        std::unordered_map<std::string, std::shared_ptr<SurpherFunction>> instance_methods;
+        std::unordered_map<std::string, std::shared_ptr<SurpherFunction>> class_methods;
+        for (const auto &i: stmt->instance_methods) {
+            auto function = std::make_shared<SurpherFunction>(i, environment, i->name.lexeme == "init", false);
+            instance_methods[i->name.lexeme] = function;
+        }
+        for (const auto &c: stmt->class_methods) {
+            auto function = std::make_shared<SurpherFunction>(c, environment, false, false);
+            class_methods[c->name.lexeme] = function;
+        }
+
+        for(const auto& i: superclass_instance_methods){
+            if(i.second->is_virtual && (instance_methods.find(i.first) == instance_methods.end() || instance_methods[i.first]->is_virtual)){
+                environment->erase(stmt->name.lexeme);
+                throw RuntimeError(i.second->declaration->name, "Derived class must implement virtual method \"" + i.first + "\" in the super class.");
+            }
+        }
+        for(const auto& c: superclass_class_methods){
+            if(c.second->is_virtual && (class_methods.find(c.first) == class_methods.end() || class_methods[c.first]->is_virtual)){
+                environment->erase(stmt->name.lexeme);
+                throw RuntimeError(c.second->declaration->name, "Derived class must implement virtual method \"" + c.first + "\" in the super class.");
+            }
+        }
+
+        environment->define(stmt->name.lexeme, {});
+
+        if (stmt->superclass != nullptr) {
+            environment = std::make_shared<Environment>(environment);
+            environment->define("super", superclass);
+        }
+
+        auto surpher_class = std::make_shared<SurpherClass>(stmt->name.lexeme, instance_methods, class_methods,
+                                                            std::any_cast<std::shared_ptr<SurpherClass>>(superclass));
+
+        if (stmt->superclass != nullptr) {
+            environment = environment->getEnclosing();
+        }
+
+        environment->assign(stmt->name, surpher_class);
+        return {};
     }
-
-    environment->define(stmt->name.lexeme, {});
-
-    if (stmt->superclass != nullptr) {
-        environment = std::make_shared<Environment>(environment);
-        environment->define("super", superclass);
-    }
-
-    std::unordered_map<std::string, std::shared_ptr<SurpherFunction>> instance_methods;
-    std::unordered_map<std::string, std::shared_ptr<SurpherFunction>> class_methods;
-    for (const auto &i: stmt->instance_methods) {
-        auto function = std::make_shared<SurpherFunction>(i, environment, i->name.lexeme == "init", false);
-        instance_methods[i->name.lexeme] = function;
-    }
-    for (const auto &c: stmt->class_methods) {
-        auto function = std::make_shared<SurpherFunction>(c, environment, false, false);
-        class_methods[c->name.lexeme] = function;
-    }
-
-    auto surpher_class = std::make_shared<SurpherClass>(stmt->name.lexeme, instance_methods, class_methods,
-                                                        std::any_cast<std::shared_ptr<SurpherClass>>(superclass));
-
-    if (stmt->superclass != nullptr) {
-        environment = environment->getEnclosing();
-    }
-
-    environment->assign(stmt->name, surpher_class);
-    return {};
+    throw RuntimeError(stmt->name, "Cannot re-declare a class.");
 }
 
 std::any Interpreter::visitGetExpr(const std::shared_ptr<Get> &expr) {

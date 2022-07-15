@@ -15,6 +15,8 @@ public:
 
     void define(const std::string &var, std::any val);
 
+    void erase(const std::string &var);
+
     void assign(const Token &name, std::any value);
 
     void assignAt(uint32_t distance, const Token &name, std::any value);

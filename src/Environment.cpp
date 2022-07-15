@@ -55,3 +55,7 @@ void Environment::assignAt(uint32_t distance, const Token &name, std::any value)
 std::shared_ptr<Environment> Environment::getEnclosing() {
     return enclosing;
 }
+
+void Environment::erase(const std::string &var) {
+    var_val_pairs.erase(var);
+}

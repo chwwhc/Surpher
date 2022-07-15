@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
   <component name="CMakeReloadState">
     <option name="reloaded" value="true" />
   </component>
@@ -16,58 +19,18 @@
   <component name="ChangeListManager">
     <list default="true" id="7a543f62-54f1-4d89-9ce5-22fa4a010cd9" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/CMakeLists.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmake-build-debug/.cmake/api/v1/reply/codemodel-v2-779227066e4b8e766eb4.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmake-build-debug/.cmake/api/v1/reply/index-2022-06-23T05-03-17-0403.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmake-build-debug/.cmake/api/v1/reply/target-Surpher-Debug-07cd8fcedfd521241bb8.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/CMakeOutput.log" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/CMakeOutput.log" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/Makefile2" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/Makefile2" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/Surpher.dir/CXX.includecache" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/Surpher.dir/CXX.includecache" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/Surpher.dir/DependInfo.cmake" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/Surpher.dir/DependInfo.cmake" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/Surpher.dir/build.make" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/Surpher.dir/build.make" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/Surpher.dir/cmake_clean.cmake" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/Surpher.dir/cmake_clean.cmake" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/Surpher.dir/depend.internal" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/Surpher.dir/depend.internal" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/Surpher.dir/depend.make" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/Surpher.dir/depend.make" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/Surpher.dir/link.txt" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/Surpher.dir/link.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/Surpher.dir/progress.make" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/Surpher.dir/progress.make" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/Surpher.dir/src/Environment.cpp.o" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/Surpher.dir/src/Environment.cpp.o" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/Surpher.dir/src/Error.cpp.o" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/Surpher.dir/src/Error.cpp.o" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/Surpher.dir/src/Expr.cpp.o" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/Surpher.dir/src/Expr.cpp.o" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/Surpher.dir/src/Interpreter.cpp.o" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/Surpher.dir/src/Interpreter.cpp.o" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/Surpher.dir/src/Lexer.cpp.o" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/Surpher.dir/src/Lexer.cpp.o" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/Surpher.dir/src/Parser.cpp.o" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/Surpher.dir/src/Parser.cpp.o" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/Surpher.dir/src/Resolver.cpp.o" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/Surpher.dir/src/Resolver.cpp.o" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/Surpher.dir/src/Stmt.cpp.o" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/Surpher.dir/src/Stmt.cpp.o" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/Surpher.dir/src/Surpher.cpp.o" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/Surpher.dir/src/Surpher.cpp.o" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/Surpher.dir/src/SurpherCallable.cpp.o" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/Surpher.dir/src/SurpherCallable.cpp.o" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/Surpher.dir/src/SurpherInstance.cpp.o" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/Surpher.dir/src/SurpherInstance.cpp.o" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/Surpher.dir/src/Token.cpp.o" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/Surpher.dir/src/Token.cpp.o" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/progress.marks" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/progress.marks" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmake-build-debug/Makefile" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/Makefile" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmake-build-debug/Surpher" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/Surpher" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmake-build-debug/Surpher.cbp" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/Surpher.cbp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/.cmake/api/v1/reply/cmakeFiles-v1-ae32e8839f7837615ea3.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/.cmake/api/v1/reply/index-2022-07-14T05-04-39-0962.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/Makefile.cmake" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/Makefile.cmake" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/clion-log.txt" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/clion-log.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/cmake-build-debug/Testing/Temporary/LastTest.log" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/Testing/Temporary/LastTest.log" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmake-build-debug/test1.sfr" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/test1.sfr" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Environment.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/Environment.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Environment.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/Environment.hpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Error.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/Error.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Error.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/Error.hpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Interpreter.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/Interpreter.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Interpreter.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/Interpreter.hpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Lexer.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/Lexer.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Lexer.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/Lexer.hpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Parser.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/Parser.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Parser.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/Parser.hpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Resolver.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/Resolver.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Resolver.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/Resolver.hpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Stmt.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/Stmt.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Stmt.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/Stmt.hpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Surpher.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/Surpher.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/SurpherCallable.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/SurpherCallable.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/SurpherCallable.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/SurpherCallable.hpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/SurpherInstance.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/SurpherInstance.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/SurpherInstance.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/SurpherInstance.hpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Token.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/Token.hpp" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -107,7 +70,7 @@
     &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
     &quot;cf.first.check.clang-format&quot;: &quot;false&quot;,
     &quot;cidr.known.project.marker&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;//wsl$/Ubuntu-20.04/home/han3816/projects/Surpher&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/zhuhanwen/Desktop/tmp/Surpher-main&quot;,
     &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
     &quot;settings.editor.selected.configurable&quot;: &quot;CPPToolchains&quot;
   }
@@ -123,6 +86,11 @@
   </component>
   <component name="RunManager">
     <configuration name="Surpher" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="Surpher" TARGET_NAME="Surpher" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="Surpher" RUN_TARGET_NAME="Surpher">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration default="true" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true">
       <method v="2">
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
       </method>
@@ -174,7 +142,10 @@
       <workItem from="1657774701195" duration="158000" />
       <workItem from="1657774974616" duration="7046000" />
       <workItem from="1657827276599" duration="6362000" />
-      <workItem from="1657855933705" duration="1344000" />
+      <workItem from="1657855933705" duration="1613000" />
+      <workItem from="1657858576210" duration="42000" />
+      <workItem from="1657864722874" duration="3531000" />
+      <workItem from="1657911058467" duration="5483000" />
     </task>
     <servers />
   </component>
@@ -199,6 +170,11 @@
           <url>file://$PROJECT_DIR$/src/tool/ASTPrinter.cpp</url>
           <line>162</line>
           <option name="timeStamp" value="1" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
+          <url>file://$PROJECT_DIR$/src/Interpreter.cpp</url>
+          <line>473</line>
+          <option name="timeStamp" value="2" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

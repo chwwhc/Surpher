@@ -6,10 +6,9 @@
 #include "Interpreter.hpp"
 
 SurpherFunction::SurpherFunction(std::shared_ptr<Function> declaration, std::shared_ptr<Environment> closure,
-                                 bool is_initializer, bool is_partial) : declaration(std::move(declaration)),
+                                 bool is_initializer, bool is_partial) : is_virtual(declaration->is_virtual), declaration(std::move(declaration)),
                                                         closure(std::move(closure)), is_initializer(is_initializer),
                                                         is_partial(is_partial) {
-
 }
 
 std::any SurpherFunction::call(Interpreter &interpreter, const std::vector<std::any> &arguments) {

@@ -173,8 +173,15 @@ std::shared_ptr<Stmt> Parser::statement() {
     }
 }
 
-std::shared_ptr<Function> Parser::functionStatement(const std::string &type) {
+std::shared_ptr<Function> Parser::functionStatement(const std::string &type, const bool &is_virtual) {
     Token name = consume(IDENTIFIER, "Expect " + type + " name.");
+    if(is_virtual){
+        consume(LEFT_PAREN, "Expect '(' after declaring a virtual function.");
+        consume(RIGHT_PAREN, "Expect ')' after declaring a virtual function.");
+        consume(SINGLE_SEMICOLON, "Expect ';' after declaring a virtual function.");
+        return std::make_shared<Function>(name, std::vector<Token>(), std::vector<std::shared_ptr<Stmt>>(), is_virtual);
+    }
+
     consume(LEFT_PAREN, "Expect '(' after " + type + " name.");
     std::vector<Token> params;
     if (!check(RIGHT_PAREN)) {
@@ -186,7 +193,7 @@ std::shared_ptr<Function> Parser::functionStatement(const std::string &type) {
 
     consume(LEFT_BRACE, "Expect '{' before " + type + " body.");
     auto body = blockStatement();
-    return std::make_shared<Function>(name, params, body);
+    return std::make_shared<Function>(name, params, body, is_virtual);
 }
 
 std::shared_ptr<Stmt> Parser::returnStatement() {
@@ -275,9 +282,9 @@ std::shared_ptr<Stmt> Parser::ifStatement() {
 std::shared_ptr<Stmt> Parser::declaration() {
     try {
         if (match(FUN)) {
-            return functionStatement("function");
+            return functionStatement("function", false);
         } else if (match(VAR)) {
-            return varDeclaration();
+                return varDeclaration();
         } else if (match(CLASS)) {
             return classDeclaration();
         }
@@ -336,12 +343,16 @@ std::shared_ptr<Stmt> Parser::classDeclaration() {
     std::vector<std::shared_ptr<Function>> class_methods;
     std::vector<std::shared_ptr<Function>> instance_methods;
     while (!isAtEnd() && !check(RIGHT_BRACE)) {
-        if (check(CLASS)) {
-            anyToken();
-            class_methods.emplace_back(functionStatement("class_method"));
-            continue;
+        bool is_virtual = false;
+        if(match(VIRTUAL)){
+            is_virtual = true;
         }
-        instance_methods.emplace_back(functionStatement("instance_method"));
+
+        if (match(CLASS)) {
+            class_methods.emplace_back(functionStatement("class_method", is_virtual));
+        } else {
+            instance_methods.emplace_back(functionStatement("instance_method", is_virtual));
+        }
     }
 
     consume(RIGHT_BRACE, "Expect '}' after class body.");

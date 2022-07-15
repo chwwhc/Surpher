@@ -129,8 +129,9 @@ struct Function : Stmt, public std::enable_shared_from_this<Function> {
     const Token name;
     const std::vector<Token> params;
     const std::vector<std::shared_ptr<Stmt>> body;
+    const bool is_virtual;
 
-    Function(Token name, std::vector<Token> params, std::vector<std::shared_ptr<Stmt>> body);
+    Function(Token name, std::vector<Token> params, std::vector<std::shared_ptr<Stmt>> body, bool is_virtual);
 
     std::any accept(StmtVisitor &visitor) override;
 };
