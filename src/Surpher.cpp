@@ -10,10 +10,23 @@
 #include "Error.hpp"
 #include "Interpreter.hpp"
 #include "Resolver.hpp"
+#include "./tool/ASTPrinter.hpp"
 
 static Interpreter interpreter{};
 
-void run(const std::string &source) {
+enum mode{
+    INTERPRET,
+    PRINT_AST
+};
+
+void printAST(const std::vector<std::shared_ptr<Stmt>>& statements){
+    ASTPrinter printer;
+    std::cout << "[";
+    for(const auto& s: statements) std::cout << std::any_cast<std::string>(s->accept(printer)) << ",\n";
+    std::cout << "]\n";
+}
+
+void run(const std::string &source, const mode& mode) {
     Lexer lexer(source);
     std::vector<Token> tokens = lexer.scanTokens();
     Parser parser(tokens);
@@ -30,10 +43,20 @@ void run(const std::string &source) {
         return;
     }
 
-    interpreter.interpret(statements);
+    switch (mode) {
+        case PRINT_AST:
+            printAST(statements);
+            break;
+        case INTERPRET:
+            interpreter.interpret(statements);
+            break;
+        default:
+            interpreter.interpret(statements);
+    }
+    //interpreter.interpret(statements);
 }
 
-void runScript(const std::string &path) {
+void runScript(const std::string &path, const mode& mode) {
 
     std::ifstream input_file(path);
     if (input_file.fail()) {
@@ -44,8 +67,7 @@ void runScript(const std::string &path) {
     std::stringstream source_code;
     source_code << input_file.rdbuf();
 
-
-    run(source_code.str());
+    run(source_code.str(), mode);
     if (had_error) {
         std::exit(65);
     } else if (had_runtime_error) {
@@ -68,10 +90,18 @@ void runRepl() {
                 curr++;
             }
             std::string file_path = cmd.substr(curr, cmd.size() - curr);
-            runScript(file_path);
+            runScript(file_path, INTERPRET);
+            continue;
+        } else if(cmd.substr(0, 9) == "!printAST"){
+            uint32_t curr = 9;
+            while (curr < cmd.size() && cmd[curr] == ' ') {
+                curr++;
+            }
+            std::string file_path = cmd.substr(curr, cmd.size() - curr);
+            runScript(file_path, PRINT_AST);
             continue;
         }
-        run(cmd);
+        run(cmd, INTERPRET);
         cmd.clear();
         had_error = false;
     }

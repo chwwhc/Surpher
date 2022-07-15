@@ -1,4 +1,7 @@
 #include "Parser.hpp"
+#include "Expr.hpp"
+#include "Stmt.hpp"
+#include "Error.hpp"
 
 uint32_t Parser::lambdaCount = 0;
 
@@ -322,10 +325,10 @@ std::shared_ptr<Stmt> Parser::printStatement() {
 std::shared_ptr<Stmt> Parser::classDeclaration() {
     Token name = consume(IDENTIFIER, "Expect class name.");
 
-    std::shared_ptr<Variable> superclass;
+    std::optional<std::shared_ptr<Variable>> superclass;
     if (match(LESS)) {
         consume(IDENTIFIER, "Expect superclass name.");
-        superclass = std::make_shared<Variable>(previous());
+        superclass = std::optional(std::make_shared<Variable>(previous()));
     }
 
     consume(LEFT_BRACE, "Expect '{' before class body.");

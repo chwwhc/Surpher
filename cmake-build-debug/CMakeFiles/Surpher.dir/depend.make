@@ -43,8 +43,6 @@ CMakeFiles/Surpher.dir/src/Resolver.cpp.o: ../src/Interpreter.hpp
 CMakeFiles/Surpher.dir/src/Resolver.cpp.o: ../src/Resolver.cpp
 CMakeFiles/Surpher.dir/src/Resolver.cpp.o: ../src/Resolver.hpp
 CMakeFiles/Surpher.dir/src/Resolver.cpp.o: ../src/Stmt.hpp
-CMakeFiles/Surpher.dir/src/Resolver.cpp.o: ../src/SurpherCallable.hpp
-CMakeFiles/Surpher.dir/src/Resolver.cpp.o: ../src/SurpherInstance.hpp
 CMakeFiles/Surpher.dir/src/Resolver.cpp.o: ../src/Token.hpp
 
 CMakeFiles/Surpher.dir/src/Stmt.cpp.o: ../src/Expr.hpp
@@ -61,9 +59,8 @@ CMakeFiles/Surpher.dir/src/Surpher.cpp.o: ../src/Parser.hpp
 CMakeFiles/Surpher.dir/src/Surpher.cpp.o: ../src/Resolver.hpp
 CMakeFiles/Surpher.dir/src/Surpher.cpp.o: ../src/Stmt.hpp
 CMakeFiles/Surpher.dir/src/Surpher.cpp.o: ../src/Surpher.cpp
-CMakeFiles/Surpher.dir/src/Surpher.cpp.o: ../src/SurpherCallable.hpp
-CMakeFiles/Surpher.dir/src/Surpher.cpp.o: ../src/SurpherInstance.hpp
 CMakeFiles/Surpher.dir/src/Surpher.cpp.o: ../src/Token.hpp
+CMakeFiles/Surpher.dir/src/Surpher.cpp.o: ../src/tool/ASTPrinter.hpp
 
 CMakeFiles/Surpher.dir/src/SurpherCallable.cpp.o: ../src/Environment.hpp
 CMakeFiles/Surpher.dir/src/SurpherCallable.cpp.o: ../src/Error.hpp
@@ -86,4 +83,12 @@ CMakeFiles/Surpher.dir/src/SurpherInstance.cpp.o: ../src/Token.hpp
 
 CMakeFiles/Surpher.dir/src/Token.cpp.o: ../src/Token.cpp
 CMakeFiles/Surpher.dir/src/Token.cpp.o: ../src/Token.hpp
+
+CMakeFiles/Surpher.dir/src/tool/ASTPrinter.cpp.o: ../src/Environment.hpp
+CMakeFiles/Surpher.dir/src/tool/ASTPrinter.cpp.o: ../src/Expr.hpp
+CMakeFiles/Surpher.dir/src/tool/ASTPrinter.cpp.o: ../src/Interpreter.hpp
+CMakeFiles/Surpher.dir/src/tool/ASTPrinter.cpp.o: ../src/Stmt.hpp
+CMakeFiles/Surpher.dir/src/tool/ASTPrinter.cpp.o: ../src/Token.hpp
+CMakeFiles/Surpher.dir/src/tool/ASTPrinter.cpp.o: ../src/tool/ASTPrinter.cpp
+CMakeFiles/Surpher.dir/src/tool/ASTPrinter.cpp.o: ../src/tool/ASTPrinter.hpp
 

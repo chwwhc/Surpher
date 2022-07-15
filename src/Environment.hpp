@@ -3,8 +3,9 @@
 
 #include <unordered_map>
 #include <memory>
-#include "Token.hpp"
-#include "Error.hpp"
+#include <any>
+
+struct Token;
 
 class Environment : public std::enable_shared_from_this<Environment> {
     std::unordered_map<std::string, std::any> var_val_pairs;

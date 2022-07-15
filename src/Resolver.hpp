@@ -3,12 +3,11 @@
 
 #include <stack>
 #include <vector>
-#include <map>
-#include <utility>
+#include <unordered_map>
 #include "Expr.hpp"
 #include "Stmt.hpp"
-#include "Interpreter.hpp"
-#include "Error.hpp"
+
+class Interpreter;
 
 class Resolver : ExprVisitor, StmtVisitor {
     enum class FunctionType {

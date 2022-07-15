@@ -12,6 +12,12 @@ interpreted language that supports object-oriented
 programming and first-class functions. The current Surpher interpreter
 is a tree-walk interpreter implemented in C++17.
 
+Some add-on features to vanilla Lox:
+<ul>
+<li>Runtime optimization for recursive functions by caching</li>
+<li>Maximum recursion depth of 4096 to avoid stackoverflow error</li>
+</ul>
+
 ## How to use
 Run the following command to open the REPL:
 ```
@@ -160,14 +166,9 @@ var partial2 = partial1(2);
 print partial2(3);
 ```
 
-## Features that could be included
-- [ ] exception handling
-- [ ] module
-- [ ] switch...case...
-- [ ] atomic container types(list, set...)
-- [ ] a standard library
-
-Well, you know how these personal projects usually end up with.
-I doubt I'll do them at all.
+## References
+<ul>
+<li><a href="https://craftinginterpreters.com/">Crafting Interpreters</a></li>
+</ul>
 
 

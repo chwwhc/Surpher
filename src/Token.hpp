@@ -68,7 +68,7 @@ enum TokenType {
     EOF_TOKEN
 };
 
-typedef struct Token {
+struct Token {
     const std::string lexeme;
     const std::any literal;
     const TokenType token_type;
@@ -76,7 +76,7 @@ typedef struct Token {
 
     Token(std::string lexeme, std::any literal, const enum TokenType &token_type, const uint32_t &line);
 
-} Token;
+};
 
 std::ostream &operator<<(std::ostream &strm, const Token &tok);
 

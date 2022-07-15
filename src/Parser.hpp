@@ -5,7 +5,6 @@
 #include <vector>
 #include <functional>
 
-#include "Error.hpp"
 #include "Token.hpp"
 #include "Expr.hpp"
 #include "Stmt.hpp"

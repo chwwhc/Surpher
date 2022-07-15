@@ -1,14 +1,13 @@
 #ifndef SURPHER_INTERPRETER_HPP
 #define SURPHER_INTERPRETER_HPP
 
-#include <functional>
-#include <numeric>
 #include "Environment.hpp"
 #include "Expr.hpp"
-#include "Error.hpp"
 #include "Stmt.hpp"
-#include "SurpherCallable.hpp"
-#include "SurpherInstance.hpp"
+
+struct SurpherCallable;
+struct SurpherInstance;
+class SurpherFunction;
 
 using namespace std::string_literals;
 
@@ -16,15 +15,14 @@ class Interpreter : public ExprVisitor, public StmtVisitor {
 public:
     const std::shared_ptr<Environment> globals;
 private:
-
+    std::unordered_map<std::shared_ptr<Call>, std::any> function_val_memoized_tbl;
+    std::unordered_map<std::string, uint32_t> recursion_counter;
     std::shared_ptr<Environment> environment = globals;
     std::unordered_map<std::shared_ptr<Expr>, uint32_t> locals;
 
     static bool isTruthy(const std::any &val);
 
     static bool isEqual(const std::any &a, const std::any &b);
-
-    static std::string stringify(const std::any &val);
 
     static void checkNumberOperands(const Token &operator_token, const std::vector<std::any> &operands);
 
@@ -91,6 +89,8 @@ public:
     std::any visitSuperExpr(const std::shared_ptr<Super> &expr) override;
 
     void resolve(const std::shared_ptr<Expr> &expr, uint32_t depth);
+
+    static std::string stringify(const std::any &val);
 
     Interpreter();
 

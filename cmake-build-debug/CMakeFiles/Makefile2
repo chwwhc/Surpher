@@ -74,12 +74,12 @@ clean: CMakeFiles/Surpher.dir/clean
 CMakeFiles/Surpher.dir/all:
 	$(MAKE) -f CMakeFiles/Surpher.dir/build.make CMakeFiles/Surpher.dir/depend
 	$(MAKE) -f CMakeFiles/Surpher.dir/build.make CMakeFiles/Surpher.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/han3816/projects/Surpher/cmake-build-debug/CMakeFiles --progress-num=1,2,3,4,5,6,7,8,9,10,11,12,13 "Built target Surpher"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/han3816/projects/Surpher/cmake-build-debug/CMakeFiles --progress-num=1,2,3,4,5,6,7,8,9,10,11,12,13,14 "Built target Surpher"
 .PHONY : CMakeFiles/Surpher.dir/all
 
 # Build rule for subdir invocation for target.
 CMakeFiles/Surpher.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/han3816/projects/Surpher/cmake-build-debug/CMakeFiles 13
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/han3816/projects/Surpher/cmake-build-debug/CMakeFiles 14
 	$(MAKE) -f CMakeFiles/Makefile2 CMakeFiles/Surpher.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /home/han3816/projects/Surpher/cmake-build-debug/CMakeFiles 0
 .PHONY : CMakeFiles/Surpher.dir/rule

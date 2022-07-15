@@ -1,6 +1,9 @@
-#include "Resolver.hpp"
-
+#include <functional>
 #include <memory>
+
+#include "Resolver.hpp"
+#include "Interpreter.hpp"
+#include "Error.hpp"
 
 Resolver::Resolver(Interpreter &interpreter) : interpreter(interpreter) {
 
@@ -233,14 +236,14 @@ std::any Resolver::visitClassStmt(const std::shared_ptr<Class> &stmt) {
     declare(stmt->name);
     define(stmt->name);
 
-    if (stmt->superclass != nullptr &&
-        stmt->name.lexeme == (stmt->superclass->name.lexeme)) {
-        error(stmt->superclass->name, "A class can't inherit from itself.");
+    if (stmt->superclass.has_value() &&
+        stmt->name.lexeme == (stmt->superclass.value()->name.lexeme)) {
+        error(stmt->superclass.value()->name, "A class can't inherit from itself.");
     }
 
-    if (stmt->superclass != nullptr) {
+    if (stmt->superclass.has_value()) {
         current_class = ClassType::SUBCLASS;
-        resolve(stmt->superclass);
+        resolve(stmt->superclass.value());
     }
 
     if (stmt->superclass != nullptr) {

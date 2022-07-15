@@ -1,7 +1,8 @@
-#include "SurpherCallable.hpp"
-
-
 #include <utility>
+#include <chrono>
+
+#include "SurpherCallable.hpp"
+#include "Error.hpp"
 #include "Interpreter.hpp"
 
 SurpherFunction::SurpherFunction(std::shared_ptr<Function> declaration, std::shared_ptr<Environment> closure,

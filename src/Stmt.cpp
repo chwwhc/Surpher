@@ -83,17 +83,18 @@ std::any Return::accept(StmtVisitor &visitor) {
 }
 
 Class::Class(Token name, std::vector<std::shared_ptr<Function>> instance_methods,
-             std::vector<std::shared_ptr<Function>> class_methods, std::shared_ptr<Variable> superclass) : name(
+             std::vector<std::shared_ptr<Function>> class_methods, std::optional<std::shared_ptr<Variable>> superclass)
+        : name(
         std::move(name)),
-                                                                                                           instance_methods(
-                                                                                                                   std::move(
-                                                                                                                           instance_methods)),
-                                                                                                           class_methods(
-                                                                                                                   std::move(
-                                                                                                                           class_methods)),
-                                                                                                           superclass(
-                                                                                                                   std::move(
-                                                                                                                           superclass)) {
+          instance_methods(
+                  std::move(
+                          instance_methods)),
+          class_methods(
+                  std::move(
+                          class_methods)),
+          superclass(
+                  std::move(
+                          superclass)) {
 
 }
 

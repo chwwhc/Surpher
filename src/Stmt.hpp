@@ -94,7 +94,8 @@ struct If : Stmt, public std::enable_shared_from_this<If> {
     const std::shared_ptr<Stmt> true_branch;
     const std::optional<std::shared_ptr<Stmt>> else_branch;
 
-    If(std::shared_ptr<Expr> condition, std::shared_ptr<Stmt> true_branch, std::optional<std::shared_ptr<Stmt>> else_branch);
+    If(std::shared_ptr<Expr> condition, std::shared_ptr<Stmt> true_branch,
+       std::optional<std::shared_ptr<Stmt>> else_branch);
 
     std::any accept(StmtVisitor &visitor) override;
 };
@@ -108,21 +109,23 @@ struct While : Stmt, public std::enable_shared_from_this<While> {
     std::any accept(StmtVisitor &visitor) override;
 };
 
-struct Break : Stmt, public std::enable_shared_from_this<Break>{
+struct Break : Stmt, public std::enable_shared_from_this<Break> {
     const Token break_tok;
 
     explicit Break(Token break_tok);
+
     std::any accept(StmtVisitor &visitor) override;
 };
 
-struct Continue : Stmt, public std::enable_shared_from_this<Continue>{
+struct Continue : Stmt, public std::enable_shared_from_this<Continue> {
     const Token continue_tok;
 
     explicit Continue(Token continue_tok);
+
     std::any accept(StmtVisitor &visitor) override;
 };
 
-struct Function : Stmt, public std::enable_shared_from_this<Function>{
+struct Function : Stmt, public std::enable_shared_from_this<Function> {
     const Token name;
     const std::vector<Token> params;
     const std::vector<std::shared_ptr<Stmt>> body;
@@ -132,22 +135,23 @@ struct Function : Stmt, public std::enable_shared_from_this<Function>{
     std::any accept(StmtVisitor &visitor) override;
 };
 
-struct Return : Stmt, public std::enable_shared_from_this<Return>{
+struct Return : Stmt, public std::enable_shared_from_this<Return> {
     const Token keyword;
     const std::optional<std::shared_ptr<Expr>> value;
 
     Return(Token keyword, std::optional<std::shared_ptr<Expr>> value);
+
     std::any accept(StmtVisitor &visitor) override;
 };
 
-struct Class : Stmt, public std::enable_shared_from_this<Class>{
+struct Class : Stmt, public std::enable_shared_from_this<Class> {
     const Token name;
-    const std::shared_ptr<Variable> superclass;
+    const std::optional<std::shared_ptr<Variable>> superclass;
     const std::vector<std::shared_ptr<Function>> instance_methods;
     const std::vector<std::shared_ptr<Function>> class_methods;
 
     Class(Token name, std::vector<std::shared_ptr<Function>> instance_methods,
-          std::vector<std::shared_ptr<Function>> class_methods, std::shared_ptr<Variable> superclass);
+          std::vector<std::shared_ptr<Function>> class_methods, std::optional<std::shared_ptr<Variable>> superclass);
 
     std::any accept(StmtVisitor &visitor) override;
 };

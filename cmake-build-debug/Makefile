@@ -447,6 +447,33 @@ src/Token.cpp.s:
 	$(MAKE) -f CMakeFiles/Surpher.dir/build.make CMakeFiles/Surpher.dir/src/Token.cpp.s
 .PHONY : src/Token.cpp.s
 
+src/tool/ASTPrinter.o: src/tool/ASTPrinter.cpp.o
+
+.PHONY : src/tool/ASTPrinter.o
+
+# target to build an object file
+src/tool/ASTPrinter.cpp.o:
+	$(MAKE) -f CMakeFiles/Surpher.dir/build.make CMakeFiles/Surpher.dir/src/tool/ASTPrinter.cpp.o
+.PHONY : src/tool/ASTPrinter.cpp.o
+
+src/tool/ASTPrinter.i: src/tool/ASTPrinter.cpp.i
+
+.PHONY : src/tool/ASTPrinter.i
+
+# target to preprocess a source file
+src/tool/ASTPrinter.cpp.i:
+	$(MAKE) -f CMakeFiles/Surpher.dir/build.make CMakeFiles/Surpher.dir/src/tool/ASTPrinter.cpp.i
+.PHONY : src/tool/ASTPrinter.cpp.i
+
+src/tool/ASTPrinter.s: src/tool/ASTPrinter.cpp.s
+
+.PHONY : src/tool/ASTPrinter.s
+
+# target to generate assembly for a file
+src/tool/ASTPrinter.cpp.s:
+	$(MAKE) -f CMakeFiles/Surpher.dir/build.make CMakeFiles/Surpher.dir/src/tool/ASTPrinter.cpp.s
+.PHONY : src/tool/ASTPrinter.cpp.s
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -492,6 +519,9 @@ help:
 	@echo "... src/Token.o"
 	@echo "... src/Token.i"
 	@echo "... src/Token.s"
+	@echo "... src/tool/ASTPrinter.o"
+	@echo "... src/tool/ASTPrinter.i"
+	@echo "... src/tool/ASTPrinter.s"
 .PHONY : help
 
 

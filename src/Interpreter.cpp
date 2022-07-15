@@ -1,7 +1,12 @@
 #include <cmath>
 #include <memory>
+#include <numeric>
+#include <functional>
 
 #include "Interpreter.hpp"
+#include "Error.hpp"
+#include "SurpherInstance.hpp"
+#include "SurpherCallable.hpp"
 
 std::any Interpreter::visitLiteralExpr(const std::shared_ptr<Literal> &expr) {
     return expr->value;
@@ -97,6 +102,8 @@ void Interpreter::interpret(const std::vector<std::shared_ptr<Stmt>> &statements
     try {
         for (const std::shared_ptr<Stmt> &statement: statements) {
             execute(statement);
+            function_val_memoized_tbl.clear();
+            recursion_counter.clear();
         }
     } catch (RuntimeError &e) {
         runtimeError(e);
@@ -312,27 +319,35 @@ std::any Interpreter::visitCallExpr(const std::shared_ptr<Call> &expr) {
     for (const auto &argument: expr->arguments) {
         arguments.emplace_back(evaluate(argument));
     }
-
     std::shared_ptr<SurpherCallable> callable;
 
     if (callee.type() == typeid(std::shared_ptr<SurpherFunction>)) {
-        callable = std::any_cast<std::shared_ptr<SurpherFunction>>(callee);
+        auto fun_callable = std::static_pointer_cast<SurpherFunction>(std::any_cast<std::shared_ptr<SurpherFunction>>(callee));
 
-        if (arguments.size() > callable->arity()) {
-            throw RuntimeError(expr->paren, "Expected " + std::to_string(callable->arity()) + " arguments but got " +
+        if (arguments.size() > fun_callable->arity()) {
+            throw RuntimeError(expr->paren, "Expected " + std::to_string(fun_callable->arity()) + " arguments but got " +
                                             std::to_string(arguments.size()) + ".");
-        }else if (arguments.size() < callable->arity()) {
-            std::shared_ptr<SurpherFunction> old_fun = std::static_pointer_cast<SurpherFunction>(callable);
-            std::shared_ptr<Function> partial_fun = std::make_shared<Function>(Token("0" + old_fun->declaration->name.lexeme, old_fun->declaration->name.literal, old_fun->declaration->name.token_type, old_fun->declaration->name.line),
-                                                                               std::vector<Token>{old_fun->declaration->params.begin() + arguments.size(), old_fun->declaration->params.end()},
-                                                          old_fun->declaration->body);
+        }else if (arguments.size() < fun_callable->arity()) {
+            std::shared_ptr<Function> partial_fun = std::make_shared<Function>(Token("0" + fun_callable->declaration->name.lexeme, fun_callable->declaration->name.literal, fun_callable->declaration->name.token_type, fun_callable->declaration->name.line),
+                                                                               std::vector<Token>(fun_callable->declaration->params.begin() + arguments.size(), fun_callable->declaration->params.end()),
+                                                          fun_callable->declaration->body);
             for (size_t i = 0; i < arguments.size(); i++) {
-                old_fun->closure->define(old_fun->declaration->params[i].lexeme, arguments[i]);
+                fun_callable->closure->define(fun_callable->declaration->params[i].lexeme, arguments[i]);
             }
-            auto new_fun = std::make_shared<SurpherFunction>(partial_fun, old_fun->closure, old_fun->is_initializer, true);
+            auto new_fun = std::make_shared<SurpherFunction>(partial_fun, fun_callable->closure, fun_callable->is_initializer, true);
             return new_fun;
         }else{
-            return callable->call(*this, arguments);
+            if(function_val_memoized_tbl.find(expr) != function_val_memoized_tbl.end()){
+                return function_val_memoized_tbl[expr];
+            }else{
+                if(recursion_counter[fun_callable->declaration->name.lexeme] > 4096){
+                    throw RuntimeError(fun_callable->declaration->name, "Maximum recursion depth exceeded.");
+                }
+                recursion_counter[fun_callable->declaration->name.lexeme]++;
+                auto result = fun_callable->call(*this, arguments);
+                function_val_memoized_tbl[expr] = result;
+                return result;
+            }
         }
     } else if (callee.type() == typeid(std::shared_ptr<SurpherClass>)) {
         callable = std::any_cast<std::shared_ptr<SurpherClass>>(callee);
@@ -361,7 +376,7 @@ std::any Interpreter::visitFunctionStmt(const std::shared_ptr<Function> &stmt) {
 }
 
 std::any Interpreter::visitReturnStmt(const std::shared_ptr<Return> &stmt) {
-    std::any value{};
+    std::any value;
     if (stmt->value.has_value()) {
         value = evaluate(stmt->value.value());
     }
@@ -395,10 +410,10 @@ std::any Interpreter::lookUpVariable(const Token &name, const std::shared_ptr<Ex
 
 std::any Interpreter::visitClassStmt(const std::shared_ptr<Class> &stmt) {
     std::any superclass = std::shared_ptr<SurpherClass>();
-    if (stmt->superclass != nullptr) {
-        superclass = evaluate(stmt->superclass);
+    if (stmt->superclass.has_value()) {
+        superclass = evaluate(stmt->superclass.value());
         if (superclass.type() != typeid(std::shared_ptr<SurpherClass>)) {
-            throw RuntimeError(stmt->superclass->name, "Superclass must be a class.");
+            throw RuntimeError(stmt->superclass.value()->name, "Superclass must be a class.");
         }
     }
 

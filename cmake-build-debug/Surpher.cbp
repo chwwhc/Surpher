@@ -153,6 +153,12 @@
 		<Unit filename="/home/han3816/projects/Surpher/src/Token.hpp">
 			<Option target="Surpher"/>
 		</Unit>
+		<Unit filename="/home/han3816/projects/Surpher/src/tool/ASTPrinter.cpp">
+			<Option target="Surpher"/>
+		</Unit>
+		<Unit filename="/home/han3816/projects/Surpher/src/tool/ASTPrinter.hpp">
+			<Option target="Surpher"/>
+		</Unit>
 		<Unit filename="/home/han3816/projects/Surpher/CMakeLists.txt">
 			<Option virtualFolder="CMake Files\"/>
 		</Unit>

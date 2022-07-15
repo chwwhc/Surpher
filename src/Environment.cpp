@@ -1,6 +1,8 @@
-#include "Environment.hpp"
-
 #include <utility>
+
+#include "Environment.hpp"
+#include "Token.hpp"
+#include "Error.hpp"
 
 void Environment::assign(const Token &name, std::any value) {
     if (var_val_pairs.find(name.lexeme) != var_val_pairs.end()) {

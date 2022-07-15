@@ -5,9 +5,9 @@
 #include <vector>
 #include <memory>
 #include <any>
-#include "Token.hpp"
 
 struct SurpherClass;
+struct Token;
 
 class SurpherInstance : public std::enable_shared_from_this<SurpherInstance> {
     const std::shared_ptr<SurpherClass> surpher_class;
