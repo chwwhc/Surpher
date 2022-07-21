@@ -12,14 +12,14 @@
 #include "Resolver.hpp"
 #include "./tool/ASTPrinter.hpp"
 
-static Interpreter interpreter{};
+static Interpreter interpreter;
 
 enum mode{
     INTERPRET,
     PRINT_AST
 };
 
-void printAST(const std::vector<std::shared_ptr<Stmt>>& statements){
+void printAST(const std::list<std::shared_ptr<Stmt>>& statements){
     ASTPrinter printer;
     std::cout << "[";
     for(const auto& s: statements) std::cout << std::any_cast<std::string>(s->accept(printer)) << ",\n";
@@ -30,7 +30,8 @@ void run(const std::string &source, const mode& mode) {
     Lexer lexer(source);
     std::vector<Token> tokens = lexer.scanTokens();
     Parser parser(tokens);
-    std::vector<std::shared_ptr<Stmt>> statements = parser.parse();
+    std::list<std::shared_ptr<Stmt>> statements = parser.parse();
+    interpreter.appendScriptBack(statements);
 
     if (had_error) {
         return;
@@ -48,12 +49,30 @@ void run(const std::string &source, const mode& mode) {
             printAST(statements);
             break;
         case INTERPRET:
-            interpreter.interpret(statements);
+            try{
+                interpreter.interpret();
+            } catch (ImportError& e) {
+                std::ifstream input_file(e.script);
+                if (input_file.fail()) {
+                    std::cerr << "Failed to open file " << e.script << ": " << std::endl;
+                    std::exit(74);
+                }
+
+                std::stringstream source_code;
+                source_code << input_file.rdbuf();
+
+                Lexer _lexer(source_code.str());
+                std::vector<Token> _tokens = _lexer.scanTokens();
+                Parser _parser(_tokens);
+                std::list<std::shared_ptr<Stmt>> _statements = _parser.parse();
+
+                interpreter.appendScriptFront(_statements);
+            }
+
             break;
         default:
-            interpreter.interpret(statements);
+            interpreter.interpret();
     }
-    //interpreter.interpret(statements);
 }
 
 void runScript(const std::string &path, const mode& mode) {

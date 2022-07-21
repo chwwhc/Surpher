@@ -8,7 +8,6 @@
 #include "Token.hpp"
 
 struct Stmt;
-
 struct Binary;
 struct Ternary;
 struct Group;

@@ -5,6 +5,8 @@
 #include "Error.hpp"
 #include "Interpreter.hpp"
 
+using namespace std::string_literals;
+
 SurpherFunction::SurpherFunction(std::shared_ptr<Function> declaration, std::shared_ptr<Environment> closure,
                                  bool is_initializer, bool is_partial) : is_virtual(declaration->is_virtual), declaration(std::move(declaration)),
                                                         closure(std::move(closure)), is_initializer(is_initializer),
@@ -46,7 +48,6 @@ std::shared_ptr<SurpherFunction> SurpherFunction::bind(const std::shared_ptr<Sur
     return std::make_shared<SurpherFunction>(declaration, environment, is_initializer, is_partial);
 }
 
-
 SurpherClass::SurpherClass(std::string name,
                            std::unordered_map<std::string, std::shared_ptr<SurpherFunction>> instance_methods,
                            std::unordered_map<std::string, std::shared_ptr<SurpherFunction>> class_methods,
@@ -58,7 +59,7 @@ SurpherClass::SurpherClass(std::string name,
 }
 
 std::any SurpherClass::call(Interpreter &interpreter, const std::vector<std::any> &arguments) {
-    auto instance = std::make_shared<SurpherInstance>(std::static_pointer_cast<SurpherClass>(shared_from_this()));
+    auto instance = std::make_shared<SurpherInstance>(std::shared_ptr<SurpherClass>(this));
     auto initializer = findInstanceMethod("init");
     if (initializer != nullptr) {
         initializer->bind(instance)->call(interpreter, arguments);

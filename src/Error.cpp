@@ -40,6 +40,11 @@ void breakError(const BreakError &error) {
     had_runtime_error = true;
 }
 
+void importError(const ImportError &error){
+    std::cerr << error.what() << "\n";
+    had_runtime_error = true;
+}
+
 BreakError::BreakError(Token token, const std::string_view &message) : std::runtime_error(message.data()),
                                                                        break_tok{std::move(token)} {
 
@@ -51,5 +56,9 @@ ContinueError::ContinueError(Token token, const std::string_view &message) : std
 }
 
 ReturnError::ReturnError(std::any value) : runtime_error(""), value(std::move(value)) {
+
+}
+
+ImportError::ImportError(std::string script) : runtime_error(""), script(std::move(script)){
 
 }

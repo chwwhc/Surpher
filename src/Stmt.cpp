@@ -2,12 +2,11 @@
 
 #include <utility>
 
-Block::Block(std::vector<std::shared_ptr<Stmt>> statements) : statements{std::move(statements)} {}
+Block::Block(std::list<std::shared_ptr<Stmt>> statements) : statements{std::move(statements)} {}
 
 std::any Block::accept(StmtVisitor &visitor) {
     return visitor.visitBlockStmt(shared_from_this());
 }
-
 
 Expression::Expression(std::shared_ptr<Expr> expression) : expression{std::move(expression)} {}
 
@@ -64,7 +63,7 @@ Continue::Continue(Token continue_tok) : continue_tok{std::move(continue_tok)} {
 
 }
 
-Function::Function(Token name, std::vector<Token> params, std::vector<std::shared_ptr<Stmt>> body, bool is_virtual)
+Function::Function(Token name, std::vector<Token> params, std::list<std::shared_ptr<Stmt>> body, bool is_virtual)
         : name(
         std::move(name)), params(std::move(params)), body(std::move(body)), is_virtual(is_virtual) {
 
@@ -101,4 +100,12 @@ Class::Class(Token name, std::vector<std::shared_ptr<Function>> instance_methods
 
 std::any Class::accept(StmtVisitor &visitor) {
     return visitor.visitClassStmt(shared_from_this());
+}
+
+Import::Import(Token keyword, std::string script) : keyword(std::move(keyword)), script(std::move(script)){
+
+}
+
+std::any Import::accept(StmtVisitor &visitor) {
+    return visitor.visitImportStmt(shared_from_this());
 }

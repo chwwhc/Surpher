@@ -27,6 +27,8 @@ struct ASTPrinter : ExprVisitor, StmtVisitor{
 
     std::any visitClassStmt(const std::shared_ptr<Class> &stmt) override;
 
+    std::any visitImportStmt(const std::shared_ptr<Import> &stmt) override;
+
     std::any visitBinaryExpr(const std::shared_ptr<Binary> &expr) override;
 
     std::any visitGroupExpr(const std::shared_ptr<Group> &expr) override;

@@ -4,6 +4,7 @@
 #include <memory>
 #include <vector>
 #include <functional>
+#include <list>
 
 #include "Token.hpp"
 #include "Expr.hpp"
@@ -51,7 +52,7 @@ class Parser {
 
     std::shared_ptr<Expr> assignment();
 
-    std::vector<std::shared_ptr<Stmt>> blockStatement();
+    std::list<std::shared_ptr<Stmt>> blockStatement();
 
     std::shared_ptr<Stmt> declaration();
 
@@ -108,7 +109,7 @@ class Parser {
 public:
     explicit Parser(std::vector<Token> &tokens);
 
-    std::vector<std::shared_ptr<Stmt>> parse();
+    std::list<std::shared_ptr<Stmt>> parse();
 };
 
 #endif //SURPHER_PARSER_HPP

@@ -4,6 +4,7 @@
 #include <stack>
 #include <vector>
 #include <unordered_map>
+#include <list>
 #include "Expr.hpp"
 #include "Stmt.hpp"
 
@@ -65,6 +66,8 @@ public:
 
     std::any visitClassStmt(const std::shared_ptr<Class> &stmt) override;
 
+    std::any visitImportStmt(const std::shared_ptr<Import> &stmt) override;
+
     std::any visitBinaryExpr(const std::shared_ptr<Binary> &expr) override;
 
     std::any visitGroupExpr(const std::shared_ptr<Group> &expr) override;
@@ -93,7 +96,7 @@ public:
 
     std::any visitSuperExpr(const std::shared_ptr<Super> &expr) override;
 
-    void resolve(const std::vector<std::shared_ptr<Stmt>> &statements);
+    void resolve(const std::list<std::shared_ptr<Stmt>> &statements);
 
     explicit Resolver(Interpreter &interpreter);
 };

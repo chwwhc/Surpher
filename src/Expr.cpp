@@ -19,7 +19,7 @@ std::any Group::accept(ExprVisitor &visitor) {
     return visitor.visitGroupExpr(shared_from_this());
 }
 
-Literal::Literal(std::any value) : value(std::move(value)) {
+Literal::Literal(std::any value) : value(std::move(value)){
 }
 
 std::any Literal::accept(ExprVisitor &visitor) {

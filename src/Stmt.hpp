@@ -4,6 +4,7 @@
 
 #include <vector>
 #include <optional>
+#include <list>
 #include "Expr.hpp"
 
 struct Block;
@@ -17,6 +18,7 @@ struct Continue;
 struct Function;
 struct Return;
 struct Class;
+struct Import;
 
 struct StmtVisitor {
     virtual std::any visitBlockStmt(const std::shared_ptr<Block> &stmt) = 0;
@@ -40,6 +42,8 @@ struct StmtVisitor {
     virtual std::any visitReturnStmt(const std::shared_ptr<Return> &stmt) = 0;
 
     virtual std::any visitClassStmt(const std::shared_ptr<Class> &stmt) = 0;
+
+    virtual std::any visitImportStmt(const std::shared_ptr<Import> &stmt) = 0;
 };
 
 struct Stmt {
@@ -47,9 +51,9 @@ struct Stmt {
 };
 
 struct Block : Stmt, public std::enable_shared_from_this<Block> {
-    const std::vector<std::shared_ptr<Stmt>> statements;
+    const std::list<std::shared_ptr<Stmt>> statements;
 
-    explicit Block(std::vector<std::shared_ptr<Stmt>> statements);
+    explicit Block(std::list<std::shared_ptr<Stmt>> statements);
 
 
     std::any accept(StmtVisitor &visitor) override;
@@ -128,10 +132,10 @@ struct Continue : Stmt, public std::enable_shared_from_this<Continue> {
 struct Function : Stmt, public std::enable_shared_from_this<Function> {
     const Token name;
     const std::vector<Token> params;
-    const std::vector<std::shared_ptr<Stmt>> body;
+    const std::list<std::shared_ptr<Stmt>> body;
     const bool is_virtual;
 
-    Function(Token name, std::vector<Token> params, std::vector<std::shared_ptr<Stmt>> body, bool is_virtual);
+    Function(Token name, std::vector<Token> params, std::list<std::shared_ptr<Stmt>> body, bool is_virtual);
 
     std::any accept(StmtVisitor &visitor) override;
 };
@@ -141,6 +145,15 @@ struct Return : Stmt, public std::enable_shared_from_this<Return> {
     const std::optional<std::shared_ptr<Expr>> value;
 
     Return(Token keyword, std::optional<std::shared_ptr<Expr>> value);
+
+    std::any accept(StmtVisitor &visitor) override;
+};
+
+struct Import : Stmt, public std::enable_shared_from_this<Import> {
+    const Token keyword;
+    const std::string script;
+
+    Import(Token keyword, std::string script);
 
     std::any accept(StmtVisitor &visitor) override;
 };

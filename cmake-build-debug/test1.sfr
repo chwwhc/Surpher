@@ -20,12 +20,12 @@ print "time used: " + (clock() - timer);
 print "";
 
 timer = clock();
-print "calculating fibonacci(1000) using y combinator:";
-print y_combinator(fibonacci)(1000);
+print "calculating fibonacci(100) using y combinator:";
+print y_combinator(fibonacci)(100);
 print "time used: " + (clock() - timer);
 print "";
 
 timer = clock();
-print "calculating fibonacci(1000) using tail-recursion:";
-print tr_fibonacci(1000);
+print "calculating fibonacci(100) using tail-recursion:";
+print tr_fibonacci(100);
 print "time used: " + (clock() - timer);

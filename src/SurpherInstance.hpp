@@ -6,14 +6,14 @@
 #include <memory>
 #include <any>
 
+struct SurpherValue;
 struct SurpherClass;
 struct Token;
 
-class SurpherInstance : public std::enable_shared_from_this<SurpherInstance> {
+struct SurpherInstance : public std::enable_shared_from_this<SurpherInstance> {
     const std::shared_ptr<SurpherClass> surpher_class;
     std::unordered_map<std::string, std::any> fields;
 
-public:
     explicit SurpherInstance(std::shared_ptr<SurpherClass> surpher_class);
 
     std::string SurpherInstanceToString();

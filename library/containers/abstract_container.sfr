@@ -1,6 +1,0 @@
-class abstract_container {
-    size(){
-        print "unspecified container size function.";
-        return 0;
-    }
-}

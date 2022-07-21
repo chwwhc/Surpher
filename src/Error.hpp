@@ -41,11 +41,19 @@ struct ReturnError : public std::runtime_error {
     explicit ReturnError(std::any value);
 };
 
+struct ImportError : public std::runtime_error{
+    const std::string script;
+
+    explicit ImportError(std::string script);
+};
+
 void runtimeError(const RuntimeError &error);
 
 void continueError(const ContinueError &error);
 
 void breakError(const BreakError &error);
+
+void importError(const ImportError &error);
 
 
 #endif //SURPHER_ERROR_HPP

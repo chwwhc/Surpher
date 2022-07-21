@@ -1,6 +1,7 @@
 #ifndef SURPHER_INTERPRETER_HPP
 #define SURPHER_INTERPRETER_HPP
 
+#include <list>
 #include "Environment.hpp"
 #include "Expr.hpp"
 #include "Stmt.hpp"
@@ -9,14 +10,11 @@ struct SurpherCallable;
 struct SurpherInstance;
 class SurpherFunction;
 
-using namespace std::string_literals;
-
 class Interpreter : public ExprVisitor, public StmtVisitor {
 public:
     const std::shared_ptr<Environment> globals;
 private:
-    std::unordered_map<std::shared_ptr<Call>, std::any> function_val_memoized_tbl;
-    std::unordered_map<std::string, uint32_t> recursion_counter;
+    std::list<std::list<std::shared_ptr<Stmt>>> scripts;
     std::shared_ptr<Environment> environment = globals;
     std::unordered_map<std::shared_ptr<Expr>, uint32_t> locals;
 
@@ -35,8 +33,10 @@ private:
     void execute(const std::shared_ptr<Stmt> &stmt);
 
 public:
+    Interpreter();
+
     void
-    executeBlock(const std::vector<std::shared_ptr<Stmt>> &stmts, const std::shared_ptr<Environment> &curr_environment);
+    executeBlock(const std::list<std::shared_ptr<Stmt>> &stmts, const std::shared_ptr<Environment> &curr_environment);
 
     std::any visitLambdaExpr(const std::shared_ptr<Lambda> &expr) override;
 
@@ -88,13 +88,17 @@ public:
 
     std::any visitSuperExpr(const std::shared_ptr<Super> &expr) override;
 
+    std::any visitImportStmt(const std::shared_ptr<Import> &stmt) override;
+
     void resolve(const std::shared_ptr<Expr> &expr, uint32_t depth);
 
     static std::string stringify(const std::any &val);
 
-    Interpreter();
+    void appendScriptBack(const std::list<std::shared_ptr<Stmt>> &script);
 
-    void interpret(const std::vector<std::shared_ptr<Stmt>> &statements);
+    void appendScriptFront(const std::list<std::shared_ptr<Stmt>> &script);
+
+    void interpret();
 };
 
 #endif //SURPHER_INTERPRETER_HPP

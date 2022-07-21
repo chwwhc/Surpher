@@ -29,7 +29,8 @@ std::map<std::string, TokenType> keyWords = {
         {"print",    PRINT},
         {"and", AND},
         {"or", OR},
-        {"virtual", VIRTUAL}};
+        {"virtual", VIRTUAL},
+        {"import", IMPORT}};
 
 Lexer::Lexer(std::string source_code) : source_code(std::move(source_code)) {
 }

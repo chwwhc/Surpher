@@ -99,6 +99,10 @@ std::any ASTPrinter::visitClassStmt(const std::shared_ptr<Class> &stmt) {
     return str_builder.str();
 }
 
+std::any ASTPrinter::visitImportStmt(const std::shared_ptr<Import> &stmt) {
+    return "Import (" + stmt->script + " )";
+}
+
 std::any ASTPrinter::visitBinaryExpr(const std::shared_ptr<Binary> &expr) {
     std::stringstream str_builder;
     str_builder << "Binary ( ";

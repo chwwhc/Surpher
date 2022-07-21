@@ -2,11 +2,75 @@
 #include <memory>
 #include <numeric>
 #include <functional>
+#include <utility>
 
 #include "Interpreter.hpp"
 #include "Error.hpp"
 #include "SurpherInstance.hpp"
 #include "SurpherCallable.hpp"
+
+using namespace std::string_literals;
+
+static uint32_t force_diff_hash = 1;
+
+struct funArgsPair{
+    std::string name;
+    std::vector<std::any> args;
+
+    funArgsPair(std::string name, std::vector<std::any> args) : name(std::move(name)), args(std::move(args)){
+    }
+
+    bool operator==(const funArgsPair& other) const {
+        if(other.name != name) return false;
+
+        if(args.empty()) return true;
+
+        bool result = true;
+        std::any curr_arg;
+        for(size_t i = 0; i < args.size(); i++){
+            if(args[i].type() == typeid(double)){
+                result = result && (std::any_cast<double>(args[i]) == std::any_cast<double>(other.args[i]));
+            }else if(args[i].type() == typeid(bool)){
+                result = result && (std::any_cast<bool>(args[i]) == std::any_cast<bool>(other.args[i]));
+            }else if(args[i].type() == typeid(std::string)) {
+                result = result && (std::any_cast<std::string>(args[i]) == std::any_cast<std::string>(other.args[i]));
+            }else if(args[i].type() == typeid(int64_t)){
+                result = result && (std::any_cast<int64_t>(args[i]) == std::any_cast<int64_t>(other.args[i]));
+            }else if(args[i].type() == typeid(std::shared_ptr<SurpherFunction>)){
+                result = result && (std::any_cast<std::shared_ptr<SurpherFunction>>(args[i])->declaration->name.lexeme ==
+                                    std::any_cast<std::shared_ptr<SurpherFunction>>(other.args[i])->declaration->name.lexeme);
+            }
+        }
+        return result;
+    }
+};
+
+struct funArgsPairHash{
+    size_t operator()(const funArgsPair& type) const {
+        size_t result = std::hash<std::string>()(type.name);
+
+        for(const auto & arg : type.args){
+            if(arg.type() == typeid(double)){
+                result ^= std::hash<double>()(std::any_cast<double>(arg));
+            }else if(arg.type() == typeid(bool)){
+                result ^= std::hash<bool>()(std::any_cast<bool>(arg));
+            }else if(arg.type() == typeid(std::string)){
+                result ^= std::hash<std::string>()(std::any_cast<std::string>(arg));
+            }else if(arg.type() == typeid(int64_t)){
+                result ^= std::hash<int64_t>()(std::any_cast<int64_t>(arg));
+            }else if(arg.type() == typeid(std::shared_ptr<SurpherFunction>)){
+                result ^= std::hash<std::string>()(std::any_cast<std::shared_ptr<SurpherFunction>>(arg)->declaration->name.lexeme);
+            }
+            else{
+                return std::hash<uint32_t>()(force_diff_hash++);
+            }
+        }
+        return result;
+    }
+};
+
+static std::unordered_map<std::string, uint32_t> recursion_counter;
+static std::unordered_map<funArgsPair, std::any, funArgsPairHash> function_memoized_tbl;
 
 std::any Interpreter::visitLiteralExpr(const std::shared_ptr<Literal> &expr) {
     return expr->value;
@@ -59,19 +123,19 @@ std::any Interpreter::visitBinaryExpr(const std::shared_ptr<Binary> &expr) {
         }
         case CARET:
             checkNumberOperands(expr->op, {left, right});
-            return (long long) std::any_cast<double>(left) ^ (long long) std::any_cast<double>(right);
+            return (int64_t) std::any_cast<double>(left) ^ (int64_t) std::any_cast<double>(right);
         case PERCENT:
             checkNumberOperands(expr->op, {left, right});
             checkZero(expr->op, {std::any_cast<double>(right)});
             return std::fmod(std::any_cast<double>(left), std::any_cast<double>(right));
         case SINGLE_AMPERSAND:
             checkNumberOperands(expr->op, {left, right});
-            return (long long) std::round(std::any_cast<double>(left)) &
-                   (long long) std::round(std::any_cast<double>(right));
+            return (int64_t) std::round(std::any_cast<double>(left)) &
+                   (int64_t) std::round(std::any_cast<double>(right));
         case SINGLE_BAR:
             checkNumberOperands(expr->op, {left, right});
-            return (long long) std::round(std::any_cast<double>(left)) |
-                   (long long) std::round(std::any_cast<double>(right));
+            return (int64_t) std::round(std::any_cast<double>(left)) |
+                   (int64_t) std::round(std::any_cast<double>(right));
         case GREATER:
             checkNumberOperands(expr->op, {left, right});
             return std::any_cast<double>(left) >
@@ -98,19 +162,26 @@ std::any Interpreter::visitBinaryExpr(const std::shared_ptr<Binary> &expr) {
     }
 }
 
-void Interpreter::interpret(const std::vector<std::shared_ptr<Stmt>> &statements) {
-    try {
-        for (const std::shared_ptr<Stmt> &statement: statements) {
-            execute(statement);
-            function_val_memoized_tbl.clear();
-            recursion_counter.clear();
+void Interpreter::interpret() {
+    while (!scripts.empty()) {
+        std::list<std::shared_ptr<Stmt>> curr_script(scripts.front());
+        scripts.pop_front();
+
+        try {
+            while (!curr_script.empty()) {
+                execute(curr_script.front());
+                curr_script.pop_front();
+                function_memoized_tbl.clear();
+                recursion_counter.clear();
+            }
+
+        } catch (RuntimeError &e) {
+            runtimeError(e);
+        } catch (BreakError &e) {
+            breakError(e);
+        } catch (ContinueError &e) {
+            continueError(e);
         }
-    } catch (RuntimeError &e) {
-        runtimeError(e);
-    } catch (BreakError &e) {
-        breakError(e);
-    } catch (ContinueError &e) {
-        continueError(e);
     }
 }
 
@@ -164,14 +235,12 @@ void Interpreter::execute(const std::shared_ptr<Stmt> &stmt) {
     stmt->accept(*this);
 }
 
-void Interpreter::executeBlock(const std::vector<std::shared_ptr<Stmt>> &stmts,
+void Interpreter::executeBlock(const std::list<std::shared_ptr<Stmt>> &stmts,
                                const std::shared_ptr<Environment> &curr_environment) {
-    auto previous = this->environment;
+    auto previous = environment;
     try {
-        this->environment = curr_environment;
-        for (const std::shared_ptr<Stmt> &s: stmts) {
-            execute(s);
-        }
+        environment = curr_environment;
+        for (const std::shared_ptr<Stmt> &s: stmts) execute(s);
     } catch (...) {
         this->environment = previous;
         throw;
@@ -226,13 +295,13 @@ std::string Interpreter::stringify(const std::any &value) {
         return std::any_cast<std::string>(value);
     } else if (value.type() == typeid(bool)) {
         return std::any_cast<bool>(value) ? "true"s : "false"s;
-    } else if (value.type() == typeid(long long)) {
-        return std::to_string(std::any_cast<long long>(value));
+    } else if (value.type() == typeid(int64_t)) {
+        return std::to_string(std::any_cast<int64_t>(value));
     } else if (value.type() == typeid(std::shared_ptr<SurpherFunction>)) {
         return (std::any_cast<std::shared_ptr<SurpherFunction>>(value))->SurpherCallableToString();
     } else if (value.type() == typeid(std::shared_ptr<SurpherInstance>)) {
         return (std::any_cast<std::shared_ptr<SurpherInstance>>(value))->SurpherInstanceToString();
-    } else if (value.type() == typeid(std::shared_ptr<SurpherClass>)){
+    } else if (value.type() == typeid(std::shared_ptr<SurpherClass>)) {
         return (std::any_cast<std::shared_ptr<SurpherClass>>(value))->SurpherCallableToString();
     }
     return "Error in stringify: un-recognized literal type."s;
@@ -322,37 +391,43 @@ std::any Interpreter::visitCallExpr(const std::shared_ptr<Call> &expr) {
     std::shared_ptr<SurpherCallable> callable;
 
     if (callee.type() == typeid(std::shared_ptr<SurpherFunction>)) {
-        auto fun_callable = std::static_pointer_cast<SurpherFunction>(std::any_cast<std::shared_ptr<SurpherFunction>>(callee));
-        if(fun_callable->is_virtual){
+        auto fun_callable = std::any_cast<std::shared_ptr<SurpherFunction>>(callee);
+        if (fun_callable->is_virtual) {
             throw RuntimeError(fun_callable->declaration->name, "Cannot invoke a virtual method.");
         }
 
         if (arguments.size() > fun_callable->arity()) {
-            throw RuntimeError(expr->paren, "Expected " + std::to_string(fun_callable->arity()) + " arguments but got " +
-                                            std::to_string(arguments.size()) + ".");
-        }else if (arguments.size() < fun_callable->arity()) {
-            std::shared_ptr<Function> partial_fun = std::make_shared<Function>(Token("0" + fun_callable->declaration->name.lexeme, fun_callable->declaration->name.literal,
-                                                                                     fun_callable->declaration->name.token_type, fun_callable->declaration->name.line),
-                                                                               std::vector<Token>(fun_callable->declaration->params.begin() + arguments.size(),
-                                                                                                  fun_callable->declaration->params.end()),
-                                                                                fun_callable->declaration->body, fun_callable->is_virtual);
+            throw RuntimeError(expr->paren,
+                               "Expected " + std::to_string(fun_callable->arity()) + " arguments but got " +
+                               std::to_string(arguments.size()) + ".");
+        } else if (arguments.size() < fun_callable->arity()) {
+            std::shared_ptr<Function> partial_fun = std::make_shared<Function>(
+                    Token("0" + fun_callable->declaration->name.lexeme, fun_callable->declaration->name.literal,
+                          fun_callable->declaration->name.token_type, fun_callable->declaration->name.line),
+                    std::vector<Token>(fun_callable->declaration->params.begin() + arguments.size(),
+                                       fun_callable->declaration->params.end()),
+                    fun_callable->declaration->body, fun_callable->is_virtual);
             for (size_t i = 0; i < arguments.size(); i++) {
                 fun_callable->closure->define(fun_callable->declaration->params[i].lexeme, arguments[i]);
             }
-            auto new_fun = std::make_shared<SurpherFunction>(partial_fun, fun_callable->closure, fun_callable->is_initializer, true);
+            auto new_fun = std::make_shared<SurpherFunction>(partial_fun, fun_callable->closure,
+                                                             fun_callable->is_initializer, true);
             return new_fun;
-        }else{
-            if(function_val_memoized_tbl.find(expr) != function_val_memoized_tbl.end()){
-                return function_val_memoized_tbl[expr];
-            }else{
-                if(recursion_counter[fun_callable->declaration->name.lexeme] > 4096){
-                    throw RuntimeError(fun_callable->declaration->name, "Maximum recursion depth exceeded.");
-                }
-                recursion_counter[fun_callable->declaration->name.lexeme]++;
-                auto result = fun_callable->call(*this, arguments);
-                function_val_memoized_tbl[expr] = result;
-                return result;
+        } else {
+            if (recursion_counter[fun_callable->declaration->name.lexeme] > (4096)) {
+                throw RuntimeError(fun_callable->declaration->name, "Maximum recursion depth exceeded.");
             }
+
+            funArgsPair fun_args_pair(fun_callable->declaration->name.lexeme, arguments);
+            std::any return_val;
+            if(function_memoized_tbl.find(fun_args_pair) != function_memoized_tbl.end()){
+                return_val = function_memoized_tbl[fun_args_pair];
+            }else{
+                return_val = fun_callable->call(*this, arguments);
+                function_memoized_tbl[fun_args_pair] = return_val;
+            }
+            recursion_counter[fun_callable->declaration->name.lexeme]++;
+            return return_val;
         }
     } else if (callee.type() == typeid(std::shared_ptr<SurpherClass>)) {
         callable = std::any_cast<std::shared_ptr<SurpherClass>>(callee);
@@ -389,10 +464,16 @@ std::any Interpreter::visitReturnStmt(const std::shared_ptr<Return> &stmt) {
     throw ReturnError(value);
 }
 
+std::any Interpreter::visitImportStmt(const std::shared_ptr<Import> &stmt) {
+    throw ImportError(stmt->script);
+}
+
 std::any Interpreter::visitLambdaExpr(const std::shared_ptr<Lambda> &expr) {
-    std::vector<std::shared_ptr<Stmt>> lambda_return{std::make_shared<Return>(Token("return", {}, RETURN, expr->name.line), expr->body)};
+    std::list<std::shared_ptr<Stmt>> lambda_return{
+            std::make_shared<Return>(Token("return", {}, RETURN, expr->name.line), expr->body)};
     auto function = std::make_shared<SurpherFunction>(
-            std::make_shared<Function>(expr->name, expr->params, std::move(lambda_return), false), environment, false, false);
+            std::make_shared<Function>(expr->name, expr->params, std::move(lambda_return), false), environment, false,
+            false);
     return function;
 }
 
@@ -416,9 +497,10 @@ std::any Interpreter::lookUpVariable(const Token &name, const std::shared_ptr<Ex
 std::any Interpreter::visitClassStmt(const std::shared_ptr<Class> &stmt) {
     try {
         globals->get(stmt->name);
-    } catch (RuntimeError& e) {
+    } catch (RuntimeError &e) {
 
-        std::any superclass = std::shared_ptr<SurpherClass>();
+        std::any superclass;
+        std::shared_ptr<SurpherClass> superclass_cast;
         std::unordered_map<std::string, std::shared_ptr<SurpherFunction>> superclass_instance_methods;
         std::unordered_map<std::string, std::shared_ptr<SurpherFunction>> superclass_class_methods;
 
@@ -428,9 +510,16 @@ std::any Interpreter::visitClassStmt(const std::shared_ptr<Class> &stmt) {
                 throw RuntimeError(stmt->superclass.value()->name, "Superclass must be a class.");
             }
 
-            auto superclass_cast = std::any_cast<std::shared_ptr<SurpherClass>>(superclass);
+            superclass_cast = std::any_cast<std::shared_ptr<SurpherClass>>(superclass);
             superclass_class_methods = superclass_cast->class_methods;
             superclass_instance_methods = superclass_cast->instance_methods;
+        }
+
+        environment->define(stmt->name.lexeme, {});
+
+        if (stmt->superclass) {
+            environment = std::make_shared<Environment>(environment);
+            environment->define("super", superclass);
         }
 
         std::unordered_map<std::string, std::shared_ptr<SurpherFunction>> instance_methods;
@@ -444,37 +533,36 @@ std::any Interpreter::visitClassStmt(const std::shared_ptr<Class> &stmt) {
             class_methods[c->name.lexeme] = function;
         }
 
-        for(const auto& i: superclass_instance_methods){
-            if(i.second->is_virtual && (instance_methods.find(i.first) == instance_methods.end() || instance_methods[i.first]->is_virtual)){
+        for (const auto &i: superclass_instance_methods) {
+            if (i.second->is_virtual &&
+                (instance_methods.find(i.first) == instance_methods.end() || instance_methods[i.first]->is_virtual)) {
                 environment->erase(stmt->name.lexeme);
-                throw RuntimeError(i.second->declaration->name, "Derived class must implement virtual method \"" + i.first + "\" in the super class.");
+                throw RuntimeError(i.second->declaration->name,
+                                   "Derived class must implement virtual method \"" + i.first +
+                                   "\" in the super class.");
             }
         }
-        for(const auto& c: superclass_class_methods){
-            if(c.second->is_virtual && (class_methods.find(c.first) == class_methods.end() || class_methods[c.first]->is_virtual)){
+        for (const auto &c: superclass_class_methods) {
+            if (c.second->is_virtual &&
+                (class_methods.find(c.first) == class_methods.end() || class_methods[c.first]->is_virtual)) {
                 environment->erase(stmt->name.lexeme);
-                throw RuntimeError(c.second->declaration->name, "Derived class must implement virtual method \"" + c.first + "\" in the super class.");
+                throw RuntimeError(c.second->declaration->name,
+                                   "Derived class must implement virtual method \"" + c.first +
+                                   "\" in the super class.");
             }
-        }
-
-        environment->define(stmt->name.lexeme, {});
-
-        if (stmt->superclass != nullptr) {
-            environment = std::make_shared<Environment>(environment);
-            environment->define("super", superclass);
         }
 
         auto surpher_class = std::make_shared<SurpherClass>(stmt->name.lexeme, instance_methods, class_methods,
-                                                            std::any_cast<std::shared_ptr<SurpherClass>>(superclass));
+                                                            superclass_cast);
 
-        if (stmt->superclass != nullptr) {
+        if (superclass_cast) {
             environment = environment->getEnclosing();
         }
 
         environment->assign(stmt->name, surpher_class);
         return {};
     }
-    throw RuntimeError(stmt->name, "Cannot re-declare a class.");
+    throw RuntimeError(stmt->name, "Cannot use an existing name to declare a class.");
 }
 
 std::any Interpreter::visitGetExpr(const std::shared_ptr<Get> &expr) {
@@ -511,14 +599,23 @@ std::any Interpreter::visitSuperExpr(const std::shared_ptr<Super> &expr) {
     auto object = std::any_cast<std::shared_ptr<SurpherInstance>>(environment->getAt(distance - 1, "this"));
 
     auto method = superclass->findInstanceMethod(expr->method.lexeme);
-    if (method == nullptr) {
+    if (!method) {
         method = superclass->findClassMethod(expr->method.lexeme);
     }
 
-    if (method == nullptr) {
+    if (!method) {
         throw RuntimeError(expr->method, "Undefined property '" + expr->method.lexeme + "'.");
     }
 
     return method->bind(object);
 }
+
+void Interpreter::appendScriptFront(const std::list<std::shared_ptr<Stmt>> &script) {
+    scripts.emplace_front(script);
+}
+
+void Interpreter::appendScriptBack(const std::list<std::shared_ptr<Stmt>> &script) {
+    scripts.emplace_back(script);
+}
+
 

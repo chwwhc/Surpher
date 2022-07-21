@@ -82,8 +82,8 @@ ParseError Parser::error(const Token &token, std::string_view message) {
     return ParseError{""};
 }
 
-std::vector<std::shared_ptr<Stmt>> Parser::parse() {
-    std::vector<std::shared_ptr<Stmt>> statements;
+std::list<std::shared_ptr<Stmt>> Parser::parse() {
+    std::list<std::shared_ptr<Stmt>> statements;
     while (!isAtEnd()) {
         statements.emplace_back(declaration());
     }
@@ -179,7 +179,7 @@ std::shared_ptr<Function> Parser::functionStatement(const std::string &type, con
         consume(LEFT_PAREN, "Expect '(' after declaring a virtual function.");
         consume(RIGHT_PAREN, "Expect ')' after declaring a virtual function.");
         consume(SINGLE_SEMICOLON, "Expect ';' after declaring a virtual function.");
-        return std::make_shared<Function>(name, std::vector<Token>(), std::vector<std::shared_ptr<Stmt>>(), is_virtual);
+        return std::make_shared<Function>(name, std::vector<Token>(), std::list<std::shared_ptr<Stmt>>(), is_virtual);
     }
 
     consume(LEFT_PAREN, "Expect '(' after " + type + " name.");
@@ -271,9 +271,9 @@ std::shared_ptr<Stmt> Parser::ifStatement() {
     consume(RIGHT_PAREN, "Expect ')' after if condition.");
 
     std::shared_ptr<Stmt> then_branch = statement();
-    std::shared_ptr<Stmt> else_branch;
+    std::optional<std::shared_ptr<Stmt>> else_branch;
     if (match(ELSE)) {
-        else_branch = statement();
+        else_branch.emplace(statement());
     }
 
     return std::make_shared<If>(condition, then_branch, else_branch);
@@ -295,8 +295,8 @@ std::shared_ptr<Stmt> Parser::declaration() {
     }
 }
 
-std::vector<std::shared_ptr<Stmt>> Parser::blockStatement() {
-    std::vector<std::shared_ptr<Stmt>> statements;
+std::list<std::shared_ptr<Stmt>> Parser::blockStatement() {
+    std::list<std::shared_ptr<Stmt>> statements;
 
     while (!isAtEnd() && !check(RIGHT_BRACE)) {
         statements.emplace_back(declaration());

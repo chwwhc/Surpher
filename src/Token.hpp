@@ -65,6 +65,7 @@ enum TokenType {
     AND,
     OR,
     VIRTUAL,
+    IMPORT,
 
     EOF_TOKEN
 };

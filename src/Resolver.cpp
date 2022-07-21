@@ -13,7 +13,7 @@ void Resolver::resolve(const std::shared_ptr<Stmt> &stmt) {
     stmt->accept(*this);
 }
 
-void Resolver::resolve(const std::vector<std::shared_ptr<Stmt>> &statements) {
+void Resolver::resolve(const std::list<std::shared_ptr<Stmt>> &statements) {
     for (const auto &s: statements) {
         resolve(s);
     }
@@ -154,6 +154,10 @@ std::any Resolver::visitBreakStmt(const std::shared_ptr<Break> &stmt) {
     return {};
 }
 
+std::any Resolver::visitImportStmt(const std::shared_ptr<Import> &stmt) {
+    return {};
+}
+
 std::any Resolver::visitContinueStmt(const std::shared_ptr<Continue> &stmt) {
     return {};
 }
@@ -223,7 +227,7 @@ std::any Resolver::visitTernaryExpr(const std::shared_ptr<Ternary> &expr) {
 }
 
 std::any Resolver::visitLambdaExpr(const std::shared_ptr<Lambda> &expr) {
-    std::vector<std::shared_ptr<Stmt>> lambda_return{std::make_shared<Return>(Token("", {}, RETURN, 1), expr->body)};
+    std::list<std::shared_ptr<Stmt>> lambda_return{std::make_shared<Return>(Token("", {}, RETURN, 1), expr->body)};
     std::shared_ptr<Function> lambda_fun = std::make_shared<Function>(expr->name, expr->params, lambda_return, false);
     return visitFunctionStmt(lambda_fun);
 }
