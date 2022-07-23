@@ -100,7 +100,7 @@ std::any ASTPrinter::visitClassStmt(const std::shared_ptr<Class> &stmt) {
 }
 
 std::any ASTPrinter::visitImportStmt(const std::shared_ptr<Import> &stmt) {
-    return "Import (" + stmt->script + " )";
+    return "Import (" + std::any_cast<std::string>(stmt->script->accept(*this)) + " )";
 }
 
 std::any ASTPrinter::visitBinaryExpr(const std::shared_ptr<Binary> &expr) {

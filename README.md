@@ -58,6 +58,7 @@ statement      → exprStmt
                | whileStmt
                | continueStmt
                | breakStmt
+               | importStmt
                | block ;
 
 exprStmt       → expression ";" ;
@@ -71,6 +72,7 @@ returnStmt     → "return" expression? ";" ;
 whileStmt      → "while" "(" expression ")" statement ;
 continueStmt   → "continue" ";";
 breakStmt      → "break" ";";
+importStmt     → "import" STRING ( "as" STRING )? ;
 block          → "{" declaration* "}" ;
 
 expression     → assignment ;

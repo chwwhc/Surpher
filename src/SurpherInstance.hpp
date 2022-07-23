@@ -6,7 +6,6 @@
 #include <memory>
 #include <any>
 
-struct SurpherValue;
 struct SurpherClass;
 struct Token;
 

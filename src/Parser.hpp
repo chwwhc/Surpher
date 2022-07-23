@@ -74,6 +74,8 @@ class Parser {
 
     std::shared_ptr<Stmt> classDeclaration();
 
+    std::shared_ptr<Stmt> importStatement();
+
     std::shared_ptr<Function> functionStatement(const std::string &type, const bool& is_virtual);
 
     std::shared_ptr<Stmt> statement();

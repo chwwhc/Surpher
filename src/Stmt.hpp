@@ -150,10 +150,10 @@ struct Return : Stmt, public std::enable_shared_from_this<Return> {
 };
 
 struct Import : Stmt, public std::enable_shared_from_this<Import> {
-    const Token keyword;
-    const std::string script;
+    const std::shared_ptr<Expr> script;
+    const std::optional<std::shared_ptr<Expr>> module_name;
 
-    Import(Token keyword, std::string script);
+    Import(std::shared_ptr<Expr> script, std::optional<std::shared_ptr<Expr>> module_name);
 
     std::any accept(StmtVisitor &visitor) override;
 };

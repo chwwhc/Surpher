@@ -1,12 +1,12 @@
 #include <string>
-#include <map>
+#include <unordered_map>
 #include <utility>
 
 #include "Lexer.hpp"
 #include "Token.hpp"
 #include "Error.hpp"
 
-std::map<std::string, TokenType> keyWords = {
+std::unordered_map<std::string, TokenType> keyWords = {
         {"class",    CLASS},
         {"else",     ELSE},
         {"false",    FALSE},
@@ -30,7 +30,8 @@ std::map<std::string, TokenType> keyWords = {
         {"and", AND},
         {"or", OR},
         {"virtual", VIRTUAL},
-        {"import", IMPORT}};
+        {"import", IMPORT},
+        {"as", AS}};
 
 Lexer::Lexer(std::string source_code) : source_code(std::move(source_code)) {
 }
@@ -40,9 +41,7 @@ char Lexer::anyChar() {
 }
 
 bool Lexer::matchNextChar(const char &expected) {
-    if (isAtEnd() || source_code[current] != expected) {
-        return false;
-    }
+    if (isAtEnd() || source_code[current] != expected) return false;
     current++;
     return true;
 }
@@ -61,9 +60,7 @@ char Lexer::lookAHead(const uint32_t &offset) {
 
 void Lexer::matchString() {
     while (lookAHead(0) != '"' && !isAtEnd()) {
-        if (lookAHead(0) == '\n') {
-            line++;
-        }
+        if (lookAHead(0) == '\n') line++;
         anyChar();
     }
 
@@ -81,17 +78,11 @@ void Lexer::matchString() {
 
 
 void Lexer::matchNumber() {
-    while (isDigit(lookAHead(0))) {
-        anyChar();
-    }
+    while (isDigit(lookAHead(0))) anyChar();
 
-    if (lookAHead(0) == '.' && isDigit(lookAHead(1))) {
-        anyChar();
-    }
+    if (lookAHead(0) == '.' && isDigit(lookAHead(1))) anyChar();
 
-    while (isDigit(lookAHead(0))) {
-        anyChar();
-    }
+    while (isDigit(lookAHead(0))) anyChar();
 
     TokenType type = NUMBER;
     std::any num_literal = std::stod(source_code.substr(start, current - start));
@@ -100,9 +91,7 @@ void Lexer::matchNumber() {
 
 
 void Lexer::matchIdentifierOrReserved() {
-    while (isAlphaNumeric(lookAHead(0))) {
-        anyChar();
-    }
+    while (isAlphaNumeric(lookAHead(0))) anyChar();
 
     std::string word = source_code.substr(start, current - start);
     TokenType type;
@@ -124,9 +113,7 @@ void Lexer::skipComment() {
             flag++;
         } else if (matchNextChar('*') && matchNextChar('/')) {
             flag--;
-            if (isAtEnd()) {
-                return;
-            }
+            if (isAtEnd()) return;
         }
         if (isAtEnd()) {
             ::error(line, "Unterminated comment.");

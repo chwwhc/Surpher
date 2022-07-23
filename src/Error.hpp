@@ -43,8 +43,9 @@ struct ReturnError : public std::runtime_error {
 
 struct ImportError : public std::runtime_error{
     const std::string script;
+    const std::string module_name;
 
-    explicit ImportError(std::string script);
+    ImportError(std::string script, std::string module_name);
 };
 
 void runtimeError(const RuntimeError &error);

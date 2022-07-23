@@ -163,14 +163,10 @@ std::any Resolver::visitContinueStmt(const std::shared_ptr<Continue> &stmt) {
 }
 
 std::any Resolver::visitReturnStmt(const std::shared_ptr<Return> &stmt) {
-    if (current_function == FunctionType::NONE) {
-        error(stmt->keyword, "Can't return from top-level code.");
-    }
+    if (current_function == FunctionType::NONE) error(stmt->keyword, "Can't return from top-level code.");
 
     if (stmt->value.has_value()) {
-        if (current_function == FunctionType::INITIALIZER) {
-            error(stmt->keyword, "Can't return a value from an initializer.");
-        }
+        if (current_function == FunctionType::INITIALIZER) error(stmt->keyword, "Can't return a value from an initializer.");
 
         resolve(stmt->value.value());
     }
@@ -192,9 +188,7 @@ std::any Resolver::visitBinaryExpr(const std::shared_ptr<Binary> &expr) {
 std::any Resolver::visitCallExpr(const std::shared_ptr<Call> &expr) {
     resolve(expr->callee);
 
-    for (const auto &argument: expr->arguments) {
-        resolve(argument);
-    }
+    for (const auto &argument: expr->arguments) resolve(argument);
 
     return {};
 }
@@ -262,9 +256,8 @@ std::any Resolver::visitClassStmt(const std::shared_ptr<Class> &stmt) {
         if(i->is_virtual) continue;
 
         FunctionType declaration = FunctionType::METHOD;
-        if (i->name.lexeme == "init") {
-            declaration = FunctionType::INITIALIZER;
-        }
+        if (i->name.lexeme == "init") declaration = FunctionType::INITIALIZER;
+
         resolveFunction(i, declaration);
     }
 
@@ -272,9 +265,8 @@ std::any Resolver::visitClassStmt(const std::shared_ptr<Class> &stmt) {
         if(c->is_virtual) continue;
 
         FunctionType declaration = FunctionType::METHOD;
-        if (c->name.lexeme == "init") {
-            error(c->name, "'init' can't be a class method.");
-        }
+        if (c->name.lexeme == "init") error(c->name, "'init' can't be a class method.");
+
         resolveFunction(c, declaration);
     }
 

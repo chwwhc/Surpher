@@ -12,12 +12,12 @@
 #include "Resolver.hpp"
 #include "./tool/ASTPrinter.hpp"
 
-static Interpreter interpreter;
-
 enum mode{
     INTERPRET,
     PRINT_AST
 };
+
+void run(const std::string &source, const mode& mode, Interpreter& interpreter);
 
 void printAST(const std::list<std::shared_ptr<Stmt>>& statements){
     ASTPrinter printer;
@@ -26,12 +26,32 @@ void printAST(const std::list<std::shared_ptr<Stmt>>& statements){
     std::cout << "]\n";
 }
 
-void run(const std::string &source, const mode& mode) {
+void runScript(const std::string &path, const mode& mode, Interpreter& interpreter) {
+    std::ifstream input_file(path);
+    if (input_file.fail()) {
+        std::cerr << "Failed to open file " << path << ": " << std::endl;
+        std::exit(74);
+    }
+
+    std::stringstream source_code;
+    source_code << input_file.rdbuf();
+
+    run(source_code.str(), mode, interpreter);
+    if (had_error) {
+        std::exit(65);
+    } else if (had_runtime_error) {
+        std::exit(70);
+    }
+}
+
+void run(const std::string &source, const mode& mode, Interpreter& interpreter) {
     Lexer lexer(source);
     std::vector<Token> tokens = lexer.scanTokens();
+
     Parser parser(tokens);
     std::list<std::shared_ptr<Stmt>> statements = parser.parse();
-    interpreter.appendScriptBack(statements);
+
+    interpreter.appendScriptFront(statements);
 
     if (had_error) {
         return;
@@ -52,49 +72,17 @@ void run(const std::string &source, const mode& mode) {
             try{
                 interpreter.interpret();
             } catch (ImportError& e) {
-                std::ifstream input_file(e.script);
-                if (input_file.fail()) {
-                    std::cerr << "Failed to open file " << e.script << ": " << std::endl;
-                    std::exit(74);
-                }
-
-                std::stringstream source_code;
-                source_code << input_file.rdbuf();
-
-                Lexer _lexer(source_code.str());
-                std::vector<Token> _tokens = _lexer.scanTokens();
-                Parser _parser(_tokens);
-                std::list<std::shared_ptr<Stmt>> _statements = _parser.parse();
-
-                interpreter.appendScriptFront(_statements);
+                runScript(e.script, INTERPRET, interpreter);
+                interpreter.interpret();
             }
-
             break;
         default:
             interpreter.interpret();
     }
 }
 
-void runScript(const std::string &path, const mode& mode) {
-
-    std::ifstream input_file(path);
-    if (input_file.fail()) {
-        std::cerr << "Failed to open file " << path << ": " << std::endl;
-        std::exit(74);
-    }
-
-    std::stringstream source_code;
-    source_code << input_file.rdbuf();
-
-    run(source_code.str(), mode);
-    if (had_error) {
-        std::exit(65);
-    } else if (had_runtime_error) {
-        std::exit(70);
-    }
-}
-
 void runRepl() {
+    Interpreter interpreter;
     std::string cmd;
     while (true) {
         std::cout << "Surpher> ";
@@ -109,7 +97,7 @@ void runRepl() {
                 curr++;
             }
             std::string file_path = cmd.substr(curr, cmd.size() - curr);
-            runScript(file_path, INTERPRET);
+            runScript(file_path, INTERPRET, interpreter);
             continue;
         } else if(cmd.substr(0, 9) == "!printAST"){
             uint32_t curr = 9;
@@ -117,27 +105,15 @@ void runRepl() {
                 curr++;
             }
             std::string file_path = cmd.substr(curr, cmd.size() - curr);
-            runScript(file_path, PRINT_AST);
+            runScript(file_path, PRINT_AST, interpreter);
             continue;
         }
-        run(cmd, INTERPRET);
+        run(cmd, INTERPRET, interpreter);
         cmd.clear();
         had_error = false;
     }
 }
 
 int main(int argc, char *argv[]) {
-    /*
-    if (argc > 2) {
-        std::cout << "Usage: Surpher [script]" << std::endl;
-        std::exit(64);
-    } else if (argc == 2) {
-        runScript(argv[0]);
-    } else {
-     */
-
     runRepl();
-    /*
-}
-     */
 }

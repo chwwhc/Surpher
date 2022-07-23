@@ -33,7 +33,7 @@ struct SurpherFunction : SurpherCallable{
     std::shared_ptr<SurpherFunction> bind(const std::shared_ptr<SurpherInstance> &instance);
 };
 
-struct SurpherClass : SurpherCallable, SurpherInstance {
+struct SurpherClass : SurpherCallable, SurpherInstance{
     const std::string name;
 
     std::unordered_map<std::string, std::shared_ptr<SurpherFunction>> instance_methods;

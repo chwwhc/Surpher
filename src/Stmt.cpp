@@ -102,7 +102,8 @@ std::any Class::accept(StmtVisitor &visitor) {
     return visitor.visitClassStmt(shared_from_this());
 }
 
-Import::Import(Token keyword, std::string script) : keyword(std::move(keyword)), script(std::move(script)){
+Import::Import(std::shared_ptr<Expr> script, std::optional<std::shared_ptr<Expr>> module_name) : script(
+        std::move(script)), module_name(std::move(module_name)) {
 
 }
 

@@ -17,12 +17,10 @@ void Environment::assign(const Token &name, std::any value) {
 }
 
 std::any Environment::get(const Token &name) {
-    if (var_val_pairs.find(name.lexeme) != var_val_pairs.end()) {
-        return var_val_pairs[name.lexeme];
-    }
-    if (enclosing != nullptr) {
-        return enclosing->get(name);
-    }
+    if (var_val_pairs.find(name.lexeme) != var_val_pairs.end()) return var_val_pairs[name.lexeme];
+
+    if (enclosing != nullptr) return enclosing->get(name);
+
     throw RuntimeError(name, "Undefined variable '" + name.lexeme + "'.");
 }
 
@@ -41,10 +39,9 @@ std::any Environment::getAt(uint32_t distance, const std::string &name) {
 }
 
 std::shared_ptr<Environment> Environment::ancestor(uint32_t distance) {
-    std::shared_ptr<Environment> environment = shared_from_this();
-    for (size_t i = 0; i < distance; i++) {
-        environment = environment->enclosing;
-    }
+    std::shared_ptr<Environment> environment(shared_from_this());
+    for (size_t i = 0; i < distance; i++) environment = environment->enclosing;
+
     return environment;
 }
 
@@ -57,5 +54,5 @@ std::shared_ptr<Environment> Environment::getEnclosing() {
 }
 
 void Environment::erase(const std::string &var) {
-    var_val_pairs.erase(var);
+        var_val_pairs.erase(var);
 }

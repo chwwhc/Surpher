@@ -59,6 +59,6 @@ ReturnError::ReturnError(std::any value) : runtime_error(""), value(std::move(va
 
 }
 
-ImportError::ImportError(std::string script) : runtime_error(""), script(std::move(script)){
+ImportError::ImportError(std::string script, std::string module_name) : runtime_error(""), script(std::move(script)), module_name(std::move(module_name)){
 
 }
