@@ -625,4 +625,8 @@ void Interpreter::appendScriptBack(const std::list<std::shared_ptr<Stmt>> &scrip
     scripts.emplace_back(script);
 }
 
+void Interpreter::setPrefix(std::string prefix) {
+    module_prefix = std::move(prefix);
+}
+
 

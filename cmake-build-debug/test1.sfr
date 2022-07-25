@@ -1,8 +1,8 @@
-var y_combinator = /\f. (/\x. x(x))(/\x. f(/\y. x(x)(y)));
+var y_combinator = \f -> (\x -> x(x))(\x -> f(\y -> x(x)(y)));
 
-var factorial = /\f. (/\x. (x == 1 ? x : x * f(x - 1)));
+var factorial = \f -> (\x -> (x == 1 ? x : x * f(x - 1)));
 
-var fibonacci = /\f. (/\x. (x < 2 ? x : f(x - 1) + f(x - 2)));
+var fibonacci = \f -> (\x -> (x < 2 ? x : f(x - 1) + f(x - 2)));
 
 fun tr_fibonacci(n){
     fun tr_fibonacci_aux(prev, curr, n){

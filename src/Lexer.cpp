@@ -27,11 +27,11 @@ std::unordered_map<std::string, TokenType> keyWords = {
         {"continue", CONTINUE},
         {"newtype",  NEWTYPE},
         {"print",    PRINT},
-        {"and", AND},
-        {"or", OR},
-        {"virtual", VIRTUAL},
-        {"import", IMPORT},
-        {"as", AS}};
+        {"and",      AND},
+        {"or",       OR},
+        {"virtual",  VIRTUAL},
+        {"import",   IMPORT},
+        {"as",       AS}};
 
 Lexer::Lexer(std::string source_code) : source_code(std::move(source_code)) {
 }
@@ -161,7 +161,11 @@ void Lexer::scanToken() {
             addToken(SINGLE_PLUS);
             break;
         case '-':
-            addToken(MINUS);
+            if (matchNextChar('>')) {
+                addToken(RIGHT_ARROW);
+            } else {
+                addToken(MINUS);
+            }
             break;
         case '?':
             addToken(QUESTION);
@@ -175,10 +179,11 @@ void Lexer::scanToken() {
         case '*':
             addToken(STAR);
             break;
+        case '\\':
+            addToken(LAMBDA);
+            break;
         case '/':
-            if (matchNextChar('\\')) {
-                addToken(LAMBDA);
-            } else if (matchNextChar('/')) {
+            if (matchNextChar('/')) {
                 while (!isAtEnd() && !matchNextChar('\n')) {
                     anyChar();
                 }

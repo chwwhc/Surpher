@@ -6,12 +6,16 @@
 #include "Error.hpp"
 
 
-SurpherInstance::SurpherInstance(std::shared_ptr<SurpherClass> surpher_class) : surpher_class(
+SurpherInstance::SurpherInstance(std::optional<std::shared_ptr<SurpherClass>> surpher_class) : surpher_class(
         std::move(surpher_class)) {
 }
 
 std::string SurpherInstance::SurpherInstanceToString() {
-    return "<" + surpher_class->name + " instance>";
+    if(surpher_class.has_value()){
+        return "<" + surpher_class.value()->name + " instance>";
+    }else{
+        return "<" + dynamic_cast<SurpherClass *>(this)->name + " instance>";
+    }
 }
 
 std::any SurpherInstance::get(const Token &name) {
@@ -19,13 +23,13 @@ std::any SurpherInstance::get(const Token &name) {
         return fields[name.lexeme];
     }
 
-    if (this != surpher_class.get()) {
-        std::shared_ptr<SurpherFunction> method(surpher_class->findInstanceMethod(name.lexeme));
+    if (!dynamic_cast<SurpherClass *>(this)) {
+        std::shared_ptr<SurpherFunction> method(surpher_class.value()->findInstanceMethod(name.lexeme));
         if (method != nullptr) return method->bind(shared_from_this());
 
         throw RuntimeError(name, "Undefined property '" + name.lexeme + "'.");
     } else {
-        std::shared_ptr<SurpherFunction> method(surpher_class->findClassMethod(name.lexeme));
+        std::shared_ptr<SurpherFunction> method(dynamic_cast<SurpherClass *>(this)->findClassMethod(name.lexeme));
         if (method != nullptr) return method;
 
         throw RuntimeError(name, "Undefined class method '" + name.lexeme + "'.");
@@ -33,7 +37,7 @@ std::any SurpherInstance::get(const Token &name) {
 }
 
 void SurpherInstance::set(const Token &name, const std::any &value) {
-    if (this == surpher_class.get()) throw RuntimeError(name, "Cannot set property to a class.");
+    if (dynamic_cast<SurpherClass *>(this)) throw RuntimeError(name, "Cannot set property to a class.");
 
     fields[name.lexeme] = value;
 }

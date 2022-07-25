@@ -10,12 +10,12 @@ struct SurpherClass;
 struct Token;
 
 struct SurpherInstance : public std::enable_shared_from_this<SurpherInstance> {
-    const std::shared_ptr<SurpherClass> surpher_class;
+    const std::optional<std::shared_ptr<SurpherClass>> surpher_class;
     std::unordered_map<std::string, std::any> fields;
 
-    explicit SurpherInstance(std::shared_ptr<SurpherClass> surpher_class);
+    explicit SurpherInstance(std::optional<std::shared_ptr<SurpherClass>> surpher_class);
 
-    std::string SurpherInstanceToString();
+    virtual std::string SurpherInstanceToString();
 
     std::any get(const Token &name);
 

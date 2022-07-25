@@ -47,10 +47,12 @@ std::shared_ptr<Expr> Parser::primary() {
         Token lambdaTok("lambda" + std::to_string(lambdaCount++), tmp.literal, tmp.token_type, tmp.line);
 
         std::vector<Token> params;
-        Token param(consume(IDENTIFIER, "Expect a variable after lambda."));
-        params.emplace_back(param);
+        do{
+            Token param(consume(IDENTIFIER, "Expect bound variables after lambda."));
+            params.emplace_back(param);
+        } while(!check(RIGHT_ARROW));
 
-        consume(DOT, "Expect '.' after lambda variable.");
+        consume(RIGHT_ARROW, "Expect '->' after bound variables.");
 
         std::shared_ptr<Expr> body (expression());
 
@@ -342,10 +344,8 @@ std::shared_ptr<Stmt> Parser::classDeclaration() {
     std::vector<std::shared_ptr<Function>> class_methods;
     std::vector<std::shared_ptr<Function>> instance_methods;
     while (!isAtEnd() && !check(RIGHT_BRACE)) {
-        bool is_virtual(false);
-        if(match(VIRTUAL)){
-            is_virtual = true;
-        }
+        bool is_virtual = false;
+        if(match(VIRTUAL))is_virtual = true;
 
         if (match(CLASS)) {
             class_methods.emplace_back(functionStatement("class_method", is_virtual));

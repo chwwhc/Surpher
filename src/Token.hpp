@@ -34,6 +34,7 @@ enum TokenType {
     LESS_EQUAL,
     QUESTION,
     COLON,
+    RIGHT_ARROW,
 
     // Literal
     IDENTIFIER,

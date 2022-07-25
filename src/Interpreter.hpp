@@ -17,6 +17,7 @@ private:
     std::list<std::list<std::shared_ptr<Stmt>>> scripts;
     std::shared_ptr<Environment> environment = globals;
     std::unordered_map<std::shared_ptr<Expr>, uint32_t> locals;
+    std::string module_prefix;
 
     static bool isTruthy(const std::any &val);
 
@@ -97,6 +98,8 @@ public:
     void appendScriptBack(const std::list<std::shared_ptr<Stmt>> &script);
 
     void appendScriptFront(const std::list<std::shared_ptr<Stmt>> &script);
+
+    void setPrefix(std::string prefix);
 
     void interpret();
 };

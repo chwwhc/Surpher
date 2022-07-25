@@ -72,8 +72,14 @@ void run(const std::string &source, const mode& mode, Interpreter& interpreter) 
             try{
                 interpreter.interpret();
             } catch (ImportError& e) {
+                if(!e.module_name.empty()){
+                    interpreter.setPrefix(e.module_name + ".");
+                }else{
+                    interpreter.setPrefix(e.module_name);
+                }
                 runScript(e.script, INTERPRET, interpreter);
                 interpreter.interpret();
+                interpreter.setPrefix("");
             }
             break;
         default:

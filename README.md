@@ -96,7 +96,7 @@ unary          → ( "!" | "-" ) unary | call ;
 call           → primary ( "(" arguments? ")" | "." IDENTIFIER )* ;
 primary        → "true" | "false" | "nil" | "this"
                | NUMBER | STRING | IDENTIFIER | "(" expression ")"
-               | "super" "." IDENTIFIER | "/\" IDENTIFIER "." expression ;
+               | "super" "." IDENTIFIER | "\" IDENTIFIER* "->" expression ;
                
 function       → "virtual"? "class"? IDENTIFIER "(" parameters? ")" block ;
 parameters     → IDENTIFIER ( "," IDENTIFIER )* ;

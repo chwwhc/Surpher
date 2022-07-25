@@ -49,7 +49,7 @@ SurpherClass::SurpherClass(std::string name,
                            std::unordered_map<std::string, std::shared_ptr<SurpherFunction>> instance_methods,
                            std::unordered_map<std::string, std::shared_ptr<SurpherFunction>> class_methods,
                            std::shared_ptr<SurpherClass> superclass) : SurpherInstance(
-        std::make_shared<SurpherClass>(*this)), name(std::move(name)), instance_methods(std::move(instance_methods)),
+        std::nullopt), name(std::move(name)), instance_methods(std::move(instance_methods)),
                                                                        class_methods(std::move(class_methods)),
                                                                        superclass(std::move(superclass)) {
 }
