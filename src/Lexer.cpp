@@ -6,7 +6,7 @@
 #include "Token.hpp"
 #include "Error.hpp"
 
-std::unordered_map<std::string, TokenType> keyWords = {
+static std::unordered_map<std::string, TokenType> keyWords = {
         {"class",    CLASS},
         {"else",     ELSE},
         {"false",    FALSE},
@@ -31,9 +31,9 @@ std::unordered_map<std::string, TokenType> keyWords = {
         {"or",       OR},
         {"virtual",  VIRTUAL},
         {"import",   IMPORT},
-        {"as",       AS}};
+        {"module", MODULE}};
 
-Lexer::Lexer(std::string source_code) : source_code(std::move(source_code)) {
+Lexer::Lexer(std::string source_code) : source_code(std::move(source_code)){
 }
 
 char Lexer::anyChar() {
@@ -128,7 +128,6 @@ void Lexer::skipComment() {
 
 void Lexer::scanToken() {
     char next_char = anyChar();
-    TokenType type;
     switch (next_char) {
         case '(':
             addToken(LEFT_PAREN);
@@ -171,7 +170,11 @@ void Lexer::scanToken() {
             addToken(QUESTION);
             break;
         case ':':
-            addToken(COLON);
+            if(matchNextChar(':')){
+                addToken(DOUBLE_COLON);
+            }else{
+                addToken(SINGLE_COLON);
+            }
             break;
         case '%':
             addToken(PERCENT);

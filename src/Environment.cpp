@@ -21,7 +21,7 @@ std::any Environment::get(const Token &name) {
 
     if (enclosing != nullptr) return enclosing->get(name);
 
-    throw RuntimeError(name, "Undefined variable '" + name.lexeme + "'.");
+    throw RuntimeError(name, "Undefined variable \"" + name.lexeme + "\".");
 }
 
 void Environment::define(const std::string &var, std::any val) {

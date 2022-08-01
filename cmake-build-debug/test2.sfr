@@ -1,17 +1,22 @@
-class Doughnut {
-  cook() {
-    print "Fry until golden brown.";
-  }
-}
 
-class BostonCream < Doughnut {
-  bar(){
-      super.cook();
-  }
-  cook() {
-        super.cook();
-    print "Pipe full of custard and coat with chocolate.";
-  }
-}
+module test2{
+    class Doughnut {
+      cook() {
+        print "Fry until golden brown.";
+      }
+    }
 
-BostonCream().cook();
+    class BostonCream < Doughnut {
+      bar(){
+          super.cook();
+      }
+      cook() {
+            super.cook();
+        print "Pipe full of custard and coat with chocolate.";
+      }
+    }
+
+    BostonCream().cook();
+
+    var x = "in test2";
+}

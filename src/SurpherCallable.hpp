@@ -57,7 +57,7 @@ struct SurpherClass : SurpherCallable, SurpherInstance{
     std::shared_ptr<SurpherFunction> findClassMethod(const std::string& methodName);
 };
 
-struct Clock : public SurpherCallable {
+struct Clock : SurpherCallable {
     uint32_t arity() override;
     std::any call(Interpreter &interpreter, const std::vector<std::any> &arguments) override;
     std::string SurpherCallableToString() override;

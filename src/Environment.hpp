@@ -29,7 +29,7 @@ public:
 
     Environment();
 
-    explicit Environment(std::shared_ptr<Environment> enclosing);
+    Environment(std::shared_ptr<Environment> enclosing);
 };
 
 #endif //SURPHER_ENVIRONMENT_HPP

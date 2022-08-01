@@ -1,31 +1,35 @@
-var y_combinator = \f -> (\x -> x(x))(\x -> f(\y -> x(x)(y)));
+import "test2.sfr";
 
-var factorial = \f -> (\x -> (x == 1 ? x : x * f(x - 1)));
+module test1{
+    var y_combinator = \f -> (\x -> x(x))(\x -> f(\y -> x(x)(y)));
 
-var fibonacci = \f -> (\x -> (x < 2 ? x : f(x - 1) + f(x - 2)));
+    var factorial = \f -> (\x -> (x == 1 ? x : x * f(x - 1)));
 
-fun tr_fibonacci(n){
-    fun tr_fibonacci_aux(prev, curr, n){
-        return n == 0 ? curr : tr_fibonacci_aux(curr, prev + curr, n - 1);
+    var fibonacci = \f -> (\x -> (x < 2 ? x : f(x - 1) + f(x - 2)));
+
+    fun tr_fibonacci(n){
+        fun tr_fibonacci_aux(prev, curr, n){
+            return n == 0 ? curr : tr_fibonacci_aux(curr, prev + curr, n - 1);
+        }
+
+        return n == 0 ? 0 : tr_fibonacci_aux(0, 1, n - 1);
     }
 
-    return n == 0 ? 0 : tr_fibonacci_aux(0, 1, n - 1);
+
+    var timer = clock();
+    print "calculating 100! using y combinator:";
+    print y_combinator(factorial)(100);
+    print "time used: " + (clock() - timer);
+    print "";
+
+    timer = clock();
+    print "calculating fibonacci(100) using y combinator:";
+    print y_combinator(fibonacci)(100);
+    print "time used: " + (clock() - timer);
+    print "";
+
+    timer = clock();
+    print "calculating fibonacci(100) using tail-recursion:";
+    print tr_fibonacci(100);
+    print "time used: " + (clock() - timer);
 }
-
-
-var timer = clock();
-print "calculating 100! using y combinator:";
-print y_combinator(factorial)(100);
-print "time used: " + (clock() - timer);
-print "";
-
-timer = clock();
-print "calculating fibonacci(100) using y combinator:";
-print y_combinator(fibonacci)(100);
-print "time used: " + (clock() - timer);
-print "";
-
-timer = clock();
-print "calculating fibonacci(100) using tail-recursion:";
-print tr_fibonacci(100);
-print "time used: " + (clock() - timer);

@@ -11,4 +11,4 @@ add_executable(Surpher
         src/Lexer.hpp
         src/Surpher.cpp
         src/Token.cpp
-        src/Token.hpp src/Expr.hpp src/Expr.cpp src/Parser.hpp src/Parser.cpp src/Error.hpp src/Error.cpp src/Interpreter.hpp src/Interpreter.cpp src/Stmt.hpp src/Stmt.cpp src/Environment.hpp src/Environment.cpp src/SurpherCallable.hpp src/SurpherCallable.cpp src/Resolver.hpp src/Resolver.cpp src/SurpherInstance.hpp src/SurpherInstance.cpp src/tool/ASTPrinter.hpp src/tool/ASTPrinter.cpp)
+        src/Token.hpp src/Expr.hpp src/Expr.cpp src/Parser.hpp src/Parser.cpp src/Error.hpp src/Error.cpp src/Interpreter.hpp src/Interpreter.cpp src/Stmt.hpp src/Stmt.cpp src/Environment.hpp src/Environment.cpp src/SurpherCallable.hpp src/SurpherCallable.cpp src/Resolver.hpp src/Resolver.cpp src/SurpherInstance.hpp src/SurpherInstance.cpp src/SurpherModule.hpp src/SurpherModule.cpp)

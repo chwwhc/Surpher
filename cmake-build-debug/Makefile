@@ -420,6 +420,33 @@ src/SurpherInstance.cpp.s:
 	$(MAKE) -f CMakeFiles/Surpher.dir/build.make CMakeFiles/Surpher.dir/src/SurpherInstance.cpp.s
 .PHONY : src/SurpherInstance.cpp.s
 
+src/SurpherModule.o: src/SurpherModule.cpp.o
+
+.PHONY : src/SurpherModule.o
+
+# target to build an object file
+src/SurpherModule.cpp.o:
+	$(MAKE) -f CMakeFiles/Surpher.dir/build.make CMakeFiles/Surpher.dir/src/SurpherModule.cpp.o
+.PHONY : src/SurpherModule.cpp.o
+
+src/SurpherModule.i: src/SurpherModule.cpp.i
+
+.PHONY : src/SurpherModule.i
+
+# target to preprocess a source file
+src/SurpherModule.cpp.i:
+	$(MAKE) -f CMakeFiles/Surpher.dir/build.make CMakeFiles/Surpher.dir/src/SurpherModule.cpp.i
+.PHONY : src/SurpherModule.cpp.i
+
+src/SurpherModule.s: src/SurpherModule.cpp.s
+
+.PHONY : src/SurpherModule.s
+
+# target to generate assembly for a file
+src/SurpherModule.cpp.s:
+	$(MAKE) -f CMakeFiles/Surpher.dir/build.make CMakeFiles/Surpher.dir/src/SurpherModule.cpp.s
+.PHONY : src/SurpherModule.cpp.s
+
 src/Token.o: src/Token.cpp.o
 
 .PHONY : src/Token.o
@@ -446,33 +473,6 @@ src/Token.s: src/Token.cpp.s
 src/Token.cpp.s:
 	$(MAKE) -f CMakeFiles/Surpher.dir/build.make CMakeFiles/Surpher.dir/src/Token.cpp.s
 .PHONY : src/Token.cpp.s
-
-src/tool/ASTPrinter.o: src/tool/ASTPrinter.cpp.o
-
-.PHONY : src/tool/ASTPrinter.o
-
-# target to build an object file
-src/tool/ASTPrinter.cpp.o:
-	$(MAKE) -f CMakeFiles/Surpher.dir/build.make CMakeFiles/Surpher.dir/src/tool/ASTPrinter.cpp.o
-.PHONY : src/tool/ASTPrinter.cpp.o
-
-src/tool/ASTPrinter.i: src/tool/ASTPrinter.cpp.i
-
-.PHONY : src/tool/ASTPrinter.i
-
-# target to preprocess a source file
-src/tool/ASTPrinter.cpp.i:
-	$(MAKE) -f CMakeFiles/Surpher.dir/build.make CMakeFiles/Surpher.dir/src/tool/ASTPrinter.cpp.i
-.PHONY : src/tool/ASTPrinter.cpp.i
-
-src/tool/ASTPrinter.s: src/tool/ASTPrinter.cpp.s
-
-.PHONY : src/tool/ASTPrinter.s
-
-# target to generate assembly for a file
-src/tool/ASTPrinter.cpp.s:
-	$(MAKE) -f CMakeFiles/Surpher.dir/build.make CMakeFiles/Surpher.dir/src/tool/ASTPrinter.cpp.s
-.PHONY : src/tool/ASTPrinter.cpp.s
 
 # Help Target
 help:
@@ -516,12 +516,12 @@ help:
 	@echo "... src/SurpherInstance.o"
 	@echo "... src/SurpherInstance.i"
 	@echo "... src/SurpherInstance.s"
+	@echo "... src/SurpherModule.o"
+	@echo "... src/SurpherModule.i"
+	@echo "... src/SurpherModule.s"
 	@echo "... src/Token.o"
 	@echo "... src/Token.i"
 	@echo "... src/Token.s"
-	@echo "... src/tool/ASTPrinter.o"
-	@echo "... src/tool/ASTPrinter.i"
-	@echo "... src/tool/ASTPrinter.s"
 .PHONY : help
 
 

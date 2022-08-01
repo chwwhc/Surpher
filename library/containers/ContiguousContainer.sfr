@@ -1,7 +1,10 @@
+module ContiguousContainer{
+
 class ContiguousContainer {
     virtual size();
     virtual getIdx();
     virtual popBack();
     virtual popFront();
     virtual popIdx();
+}
 }

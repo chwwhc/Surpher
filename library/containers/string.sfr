@@ -1,0 +1,5 @@
+import "../library/containers/ContiguousContainer.sfr";
+
+class String < ContiguousContainer {
+
+}

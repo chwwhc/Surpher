@@ -17,7 +17,6 @@ private:
     std::list<std::list<std::shared_ptr<Stmt>>> scripts;
     std::shared_ptr<Environment> environment = globals;
     std::unordered_map<std::shared_ptr<Expr>, uint32_t> locals;
-    std::string module_prefix;
 
     static bool isTruthy(const std::any &val);
 
@@ -91,6 +90,8 @@ public:
 
     std::any visitImportStmt(const std::shared_ptr<Import> &stmt) override;
 
+    std::any visitModuleStmt(const std::shared_ptr<Module> &stmt) override;
+
     void resolve(const std::shared_ptr<Expr> &expr, uint32_t depth);
 
     static std::string stringify(const std::any &val);
@@ -98,8 +99,6 @@ public:
     void appendScriptBack(const std::list<std::shared_ptr<Stmt>> &script);
 
     void appendScriptFront(const std::list<std::shared_ptr<Stmt>> &script);
-
-    void setPrefix(std::string prefix);
 
     void interpret();
 };

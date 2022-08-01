@@ -147,16 +147,16 @@
 		<Unit filename="/home/han3816/projects/Surpher/src/SurpherInstance.hpp">
 			<Option target="Surpher"/>
 		</Unit>
+		<Unit filename="/home/han3816/projects/Surpher/src/SurpherModule.cpp">
+			<Option target="Surpher"/>
+		</Unit>
+		<Unit filename="/home/han3816/projects/Surpher/src/SurpherModule.hpp">
+			<Option target="Surpher"/>
+		</Unit>
 		<Unit filename="/home/han3816/projects/Surpher/src/Token.cpp">
 			<Option target="Surpher"/>
 		</Unit>
 		<Unit filename="/home/han3816/projects/Surpher/src/Token.hpp">
-			<Option target="Surpher"/>
-		</Unit>
-		<Unit filename="/home/han3816/projects/Surpher/src/tool/ASTPrinter.cpp">
-			<Option target="Surpher"/>
-		</Unit>
-		<Unit filename="/home/han3816/projects/Surpher/src/tool/ASTPrinter.hpp">
 			<Option target="Surpher"/>
 		</Unit>
 		<Unit filename="/home/han3816/projects/Surpher/CMakeLists.txt">

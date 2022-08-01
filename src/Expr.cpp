@@ -39,13 +39,17 @@ Assign::Assign(Token name, std::shared_ptr<Expr> value) : name{std::move(name)},
 
 }
 
+/*
+Assign::Assign(Token name, std::shared_ptr<Expr> value, std::optional<Token> module) : name(std::move(name)), value(std::move(value)), module(std::move(module)){
+
+}
+ */
+
 std::any Assign::accept(ExprVisitor &visitor) {
     return visitor.visitAssignExpr(shared_from_this());
 }
 
-Variable::Variable(Token name) : name{std::move(name)} {
-
-}
+Variable::Variable(Token name) : name(std::move(name)) {}
 
 std::any Variable::accept(ExprVisitor &visitor) {
     return visitor.visitVariableExpr(shared_from_this());
@@ -96,6 +100,12 @@ Get::Get(std::shared_ptr<Expr> object, Token name) : object(std::move(object)), 
 
 }
 
+/*
+Get::Get(std::shared_ptr<Expr> object, Token name, std::optional<Token> module) : object(std::move(object)), name(std::move(name)), module(std::move(module)){
+
+}
+ */
+
 std::any Get::accept(ExprVisitor &visitor) {
     return visitor.visitGetExpr(shared_from_this());
 }
@@ -105,6 +115,12 @@ Set::Set(std::shared_ptr<Expr> object, Token name, std::shared_ptr<Expr> value) 
                                                                                   value(std::move(value)) {
 
 }
+
+/*
+Set::Set(std::shared_ptr<Expr> object, Token name, std::shared_ptr<Expr> value, std::optional<Token> module) : object(std::move(object)), name(std::move(name)), value(std::move(value)), module(std::move(module)){
+
+}
+ */
 
 std::any Set::accept(ExprVisitor &visitor) {
     return visitor.visitSetExpr(shared_from_this());

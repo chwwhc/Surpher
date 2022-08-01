@@ -33,7 +33,8 @@ enum TokenType {
     LESS,
     LESS_EQUAL,
     QUESTION,
-    COLON,
+    SINGLE_COLON,
+    DOUBLE_COLON,
     RIGHT_ARROW,
 
     // Literal
@@ -67,7 +68,8 @@ enum TokenType {
     OR,
     VIRTUAL,
     IMPORT,
-    AS,
+    MODULE,
+    CONST,
 
     EOF_TOKEN
 };

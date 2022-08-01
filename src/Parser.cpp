@@ -1,13 +1,12 @@
-#include "Parser.hpp"
+#include <utility>
 #include "Expr.hpp"
 #include "Stmt.hpp"
 #include "Error.hpp"
-
-uint32_t Parser::lambdaCount = 0;
+#include "Parser.hpp"
 
 template<typename... T>
 bool Parser::match(T... types) {
-    if ((... || check(types))) {
+    if ((... || check(types, 0))) {
         anyToken();
         return true;
     }
@@ -50,7 +49,7 @@ std::shared_ptr<Expr> Parser::primary() {
         do{
             Token param(consume(IDENTIFIER, "Expect bound variables after lambda."));
             params.emplace_back(param);
-        } while(!check(RIGHT_ARROW));
+        } while(!check(RIGHT_ARROW, 0));
 
         consume(RIGHT_ARROW, "Expect '->' after bound variables.");
 
@@ -65,15 +64,12 @@ std::shared_ptr<Expr> Parser::primary() {
         Token method(consume(IDENTIFIER, "Expect superclass method name."));
         return std::make_shared<Super>(keyword, method);
     }
-    throw error(peek(), "Expected expression.");
+    throw error(peek(0), "Expected expression.");
 }
 
 Token Parser::consume(TokenType type, std::string_view message) {
-    if (check(type)) return anyToken();
-    throw error(peek(), message);
-}
-
-Parser::Parser(std::vector<Token> &tokens) : tokens(tokens) {
+    if (check(type, 0)) return anyToken();
+    throw error(peek(0), message);
 }
 
 ParseError Parser::error(const Token &token, std::string_view message) {
@@ -96,7 +92,7 @@ void Parser::synchronize() {
         if (previous().token_type == SINGLE_SEMICOLON) {
             return;
         }
-        switch (peek().token_type) {
+        switch (peek(0).token_type) {
             case CLASS:
             case FUN:
             case VAR:
@@ -114,16 +110,16 @@ void Parser::synchronize() {
 
 }
 
-Token Parser::peek() {
-    return tokens[current];
+Token Parser::peek(const uint32_t& offset) {
+    return tokens[current + offset];
 }
 
 bool Parser::isAtEnd() {
-    return peek().token_type == EOF_TOKEN;
+    return peek(0).token_type == EOF_TOKEN;
 }
 
-bool Parser::check(const TokenType &type) {
-    return !isAtEnd() && peek().token_type == type;
+bool Parser::check(const TokenType &type, const uint32_t& offset) {
+    return !isAtEnd() && peek(offset).token_type == type;
 }
 
 Token Parser::previous() {
@@ -139,7 +135,7 @@ Token Parser::anyToken() {
 
 std::shared_ptr<Expr> Parser::finishCall(const std::shared_ptr<Expr> &callee) {
     std::vector<std::shared_ptr<Expr>> arguments;
-    if (!check(RIGHT_PAREN)) {
+    if (!check(RIGHT_PAREN, 0)) {
         do {
             arguments.emplace_back(expression());
         } while (match(COMMA));
@@ -169,6 +165,8 @@ std::shared_ptr<Stmt> Parser::statement() {
         return returnStatement();
     } else if(match(IMPORT)){
         return importStatement();
+    } else if(match(MODULE)){
+        return moduleStatement();
     } else {
         return expressionStatement();
     }
@@ -185,7 +183,7 @@ std::shared_ptr<Function> Parser::functionStatement(const std::string &type, con
 
     consume(LEFT_PAREN, "Expect '(' after " + type + " name.");
     std::vector<Token> params;
-    if (!check(RIGHT_PAREN)) {
+    if (!check(RIGHT_PAREN, 0)) {
         do {
             params.emplace_back(consume(IDENTIFIER, "Expect parameter name."));
         } while (match(COMMA));
@@ -200,7 +198,7 @@ std::shared_ptr<Function> Parser::functionStatement(const std::string &type, con
 std::shared_ptr<Stmt> Parser::returnStatement() {
     Token keyword = previous();
     std::shared_ptr<Expr> value;
-    if (!check(SINGLE_SEMICOLON)) {
+    if (!check(SINGLE_SEMICOLON, 0)) {
         value = expression();
     }
 
@@ -230,13 +228,13 @@ std::shared_ptr<Stmt> Parser::forStatement() {
     }
 
     std::shared_ptr<Expr> condition;
-    if (!check(SINGLE_SEMICOLON)) {
+    if (!check(SINGLE_SEMICOLON, 0)) {
         condition = expression();
     }
     consume(SINGLE_SEMICOLON, "Expect ';' after 'for' condition.");
 
     std::shared_ptr<Expr> increment;
-    if (!check(RIGHT_PAREN)) {
+    if (!check(RIGHT_PAREN, 0)) {
         increment = expression();
     }
     consume(RIGHT_PAREN, "Expect ')' after 'for' clauses.");
@@ -299,12 +297,16 @@ std::shared_ptr<Stmt> Parser::declaration() {
 std::list<std::shared_ptr<Stmt>> Parser::blockStatement() {
     std::list<std::shared_ptr<Stmt>> statements;
 
-    while (!isAtEnd() && !check(RIGHT_BRACE)) {
-        statements.emplace_back(declaration());
-    }
+    while (!isAtEnd() && !check(RIGHT_BRACE, 0)) statements.emplace_back(declaration());
 
     consume(RIGHT_BRACE, "Expect '}' after block.");
     return statements;
+}
+
+std::shared_ptr<Stmt> Parser::moduleStatement() {
+    auto name (consume(IDENTIFIER, "Expect module name."));
+    consume(LEFT_BRACE, "Expect '{' before module body.");
+    return std::make_shared<Module>(name, blockStatement());
 }
 
 std::shared_ptr<Stmt> Parser::varDeclaration() {
@@ -333,17 +335,14 @@ std::shared_ptr<Stmt> Parser::printStatement() {
 std::shared_ptr<Stmt> Parser::classDeclaration() {
     Token name(consume(IDENTIFIER, "Expect class name."));
 
-    std::optional<std::shared_ptr<Variable>> superclass(std::nullopt);
-    if (match(LESS)) {
-        consume(IDENTIFIER, "Expect superclass name.");
-        superclass.emplace(std::make_shared<Variable>(previous()));
-    }
+    std::optional<std::shared_ptr<Expr>> superclass(std::nullopt);
+    if (match(LESS)) superclass.emplace(expression());
 
     consume(LEFT_BRACE, "Expect '{' before class body.");
 
     std::vector<std::shared_ptr<Function>> class_methods;
     std::vector<std::shared_ptr<Function>> instance_methods;
-    while (!isAtEnd() && !check(RIGHT_BRACE)) {
+    while (!isAtEnd() && !check(RIGHT_BRACE, 0)) {
         bool is_virtual = false;
         if(match(VIRTUAL))is_virtual = true;
 
@@ -367,8 +366,7 @@ std::shared_ptr<Expr> Parser::assignment() {
         std::shared_ptr<Expr> value(assignment());
 
         if (auto *var_expr = dynamic_cast<Variable *>(expr.get())) {
-            Token name(var_expr->name);
-            return std::make_shared<Assign>(std::move(name), value);
+            return std::make_shared<Assign>(var_expr->name, value);
         } else if (auto *get = dynamic_cast<Get *>(expr.get())) {
             return std::make_shared<Set>(get->object, get->name, value);
         }
@@ -384,7 +382,7 @@ std::shared_ptr<Expr> Parser::ternary() {
     if (match(QUESTION)) {
         Token question(previous());
         std::shared_ptr<Expr> true_branch(ternary());
-        if (match(COLON)) {
+        if (match(SINGLE_COLON)) {
             Token colon(previous());
             std::shared_ptr<Expr> else_branch(ternary());
             return std::shared_ptr<Expr>(new Ternary{condition, question, true_branch, colon, else_branch});
@@ -428,7 +426,7 @@ std::shared_ptr<Expr> Parser::call() {
         if (match(LEFT_PAREN)) {
             expr = finishCall(expr);
         } else if (match(DOT)) {
-            Token name(consume(IDENTIFIER, "Expect property name after '.'."));
+            Token name(consume(IDENTIFIER, "Expect identifier after '.'."));
             expr = std::make_shared<Get>(expr, name);
         } else {
             break;
@@ -440,15 +438,15 @@ std::shared_ptr<Expr> Parser::call() {
 
 std::shared_ptr<Stmt> Parser::importStatement() {
     std::shared_ptr<Expr> path(expression());
-    std::optional<std::shared_ptr<Expr>> module_name(std::nullopt);
-
-    if(match(AS)) module_name.emplace(expression());
 
     consume(SINGLE_SEMICOLON, "Expect ';' after script path.");
-    return std::make_shared<Import>(path, module_name);
+
+    return std::make_shared<Import>(path);
 }
 
+Parser::Parser(std::vector<Token> tokens) : tokens(std::move(tokens)){
 
+}
 
 
 

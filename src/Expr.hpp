@@ -4,6 +4,7 @@
 #include <memory>
 #include <any>
 #include <vector>
+#include <optional>
 
 #include "Token.hpp"
 
@@ -106,17 +107,17 @@ struct Assign: Expr, public std::enable_shared_from_this<Assign>{
     const Token name;
     const std::shared_ptr<Expr> value;
 
+
     Assign(Token  name, std::shared_ptr<Expr> value);
     std::any accept(ExprVisitor &visitor) override;
 };
 
 struct Variable: Expr, public std::enable_shared_from_this<Variable> {
     const Token name;
-    explicit Variable(Token  name);
+
+    explicit Variable(Token name);
 
     std::any accept(ExprVisitor& visitor) override;
-
-
 };
 
 struct Call : Expr, public std::enable_shared_from_this<Call> {

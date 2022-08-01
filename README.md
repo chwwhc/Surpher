@@ -18,6 +18,7 @@ Some add-on features to vanilla Lox:
 <li>Maximum recursion depth of 4096 to avoid stackoverflow error</li>
 <li>Virtual methods in classes</li>
 <li>Static and non-static methods in classes</li>
+<li>Modules to avoid name collision</li>
 </ul>
 
 ## How to use
@@ -59,6 +60,7 @@ statement      → exprStmt
                | continueStmt
                | breakStmt
                | importStmt
+               | moduleStmt
                | block ;
 
 exprStmt       → expression ";" ;
@@ -70,9 +72,10 @@ ifStmt         → "if" "(" expression ")" statement
 printStmt      → "print" expression ";" ;
 returnStmt     → "return" expression? ";" ;
 whileStmt      → "while" "(" expression ")" statement ;
-continueStmt   → "continue" ";";
-breakStmt      → "break" ";";
-importStmt     → "import" STRING ( "as" STRING )? ;
+continueStmt   → "continue" ";" ;
+breakStmt      → "break" ";" ;
+importStmt     → "import" STRING ;
+moduleStmt     → "module" IDENTIFIER block ;
 block          → "{" declaration* "}" ;
 
 expression     → assignment ;
@@ -113,10 +116,10 @@ DIGIT          → "0" ... "9" ;
 ### 1. Implementing Y-combinator
 ``` 
 // Y-combinator as a lambda expression
-var y_combinator = /\f. (/\x. x(x))(/\x. f(/\y. x(x)(y)));
+var y_combinator = \f -> (\x -> x(x))(\x -> f(\y -> x(x)(y)));
 
 // fibonacci function as a lambda expression
-var fibonacci = /\f. (/\x. (x < 2 ? x : f(x - 1) + f(x - 2)));
+var fibonacci = \f -> (\x -> (x < 2 ? x : f(x - 1) + f(x - 2)));
 
 // compute fibonacci(20) via Y-combinator
 print y_combinator(fibonacci)(20);

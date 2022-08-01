@@ -27,6 +27,9 @@ std::any Var::accept(StmtVisitor &visitor) {
     return visitor.visitVarStmt(shared_from_this());
 }
 
+Var::Var(Token name) : name(std::move(name)){
+}
+
 
 If::If(std::shared_ptr<Expr> condition, std::shared_ptr<Stmt> true_branch,
        std::optional<std::shared_ptr<Stmt>> else_branch)
@@ -66,7 +69,6 @@ Continue::Continue(Token continue_tok) : continue_tok{std::move(continue_tok)} {
 Function::Function(Token name, std::vector<Token> params, std::list<std::shared_ptr<Stmt>> body, bool is_virtual)
         : name(
         std::move(name)), params(std::move(params)), body(std::move(body)), is_virtual(is_virtual) {
-
 }
 
 std::any Function::accept(StmtVisitor &visitor) {
@@ -83,7 +85,7 @@ std::any Return::accept(StmtVisitor &visitor) {
 }
 
 Class::Class(Token name, std::vector<std::shared_ptr<Function>> instance_methods,
-             std::vector<std::shared_ptr<Function>> class_methods, std::optional<std::shared_ptr<Variable>> superclass)
+             std::vector<std::shared_ptr<Function>> class_methods, std::optional<std::shared_ptr<Expr>> superclass)
         : name(
         std::move(name)),
           instance_methods(
@@ -102,11 +104,18 @@ std::any Class::accept(StmtVisitor &visitor) {
     return visitor.visitClassStmt(shared_from_this());
 }
 
-Import::Import(std::shared_ptr<Expr> script, std::optional<std::shared_ptr<Expr>> module_name) : script(
-        std::move(script)), module_name(std::move(module_name)) {
+Import::Import(std::shared_ptr<Expr> script) : script(
+        std::move(script)) {
 
 }
 
 std::any Import::accept(StmtVisitor &visitor) {
     return visitor.visitImportStmt(shared_from_this());
+}
+
+Module::Module(Token name, std::list<std::shared_ptr<Stmt>> statements) : name(std::move(name)), statements(std::move(statements)){
+}
+
+std::any Module::accept(StmtVisitor &visitor) {
+    return visitor.visitModuleStmt(shared_from_this());
 }

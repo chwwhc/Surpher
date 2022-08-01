@@ -19,6 +19,7 @@ struct Function;
 struct Return;
 struct Class;
 struct Import;
+struct Module;
 
 struct StmtVisitor {
     virtual std::any visitBlockStmt(const std::shared_ptr<Block> &stmt) = 0;
@@ -44,6 +45,8 @@ struct StmtVisitor {
     virtual std::any visitClassStmt(const std::shared_ptr<Class> &stmt) = 0;
 
     virtual std::any visitImportStmt(const std::shared_ptr<Import> &stmt) = 0;
+
+    virtual std::any visitModuleStmt(const std::shared_ptr<Module> &stmt) = 0;
 };
 
 struct Stmt {
@@ -85,10 +88,11 @@ struct Print : Stmt, public std::enable_shared_from_this<Print> {
 
 struct Var : Stmt, public std::enable_shared_from_this<Var> {
     const Token name;
-    const std::shared_ptr<Expr> initializer;
+    std::optional<std::shared_ptr<Expr>> initializer {std::nullopt};
 
     Var(Token name, std::shared_ptr<Expr> initializer);
 
+    explicit Var(Token name);
 
     std::any accept(StmtVisitor &visitor) override;
 };
@@ -151,21 +155,29 @@ struct Return : Stmt, public std::enable_shared_from_this<Return> {
 
 struct Import : Stmt, public std::enable_shared_from_this<Import> {
     const std::shared_ptr<Expr> script;
-    const std::optional<std::shared_ptr<Expr>> module_name;
 
-    Import(std::shared_ptr<Expr> script, std::optional<std::shared_ptr<Expr>> module_name);
+    Import(std::shared_ptr<Expr> script);
 
     std::any accept(StmtVisitor &visitor) override;
 };
 
 struct Class : Stmt, public std::enable_shared_from_this<Class> {
     const Token name;
-    const std::optional<std::shared_ptr<Variable>> superclass;
+    std::optional<std::shared_ptr<Expr>> superclass;
     const std::vector<std::shared_ptr<Function>> instance_methods;
     const std::vector<std::shared_ptr<Function>> class_methods;
 
     Class(Token name, std::vector<std::shared_ptr<Function>> instance_methods,
-          std::vector<std::shared_ptr<Function>> class_methods, std::optional<std::shared_ptr<Variable>> superclass);
+          std::vector<std::shared_ptr<Function>> class_methods, std::optional<std::shared_ptr<Expr>> superclass);
+
+    std::any accept(StmtVisitor &visitor) override;
+};
+
+struct Module : Stmt, public std::enable_shared_from_this<Module>{
+    const Token name;
+    const std::list<std::shared_ptr<Stmt>> statements;
+
+    Module(Token name, std::list<std::shared_ptr<Stmt>> statements);
 
     std::any accept(StmtVisitor &visitor) override;
 };

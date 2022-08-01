@@ -43,6 +43,8 @@ class Resolver : ExprVisitor, StmtVisitor {
 
     void resolveFunction(const std::shared_ptr<Function> &function, FunctionType type);
 
+    void transferStack(std::stack<std::unordered_map<std::string, bool>> &aux_stack);
+
 public:
     std::any visitBlockStmt(const std::shared_ptr<Block> &stmt) override;
 
@@ -67,6 +69,8 @@ public:
     std::any visitClassStmt(const std::shared_ptr<Class> &stmt) override;
 
     std::any visitImportStmt(const std::shared_ptr<Import> &stmt) override;
+
+    std::any visitModuleStmt(const std::shared_ptr<Module> &stmt) override;
 
     std::any visitBinaryExpr(const std::shared_ptr<Binary> &expr) override;
 

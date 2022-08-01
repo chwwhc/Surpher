@@ -6,7 +6,6 @@
 #include "Error.hpp"
 
 Resolver::Resolver(Interpreter &interpreter) : interpreter(interpreter) {
-
 }
 
 void Resolver::resolve(const std::shared_ptr<Stmt> &stmt) {
@@ -14,9 +13,7 @@ void Resolver::resolve(const std::shared_ptr<Stmt> &stmt) {
 }
 
 void Resolver::resolve(const std::list<std::shared_ptr<Stmt>> &statements) {
-    for (const auto &s: statements) {
-        resolve(s);
-    }
+    for (const auto &s: statements) resolve(s);
 }
 
 std::any Resolver::visitBlockStmt(const std::shared_ptr<Block> &stmt) {
@@ -36,67 +33,58 @@ void Resolver::endScope() {
 
 std::any Resolver::visitVarStmt(const std::shared_ptr<Var> &stmt) {
     declare(stmt->name);
-    if (stmt->initializer != nullptr) {
-        resolve(stmt->initializer);
-    }
+    if (stmt->initializer.has_value()) resolve(stmt->initializer.value());
     define(stmt->name);
     return {};
 }
 
 void Resolver::declare(const Token &name) {
-    if (scopes.empty()) {
-        return;
-    }
+    if (scopes.empty()) return;
 
-    auto scope = scopes.top();
-    if (scope.find(name.lexeme) != scope.end()) {
-        error(name, "Already a variable with this name in this scope.");
-    }
+    auto &scope = scopes.top();
+    if (scope.find(name.lexeme) != scope.end()) error(name, "Already a variable with this name in this scope.");
+
     scope[name.lexeme] = false;
-
 }
 
 void Resolver::define(const Token &name) {
-    if (scopes.empty()) {
-        return;
-    }
+    if (scopes.empty()) return;
+
     scopes.top()[name.lexeme] = true;
 }
 
 std::any Resolver::visitVariableExpr(const std::shared_ptr<Variable> &expr) {
     if (!scopes.empty()) {
         auto &scope = scopes.top();
-        auto elem = scope.find(expr->name.lexeme);
-        if (elem != scope.end() && !elem->second) {
-            error(expr->name, "Can't read local variable in its own initializer.");
-        }
+        auto elem (scope.find(expr->name.lexeme));
+        if (elem != scope.end() && !elem->second) error(expr->name, "Can't read local variable in its own initializer.");
     }
 
     resolveLocal(expr, expr->name);
     return {};
 }
 
-void Resolver::resolveLocal(const std::shared_ptr<Expr> &expr, const Token &name) {
-    std::function<void(std::stack<std::unordered_map<std::string, bool>>)> transfer = [&, this](auto aux_stack) {
-        while (!aux_stack.empty()) {
-            scopes.push(std::move(aux_stack.top()));
-            aux_stack.pop();
-        }
-    };
+void Resolver::transferStack(std::stack<std::unordered_map<std::string, bool>> &aux_stack){
+    while (!aux_stack.empty()) {
+        scopes.emplace(aux_stack.top());
+        aux_stack.pop();
+    }
+}
 
+void Resolver::resolveLocal(const std::shared_ptr<Expr> &expr, const Token &name) {
     std::stack<std::unordered_map<std::string, bool>> aux_stack;
-    auto scopes_size = scopes.size();
-    for (size_t i = 0; i < scopes_size; i++) {
+    uint32_t scopes_size (scopes.size());
+    for (uint32_t i = 0; i < scopes_size; i++) {
         if (scopes.top().find(name.lexeme) != scopes.top().end()) {
             interpreter.resolve(expr, i);
-            transfer(aux_stack);
+            transferStack(aux_stack);
             return;
         } else {
-            aux_stack.push(std::move(scopes.top()));
+            aux_stack.emplace(scopes.top());
             scopes.pop();
         }
     }
-    transfer(aux_stack);
+    transferStack(aux_stack);
 }
 
 void Resolver::resolve(const std::shared_ptr<Expr> &expr) {
@@ -226,6 +214,17 @@ std::any Resolver::visitLambdaExpr(const std::shared_ptr<Lambda> &expr) {
     return visitFunctionStmt(lambda_fun);
 }
 
+std::any Resolver::visitModuleStmt(const std::shared_ptr<Module> &stmt) {
+    declare(stmt->name);
+    define(stmt->name);
+
+    beginScope();
+    resolve(stmt->statements);
+    endScope();
+
+    return {};
+}
+
 std::any Resolver::visitClassStmt(const std::shared_ptr<Class> &stmt) {
     auto enclosing_class = current_class;
     current_class = ClassType::CLASS;
@@ -234,17 +233,16 @@ std::any Resolver::visitClassStmt(const std::shared_ptr<Class> &stmt) {
     declare(stmt->name);
     define(stmt->name);
 
-    if (stmt->superclass.has_value() &&
-        stmt->name.lexeme == (stmt->superclass.value()->name.lexeme)) {
-        error(stmt->superclass.value()->name, "A class can't inherit from itself.");
+    if (stmt->superclass.has_value()){
+        auto super_class_var (std::dynamic_pointer_cast<Variable>(stmt->superclass.value()));
+        if(super_class_var && stmt->name.lexeme == super_class_var->name.lexeme){
+            error(super_class_var->name, "Class can't inherit from itself.");
+        }
     }
 
     if (stmt->superclass.has_value()) {
         current_class = ClassType::SUBCLASS;
         resolve(stmt->superclass.value());
-    }
-
-    if (stmt->superclass != nullptr) {
         beginScope();
         scopes.top()["super"] = true;
     }
@@ -272,9 +270,7 @@ std::any Resolver::visitClassStmt(const std::shared_ptr<Class> &stmt) {
 
     endScope();
 
-    if (stmt->superclass != nullptr) {
-        endScope();
-    }
+    if (stmt->superclass.has_value()) endScope();
 
     current_class = enclosing_class;
     return {};

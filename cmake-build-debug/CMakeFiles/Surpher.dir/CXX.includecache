@@ -6,6 +6,14 @@
 
 #IncludeRegexTransform: 
 
+/home/han3816/projects/Surpher/src/Environment.hpp
+unordered_map
+-
+memory
+-
+any
+-
+
 /home/han3816/projects/Surpher/src/Error.hpp
 string_view
 -
@@ -13,6 +21,8 @@ stdexcept
 -
 any
 -
+optional
+-
 Token.hpp
 /home/han3816/projects/Surpher/src/Token.hpp
 
@@ -23,44 +33,38 @@ any
 -
 vector
 -
+optional
+-
 Token.hpp
 /home/han3816/projects/Surpher/src/Token.hpp
 
-/home/han3816/projects/Surpher/src/Parser.cpp
-Parser.hpp
-/home/han3816/projects/Surpher/src/Parser.hpp
+/home/han3816/projects/Surpher/src/SurpherInstance.hpp
+unordered_map
+-
+vector
+-
+memory
+-
+any
+-
+
+/home/han3816/projects/Surpher/src/SurpherModule.cpp
+utility
+-
+SurpherModule.hpp
+/home/han3816/projects/Surpher/src/SurpherModule.hpp
 Expr.hpp
 /home/han3816/projects/Surpher/src/Expr.hpp
-Stmt.hpp
-/home/han3816/projects/Surpher/src/Stmt.hpp
+SurpherInstance.hpp
+/home/han3816/projects/Surpher/src/SurpherInstance.hpp
 Error.hpp
 /home/han3816/projects/Surpher/src/Error.hpp
 
-/home/han3816/projects/Surpher/src/Parser.hpp
+/home/han3816/projects/Surpher/src/SurpherModule.hpp
 memory
 -
-vector
--
-functional
--
-list
--
-Token.hpp
-/home/han3816/projects/Surpher/src/Token.hpp
-Expr.hpp
-/home/han3816/projects/Surpher/src/Expr.hpp
-Stmt.hpp
-/home/han3816/projects/Surpher/src/Stmt.hpp
-
-/home/han3816/projects/Surpher/src/Stmt.hpp
-vector
--
-optional
--
-list
--
-Expr.hpp
-/home/han3816/projects/Surpher/src/Expr.hpp
+Environment.hpp
+/home/han3816/projects/Surpher/src/Environment.hpp
 
 /home/han3816/projects/Surpher/src/Token.hpp
 string

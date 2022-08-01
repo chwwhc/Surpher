@@ -4,6 +4,7 @@
 #include <string_view>
 #include <stdexcept>
 #include <any>
+#include <optional>
 #include "Token.hpp"
 
 struct Token;
@@ -43,9 +44,10 @@ struct ReturnError : public std::runtime_error {
 
 struct ImportError : public std::runtime_error{
     const std::string script;
-    const std::string module_name;
+    std::optional<std::string> module_name {std::nullopt};
 
-    ImportError(std::string script, std::string module_name);
+    explicit ImportError(std::string script);
+    ImportError(std::string script, const std::string& new_module_name);
 };
 
 void runtimeError(const RuntimeError &error);
@@ -53,8 +55,6 @@ void runtimeError(const RuntimeError &error);
 void continueError(const ContinueError &error);
 
 void breakError(const BreakError &error);
-
-void importError(const ImportError &error);
 
 
 #endif //SURPHER_ERROR_HPP

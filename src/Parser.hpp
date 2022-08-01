@@ -17,7 +17,7 @@ struct ParseError : public std::runtime_error {
 
 class Parser {
     const std::vector<Token> tokens;
-    static uint32_t lambdaCount;
+    uint32_t lambdaCount = 0;
     uint32_t current = 0;
     std::function<std::shared_ptr<Expr>()> factor = [this]() { return parseBinary(unary, STAR, SLASH, PERCENT); };
     std::function<std::shared_ptr<Expr>()> term = [this]() { return parseBinary(factor, SINGLE_PLUS, MINUS); };
@@ -76,6 +76,8 @@ class Parser {
 
     std::shared_ptr<Stmt> importStatement();
 
+    std::shared_ptr<Stmt> moduleStatement();
+
     std::shared_ptr<Function> functionStatement(const std::string &type, const bool& is_virtual);
 
     std::shared_ptr<Stmt> statement();
@@ -84,11 +86,11 @@ class Parser {
 
     void synchronize();
 
-    Token peek();
+    Token peek(const uint32_t& offset);
 
     bool isAtEnd();
 
-    bool check(const TokenType &type);
+    bool check(const TokenType &type, const uint32_t& offset);
 
     Token previous();
 
@@ -109,7 +111,7 @@ class Parser {
     static ParseError error(const Token &token, std::string_view message);
 
 public:
-    explicit Parser(std::vector<Token> &tokens);
+    explicit Parser(std::vector<Token> tokens);
 
     std::list<std::shared_ptr<Stmt>> parse();
 };

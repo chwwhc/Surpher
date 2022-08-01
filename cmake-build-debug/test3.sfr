@@ -1,0 +1,2 @@
+import "test1.sfr" as "test1";
+import "test2.sfr" as "test2";

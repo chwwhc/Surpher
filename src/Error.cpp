@@ -25,8 +25,7 @@ RuntimeError::RuntimeError(Token token, const std::string_view &message)
 }
 
 void runtimeError(const RuntimeError &error) {
-    std::cerr << error.what() <<
-              "\n[line " << error.token.line << "]\n";
+    std::cerr << "[line " << error.token.line << "] Runtime error: " << error.what() << "\n";
     had_runtime_error = true;
 }
 
@@ -37,11 +36,6 @@ void continueError(const ContinueError &error) {
 
 void breakError(const BreakError &error) {
     std::cerr << error.what() << "\n[line " << error.break_tok.line << "]\n";
-    had_runtime_error = true;
-}
-
-void importError(const ImportError &error){
-    std::cerr << error.what() << "\n";
     had_runtime_error = true;
 }
 
@@ -59,6 +53,10 @@ ReturnError::ReturnError(std::any value) : runtime_error(""), value(std::move(va
 
 }
 
-ImportError::ImportError(std::string script, std::string module_name) : runtime_error(""), script(std::move(script)), module_name(std::move(module_name)){
+ImportError::ImportError(std::string script, const std::string& new_module_name) : runtime_error(""), script(std::move(script)){
+module_name.emplace(new_module_name);
+}
+
+ImportError::ImportError(std::string script) : runtime_error(""), script(std::move(script)){
 
 }

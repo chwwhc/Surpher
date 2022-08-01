@@ -14,14 +14,14 @@ SurpherFunction::SurpherFunction(std::shared_ptr<Function> declaration, std::sha
 }
 
 std::any SurpherFunction::call(Interpreter &interpreter, const std::vector<std::any> &arguments) {
-    std::shared_ptr<Environment> environment = is_partial ? closure : std::make_shared<Environment>(closure);
+    std::shared_ptr<Environment> environment {is_partial ? closure : std::make_shared<Environment>(closure)};
     for (size_t i = 0; i < declaration->params.size(); i++) {
         environment->define(declaration->params[i].lexeme, arguments[i]);
     }
     try {
         interpreter.executeBlock(declaration->body, environment);
     } catch (ReturnError &returnVal) {
-        if (is_initializer) return closure->getAt(0, "this");
+        if (is_initializer) return closure->getAt( 0, "this");
 
         return returnVal.value;
     }
