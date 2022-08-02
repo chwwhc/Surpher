@@ -40,9 +40,9 @@ std::shared_ptr<Expr> Parser::primary() {
         consume(RIGHT_PAREN, "Expected right parentheses.");
         return std::make_shared<Group>(expr_in);
     } else if (match(IDENTIFIER)) {
-        return std::make_shared<Variable>(previous());
+        return std::make_shared<Variable>(previous(), false);
     } else if (match(LAMBDA)) {
-        auto tmp = previous();
+        auto tmp (previous());
         Token lambdaTok("lambda" + std::to_string(lambdaCount++), tmp.literal, tmp.token_type, tmp.line);
 
         std::vector<Token> params;
@@ -110,7 +110,7 @@ void Parser::synchronize() {
 
 }
 
-Token Parser::peek(const uint32_t& offset) {
+Token Parser::peek(const uint32_t offset) {
     return tokens[current + offset];
 }
 
@@ -118,7 +118,7 @@ bool Parser::isAtEnd() {
     return peek(0).token_type == EOF_TOKEN;
 }
 
-bool Parser::check(const TokenType &type, const uint32_t& offset) {
+bool Parser::check(const TokenType &type, const uint32_t offset) {
     return !isAtEnd() && peek(offset).token_type == type;
 }
 
@@ -165,20 +165,18 @@ std::shared_ptr<Stmt> Parser::statement() {
         return returnStatement();
     } else if(match(IMPORT)){
         return importStatement();
-    } else if(match(MODULE)){
-        return moduleStatement();
     } else {
         return expressionStatement();
     }
 }
 
-std::shared_ptr<Function> Parser::functionStatement(const std::string &type, const bool &is_virtual) {
+std::shared_ptr<Function> Parser::functionStatement(const std::string &type, bool is_virtual, bool is_const) {
     Token name(consume(IDENTIFIER, "Expect " + type + " name."));
     if(is_virtual){
         consume(LEFT_PAREN, "Expect '(' after declaring a virtual function.");
         consume(RIGHT_PAREN, "Expect ')' after declaring a virtual function.");
         consume(SINGLE_SEMICOLON, "Expect ';' after declaring a virtual function.");
-        return std::make_shared<Function>(name, std::vector<Token>(), std::list<std::shared_ptr<Stmt>>(), is_virtual);
+        return std::make_shared<Function>(name, std::vector<Token>(), std::list<std::shared_ptr<Stmt>>(), is_virtual, is_const);
     }
 
     consume(LEFT_PAREN, "Expect '(' after " + type + " name.");
@@ -192,7 +190,7 @@ std::shared_ptr<Function> Parser::functionStatement(const std::string &type, con
 
     consume(LEFT_BRACE, "Expect '{' before " + type + " body.");
     std::list<std::shared_ptr<Stmt>> body(blockStatement());
-    return std::make_shared<Function>(name, params, body, is_virtual);
+    return std::make_shared<Function>(name, params, body, is_virtual, is_const);
 }
 
 std::shared_ptr<Stmt> Parser::returnStatement() {
@@ -222,7 +220,7 @@ std::shared_ptr<Stmt> Parser::forStatement() {
     consume(LEFT_PAREN, "Expect '(' after 'for'.");
     std::shared_ptr<Stmt> initializer;
     if (match(VAR)) {
-        initializer = varDeclaration();
+        initializer = varDeclaration(false);
     } else if (!match(SINGLE_SEMICOLON)) {
         initializer = expressionStatement();
     }
@@ -280,12 +278,16 @@ std::shared_ptr<Stmt> Parser::ifStatement() {
 
 std::shared_ptr<Stmt> Parser::declaration() {
     try {
+        bool is_const {match(CONST)};
+
         if (match(FUN)) {
-            return functionStatement("function", false);
+            return functionStatement("function", false, is_const);
         } else if (match(VAR)) {
-                return varDeclaration();
+                return varDeclaration(is_const);
         } else if (match(CLASS)) {
-            return classDeclaration();
+            return classDeclaration(is_const);
+        } else if(match(NAMESPACE)){
+            return namespaceDeclaration(is_const);
         }
         return statement();
     } catch (ParseError &e) {
@@ -303,13 +305,13 @@ std::list<std::shared_ptr<Stmt>> Parser::blockStatement() {
     return statements;
 }
 
-std::shared_ptr<Stmt> Parser::moduleStatement() {
+std::shared_ptr<Stmt> Parser::namespaceDeclaration(const bool is_const) {
     auto name (consume(IDENTIFIER, "Expect module name."));
     consume(LEFT_BRACE, "Expect '{' before module body.");
-    return std::make_shared<Module>(name, blockStatement());
+    return std::make_shared<Namespace>(name, blockStatement(), is_const);
 }
 
-std::shared_ptr<Stmt> Parser::varDeclaration() {
+std::shared_ptr<Stmt> Parser::varDeclaration(const bool is_const) {
     Token name(consume(IDENTIFIER, "Expect variable name."));
 
     std::shared_ptr<Expr> initializer;
@@ -317,7 +319,7 @@ std::shared_ptr<Stmt> Parser::varDeclaration() {
         initializer = expression();
     }
     consume(SINGLE_SEMICOLON, "Expect ';' after variable declaration.");
-    return std::make_shared<Var>(name, initializer);
+    return std::make_shared<Var>(name, initializer, is_const);
 }
 
 std::shared_ptr<Stmt> Parser::expressionStatement() {
@@ -332,7 +334,7 @@ std::shared_ptr<Stmt> Parser::printStatement() {
     return std::make_shared<Print>(value);
 }
 
-std::shared_ptr<Stmt> Parser::classDeclaration() {
+std::shared_ptr<Stmt> Parser::classDeclaration(const bool is_const) {
     Token name(consume(IDENTIFIER, "Expect class name."));
 
     std::optional<std::shared_ptr<Expr>> superclass(std::nullopt);
@@ -343,19 +345,18 @@ std::shared_ptr<Stmt> Parser::classDeclaration() {
     std::vector<std::shared_ptr<Function>> class_methods;
     std::vector<std::shared_ptr<Function>> instance_methods;
     while (!isAtEnd() && !check(RIGHT_BRACE, 0)) {
-        bool is_virtual = false;
-        if(match(VIRTUAL))is_virtual = true;
+        bool is_virtual {match(VIRTUAL)};
 
         if (match(CLASS)) {
-            class_methods.emplace_back(functionStatement("class_method", is_virtual));
+            class_methods.emplace_back(functionStatement("class_method", is_virtual, is_const));
         } else {
-            instance_methods.emplace_back(functionStatement("instance_method", is_virtual));
+            instance_methods.emplace_back(functionStatement("instance_method", is_virtual, is_const));
         }
     }
 
     consume(RIGHT_BRACE, "Expect '}' after class body.");
 
-    return std::make_shared<Class>(name, instance_methods, class_methods, superclass);
+    return std::make_shared<Class>(name, instance_methods, class_methods, superclass, is_const);
 }
 
 std::shared_ptr<Expr> Parser::assignment() {

@@ -147,10 +147,10 @@
 		<Unit filename="/home/han3816/projects/Surpher/src/SurpherInstance.hpp">
 			<Option target="Surpher"/>
 		</Unit>
-		<Unit filename="/home/han3816/projects/Surpher/src/SurpherModule.cpp">
+		<Unit filename="/home/han3816/projects/Surpher/src/SurpherNamespace.cpp">
 			<Option target="Surpher"/>
 		</Unit>
-		<Unit filename="/home/han3816/projects/Surpher/src/SurpherModule.hpp">
+		<Unit filename="/home/han3816/projects/Surpher/src/SurpherNamespace.hpp">
 			<Option target="Surpher"/>
 		</Unit>
 		<Unit filename="/home/han3816/projects/Surpher/src/Token.cpp">

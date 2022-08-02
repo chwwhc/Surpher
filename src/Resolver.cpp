@@ -210,11 +210,11 @@ std::any Resolver::visitTernaryExpr(const std::shared_ptr<Ternary> &expr) {
 
 std::any Resolver::visitLambdaExpr(const std::shared_ptr<Lambda> &expr) {
     std::list<std::shared_ptr<Stmt>> lambda_return{std::make_shared<Return>(Token("", {}, RETURN, 1), expr->body)};
-    std::shared_ptr<Function> lambda_fun = std::make_shared<Function>(expr->name, expr->params, lambda_return, false);
+    std::shared_ptr<Function> lambda_fun = std::make_shared<Function>(expr->name, expr->params, lambda_return, false, true);
     return visitFunctionStmt(lambda_fun);
 }
 
-std::any Resolver::visitModuleStmt(const std::shared_ptr<Module> &stmt) {
+std::any Resolver::visitNamespaceStmt(const std::shared_ptr<Namespace> &stmt) {
     declare(stmt->name);
     define(stmt->name);
 

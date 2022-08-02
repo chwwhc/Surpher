@@ -31,7 +31,8 @@ static std::unordered_map<std::string, TokenType> keyWords = {
         {"or",       OR},
         {"virtual",  VIRTUAL},
         {"import",   IMPORT},
-        {"module", MODULE}};
+        {"namespace", NAMESPACE},
+        {"const", CONST}};
 
 Lexer::Lexer(std::string source_code) : source_code(std::move(source_code)){
 }

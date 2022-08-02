@@ -90,7 +90,7 @@ public:
 
     std::any visitImportStmt(const std::shared_ptr<Import> &stmt) override;
 
-    std::any visitModuleStmt(const std::shared_ptr<Module> &stmt) override;
+    std::any visitNamespaceStmt(const std::shared_ptr<Namespace> &stmt) override;
 
     void resolve(const std::shared_ptr<Expr> &expr, uint32_t depth);
 

@@ -420,32 +420,32 @@ src/SurpherInstance.cpp.s:
 	$(MAKE) -f CMakeFiles/Surpher.dir/build.make CMakeFiles/Surpher.dir/src/SurpherInstance.cpp.s
 .PHONY : src/SurpherInstance.cpp.s
 
-src/SurpherModule.o: src/SurpherModule.cpp.o
+src/SurpherNamespace.o: src/SurpherNamespace.cpp.o
 
-.PHONY : src/SurpherModule.o
+.PHONY : src/SurpherNamespace.o
 
 # target to build an object file
-src/SurpherModule.cpp.o:
-	$(MAKE) -f CMakeFiles/Surpher.dir/build.make CMakeFiles/Surpher.dir/src/SurpherModule.cpp.o
-.PHONY : src/SurpherModule.cpp.o
+src/SurpherNamespace.cpp.o:
+	$(MAKE) -f CMakeFiles/Surpher.dir/build.make CMakeFiles/Surpher.dir/src/SurpherNamespace.cpp.o
+.PHONY : src/SurpherNamespace.cpp.o
 
-src/SurpherModule.i: src/SurpherModule.cpp.i
+src/SurpherNamespace.i: src/SurpherNamespace.cpp.i
 
-.PHONY : src/SurpherModule.i
+.PHONY : src/SurpherNamespace.i
 
 # target to preprocess a source file
-src/SurpherModule.cpp.i:
-	$(MAKE) -f CMakeFiles/Surpher.dir/build.make CMakeFiles/Surpher.dir/src/SurpherModule.cpp.i
-.PHONY : src/SurpherModule.cpp.i
+src/SurpherNamespace.cpp.i:
+	$(MAKE) -f CMakeFiles/Surpher.dir/build.make CMakeFiles/Surpher.dir/src/SurpherNamespace.cpp.i
+.PHONY : src/SurpherNamespace.cpp.i
 
-src/SurpherModule.s: src/SurpherModule.cpp.s
+src/SurpherNamespace.s: src/SurpherNamespace.cpp.s
 
-.PHONY : src/SurpherModule.s
+.PHONY : src/SurpherNamespace.s
 
 # target to generate assembly for a file
-src/SurpherModule.cpp.s:
-	$(MAKE) -f CMakeFiles/Surpher.dir/build.make CMakeFiles/Surpher.dir/src/SurpherModule.cpp.s
-.PHONY : src/SurpherModule.cpp.s
+src/SurpherNamespace.cpp.s:
+	$(MAKE) -f CMakeFiles/Surpher.dir/build.make CMakeFiles/Surpher.dir/src/SurpherNamespace.cpp.s
+.PHONY : src/SurpherNamespace.cpp.s
 
 src/Token.o: src/Token.cpp.o
 
@@ -516,9 +516,9 @@ help:
 	@echo "... src/SurpherInstance.o"
 	@echo "... src/SurpherInstance.i"
 	@echo "... src/SurpherInstance.s"
-	@echo "... src/SurpherModule.o"
-	@echo "... src/SurpherModule.i"
-	@echo "... src/SurpherModule.s"
+	@echo "... src/SurpherNamespace.o"
+	@echo "... src/SurpherNamespace.i"
+	@echo "... src/SurpherNamespace.s"
 	@echo "... src/Token.o"
 	@echo "... src/Token.i"
 	@echo "... src/Token.s"

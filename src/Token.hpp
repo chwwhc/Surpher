@@ -68,7 +68,7 @@ enum TokenType {
     OR,
     VIRTUAL,
     IMPORT,
-    MODULE,
+    NAMESPACE,
     CONST,
 
     EOF_TOKEN

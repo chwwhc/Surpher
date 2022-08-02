@@ -56,7 +56,7 @@ class Parser {
 
     std::shared_ptr<Stmt> declaration();
 
-    std::shared_ptr<Stmt> varDeclaration();
+    std::shared_ptr<Stmt> varDeclaration(const bool is_const);
 
     std::shared_ptr<Stmt> ifStatement();
 
@@ -72,13 +72,13 @@ class Parser {
 
     std::shared_ptr<Stmt> printStatement();
 
-    std::shared_ptr<Stmt> classDeclaration();
+    std::shared_ptr<Stmt> classDeclaration(const bool is_const);
 
     std::shared_ptr<Stmt> importStatement();
 
-    std::shared_ptr<Stmt> moduleStatement();
+    std::shared_ptr<Stmt> namespaceDeclaration(const bool is_const);
 
-    std::shared_ptr<Function> functionStatement(const std::string &type, const bool& is_virtual);
+    std::shared_ptr<Function> functionStatement(const std::string &type, const bool is_virtual, const bool is_const);
 
     std::shared_ptr<Stmt> statement();
 
@@ -86,11 +86,11 @@ class Parser {
 
     void synchronize();
 
-    Token peek(const uint32_t& offset);
+    Token peek(const uint32_t offset);
 
     bool isAtEnd();
 
-    bool check(const TokenType &type, const uint32_t& offset);
+    bool check(const TokenType &type, const uint32_t offset);
 
     Token previous();
 

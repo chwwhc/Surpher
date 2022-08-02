@@ -23,7 +23,7 @@ CMakeFiles/Surpher.dir/src/Interpreter.cpp.o
  /home/han3816/projects/Surpher/src/Stmt.hpp
  /home/han3816/projects/Surpher/src/SurpherCallable.hpp
  /home/han3816/projects/Surpher/src/SurpherInstance.hpp
- /home/han3816/projects/Surpher/src/SurpherModule.hpp
+ /home/han3816/projects/Surpher/src/SurpherNamespace.hpp
  /home/han3816/projects/Surpher/src/Token.hpp
 CMakeFiles/Surpher.dir/src/Lexer.cpp.o
  /home/han3816/projects/Surpher/src/Error.hpp
@@ -81,13 +81,13 @@ CMakeFiles/Surpher.dir/src/SurpherInstance.cpp.o
  /home/han3816/projects/Surpher/src/SurpherInstance.cpp
  /home/han3816/projects/Surpher/src/SurpherInstance.hpp
  /home/han3816/projects/Surpher/src/Token.hpp
-CMakeFiles/Surpher.dir/src/SurpherModule.cpp.o
+CMakeFiles/Surpher.dir/src/SurpherNamespace.cpp.o
  /home/han3816/projects/Surpher/src/Environment.hpp
  /home/han3816/projects/Surpher/src/Error.hpp
  /home/han3816/projects/Surpher/src/Expr.hpp
  /home/han3816/projects/Surpher/src/SurpherInstance.hpp
- /home/han3816/projects/Surpher/src/SurpherModule.cpp
- /home/han3816/projects/Surpher/src/SurpherModule.hpp
+ /home/han3816/projects/Surpher/src/SurpherNamespace.cpp
+ /home/han3816/projects/Surpher/src/SurpherNamespace.hpp
  /home/han3816/projects/Surpher/src/Token.hpp
 CMakeFiles/Surpher.dir/src/Token.cpp.o
  /home/han3816/projects/Surpher/src/Token.cpp

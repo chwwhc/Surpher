@@ -213,18 +213,18 @@ CMakeFiles/Surpher.dir/src/SurpherInstance.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/Surpher.dir/src/SurpherInstance.cpp.s"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/han3816/projects/Surpher/src/SurpherInstance.cpp -o CMakeFiles/Surpher.dir/src/SurpherInstance.cpp.s
 
-CMakeFiles/Surpher.dir/src/SurpherModule.cpp.o: CMakeFiles/Surpher.dir/flags.make
-CMakeFiles/Surpher.dir/src/SurpherModule.cpp.o: ../src/SurpherModule.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/han3816/projects/Surpher/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_13) "Building CXX object CMakeFiles/Surpher.dir/src/SurpherModule.cpp.o"
-	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/Surpher.dir/src/SurpherModule.cpp.o -c /home/han3816/projects/Surpher/src/SurpherModule.cpp
+CMakeFiles/Surpher.dir/src/SurpherNamespace.cpp.o: CMakeFiles/Surpher.dir/flags.make
+CMakeFiles/Surpher.dir/src/SurpherNamespace.cpp.o: ../src/SurpherNamespace.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/han3816/projects/Surpher/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_13) "Building CXX object CMakeFiles/Surpher.dir/src/SurpherNamespace.cpp.o"
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/Surpher.dir/src/SurpherNamespace.cpp.o -c /home/han3816/projects/Surpher/src/SurpherNamespace.cpp
 
-CMakeFiles/Surpher.dir/src/SurpherModule.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/Surpher.dir/src/SurpherModule.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/han3816/projects/Surpher/src/SurpherModule.cpp > CMakeFiles/Surpher.dir/src/SurpherModule.cpp.i
+CMakeFiles/Surpher.dir/src/SurpherNamespace.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/Surpher.dir/src/SurpherNamespace.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/han3816/projects/Surpher/src/SurpherNamespace.cpp > CMakeFiles/Surpher.dir/src/SurpherNamespace.cpp.i
 
-CMakeFiles/Surpher.dir/src/SurpherModule.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/Surpher.dir/src/SurpherModule.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/han3816/projects/Surpher/src/SurpherModule.cpp -o CMakeFiles/Surpher.dir/src/SurpherModule.cpp.s
+CMakeFiles/Surpher.dir/src/SurpherNamespace.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/Surpher.dir/src/SurpherNamespace.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/han3816/projects/Surpher/src/SurpherNamespace.cpp -o CMakeFiles/Surpher.dir/src/SurpherNamespace.cpp.s
 
 # Object files for target Surpher
 Surpher_OBJECTS = \
@@ -240,7 +240,7 @@ Surpher_OBJECTS = \
 "CMakeFiles/Surpher.dir/src/SurpherCallable.cpp.o" \
 "CMakeFiles/Surpher.dir/src/Resolver.cpp.o" \
 "CMakeFiles/Surpher.dir/src/SurpherInstance.cpp.o" \
-"CMakeFiles/Surpher.dir/src/SurpherModule.cpp.o"
+"CMakeFiles/Surpher.dir/src/SurpherNamespace.cpp.o"
 
 # External object files for target Surpher
 Surpher_EXTERNAL_OBJECTS =
@@ -257,7 +257,7 @@ Surpher: CMakeFiles/Surpher.dir/src/Environment.cpp.o
 Surpher: CMakeFiles/Surpher.dir/src/SurpherCallable.cpp.o
 Surpher: CMakeFiles/Surpher.dir/src/Resolver.cpp.o
 Surpher: CMakeFiles/Surpher.dir/src/SurpherInstance.cpp.o
-Surpher: CMakeFiles/Surpher.dir/src/SurpherModule.cpp.o
+Surpher: CMakeFiles/Surpher.dir/src/SurpherNamespace.cpp.o
 Surpher: CMakeFiles/Surpher.dir/build.make
 Surpher: CMakeFiles/Surpher.dir/link.txt
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/han3816/projects/Surpher/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_14) "Linking CXX executable Surpher"

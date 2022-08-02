@@ -16,7 +16,7 @@ SurpherFunction::SurpherFunction(std::shared_ptr<Function> declaration, std::sha
 std::any SurpherFunction::call(Interpreter &interpreter, const std::vector<std::any> &arguments) {
     std::shared_ptr<Environment> environment {is_partial ? closure : std::make_shared<Environment>(closure)};
     for (size_t i = 0; i < declaration->params.size(); i++) {
-        environment->define(declaration->params[i].lexeme, arguments[i]);
+        environment->define(declaration->params[i].lexeme, arguments[i], false);
     }
     try {
         interpreter.executeBlock(declaration->body, environment);
@@ -36,12 +36,12 @@ uint32_t SurpherFunction::arity() {
 }
 
 std::string SurpherFunction::SurpherCallableToString() {
-    return "<fn "s + declaration->name.lexeme + ">"s;
+    return "<function "s + declaration->name.lexeme + ">"s;
 }
 
 std::shared_ptr<SurpherFunction> SurpherFunction::bind(const std::shared_ptr<SurpherInstance> &instance) {
     auto environment(std::make_shared<Environment>(closure));
-    environment->define("this", instance);
+    environment->define("this", instance, true);
     return std::make_shared<SurpherFunction>(declaration, environment, is_initializer, is_partial);
 }
 

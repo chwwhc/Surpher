@@ -21,13 +21,16 @@ std::any Print::accept(StmtVisitor &visitor) {
     return visitor.visitPrintStmt(shared_from_this());
 }
 
-Var::Var(Token name, std::shared_ptr<Expr> initializer) : name{std::move(name)}, initializer{std::move(initializer)} {}
+Var::Var(Token name, std::shared_ptr<Expr> initializer, bool is_const) : name{std::move(name)},
+                                                                         initializer{std::move(initializer)},
+                                                                         is_const(is_const) {
+}
 
 std::any Var::accept(StmtVisitor &visitor) {
     return visitor.visitVarStmt(shared_from_this());
 }
 
-Var::Var(Token name) : name(std::move(name)){
+Var::Var(Token name, bool is_const) : name(std::move(name)), is_const(is_const) {
 }
 
 
@@ -55,7 +58,6 @@ std::any Break::accept(StmtVisitor &visitor) {
 }
 
 Break::Break(Token break_tok) : break_tok{std::move(break_tok)} {
-
 }
 
 std::any Continue::accept(StmtVisitor &visitor) {
@@ -66,9 +68,10 @@ Continue::Continue(Token continue_tok) : continue_tok{std::move(continue_tok)} {
 
 }
 
-Function::Function(Token name, std::vector<Token> params, std::list<std::shared_ptr<Stmt>> body, bool is_virtual)
+Function::Function(Token name, std::vector<Token> params, std::list<std::shared_ptr<Stmt>> body, bool is_virtual,
+                   bool is_const)
         : name(
-        std::move(name)), params(std::move(params)), body(std::move(body)), is_virtual(is_virtual) {
+        std::move(name)), params(std::move(params)), body(std::move(body)), is_virtual(is_virtual), is_const(is_const) {
 }
 
 std::any Function::accept(StmtVisitor &visitor) {
@@ -85,7 +88,8 @@ std::any Return::accept(StmtVisitor &visitor) {
 }
 
 Class::Class(Token name, std::vector<std::shared_ptr<Function>> instance_methods,
-             std::vector<std::shared_ptr<Function>> class_methods, std::optional<std::shared_ptr<Expr>> superclass)
+             std::vector<std::shared_ptr<Function>> class_methods, std::optional<std::shared_ptr<Expr>> superclass,
+             bool is_const)
         : name(
         std::move(name)),
           instance_methods(
@@ -96,7 +100,7 @@ Class::Class(Token name, std::vector<std::shared_ptr<Function>> instance_methods
                           class_methods)),
           superclass(
                   std::move(
-                          superclass)) {
+                          superclass)), is_const(is_const) {
 
 }
 
@@ -113,9 +117,10 @@ std::any Import::accept(StmtVisitor &visitor) {
     return visitor.visitImportStmt(shared_from_this());
 }
 
-Module::Module(Token name, std::list<std::shared_ptr<Stmt>> statements) : name(std::move(name)), statements(std::move(statements)){
+Namespace::Namespace(Token name, std::list<std::shared_ptr<Stmt>> statements, bool is_const) : name(std::move(name)),
+                                                                                statements(std::move(statements)), is_const(is_const) {
 }
 
-std::any Module::accept(StmtVisitor &visitor) {
-    return visitor.visitModuleStmt(shared_from_this());
+std::any Namespace::accept(StmtVisitor &visitor) {
+    return visitor.visitNamespaceStmt(shared_from_this());
 }

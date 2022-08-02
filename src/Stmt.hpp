@@ -19,7 +19,7 @@ struct Function;
 struct Return;
 struct Class;
 struct Import;
-struct Module;
+struct Namespace;
 
 struct StmtVisitor {
     virtual std::any visitBlockStmt(const std::shared_ptr<Block> &stmt) = 0;
@@ -46,7 +46,7 @@ struct StmtVisitor {
 
     virtual std::any visitImportStmt(const std::shared_ptr<Import> &stmt) = 0;
 
-    virtual std::any visitModuleStmt(const std::shared_ptr<Module> &stmt) = 0;
+    virtual std::any visitNamespaceStmt(const std::shared_ptr<Namespace> &stmt) = 0;
 };
 
 struct Stmt {
@@ -88,11 +88,12 @@ struct Print : Stmt, public std::enable_shared_from_this<Print> {
 
 struct Var : Stmt, public std::enable_shared_from_this<Var> {
     const Token name;
-    std::optional<std::shared_ptr<Expr>> initializer {std::nullopt};
+    const bool is_const;
+    std::optional<std::shared_ptr<Expr>> initializer{std::nullopt};
 
-    Var(Token name, std::shared_ptr<Expr> initializer);
+    Var(Token name, std::shared_ptr<Expr> initializer, bool is_const);
 
-    explicit Var(Token name);
+    Var(Token name, bool is_const);
 
     std::any accept(StmtVisitor &visitor) override;
 };
@@ -138,8 +139,10 @@ struct Function : Stmt, public std::enable_shared_from_this<Function> {
     const std::vector<Token> params;
     const std::list<std::shared_ptr<Stmt>> body;
     const bool is_virtual;
+    const bool is_const;
 
-    Function(Token name, std::vector<Token> params, std::list<std::shared_ptr<Stmt>> body, bool is_virtual);
+    Function(Token name, std::vector<Token> params, std::list<std::shared_ptr<Stmt>> body, bool is_virtual,
+             bool is_const);
 
     std::any accept(StmtVisitor &visitor) override;
 };
@@ -156,7 +159,7 @@ struct Return : Stmt, public std::enable_shared_from_this<Return> {
 struct Import : Stmt, public std::enable_shared_from_this<Import> {
     const std::shared_ptr<Expr> script;
 
-    Import(std::shared_ptr<Expr> script);
+    explicit Import(std::shared_ptr<Expr> script);
 
     std::any accept(StmtVisitor &visitor) override;
 };
@@ -166,18 +169,21 @@ struct Class : Stmt, public std::enable_shared_from_this<Class> {
     std::optional<std::shared_ptr<Expr>> superclass;
     const std::vector<std::shared_ptr<Function>> instance_methods;
     const std::vector<std::shared_ptr<Function>> class_methods;
+    const bool is_const;
 
     Class(Token name, std::vector<std::shared_ptr<Function>> instance_methods,
-          std::vector<std::shared_ptr<Function>> class_methods, std::optional<std::shared_ptr<Expr>> superclass);
+          std::vector<std::shared_ptr<Function>> class_methods, std::optional<std::shared_ptr<Expr>> superclass,
+          bool is_const);
 
     std::any accept(StmtVisitor &visitor) override;
 };
 
-struct Module : Stmt, public std::enable_shared_from_this<Module>{
+struct Namespace : Stmt, public std::enable_shared_from_this<Namespace> {
     const Token name;
+    const bool is_const;
     const std::list<std::shared_ptr<Stmt>> statements;
 
-    Module(Token name, std::list<std::shared_ptr<Stmt>> statements);
+    Namespace(Token name, std::list<std::shared_ptr<Stmt>> statements, bool is_const);
 
     std::any accept(StmtVisitor &visitor) override;
 };

@@ -49,7 +49,8 @@ std::any Assign::accept(ExprVisitor &visitor) {
     return visitor.visitAssignExpr(shared_from_this());
 }
 
-Variable::Variable(Token name) : name(std::move(name)) {}
+Variable::Variable(Token name, bool is_const) : name(std::move(name)) ,is_const(is_const){
+}
 
 std::any Variable::accept(ExprVisitor &visitor) {
     return visitor.visitVariableExpr(shared_from_this());

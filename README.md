@@ -18,7 +18,7 @@ Some add-on features to vanilla Lox:
 <li>Maximum recursion depth of 4096 to avoid stackoverflow error</li>
 <li>Virtual methods in classes</li>
 <li>Static and non-static methods in classes</li>
-<li>Modules to avoid name collision</li>
+<li>Namespaces to avoid name collision</li>
 </ul>
 
 ## How to use
@@ -29,7 +29,7 @@ Run the following command to open the REPL:
 In the REPL session, 
 run the following command to execute a script that's in the same directory:
 ```
-!run ./some_script.sfr
+import "some_script.sfr";
 ```
 In the REPL session,
 run the following command to exit:
@@ -41,15 +41,14 @@ run the following command to exit:
 ``` 
 program        → declaration* EOF ;
 
-declaration    → classDecl
-               | funDecl
-               | varDecl
+declaration    → "const"? ( classDecl | funDecl | varDecl | namespaceDecl )
                | statement ;
 
 classDecl      → "class" IDENTIFIER ( "<" IDENTIFIER )?
                  "{" function* "}" ;
 funDecl        → "fun" function ;
 varDecl        → "var" IDENTIFIER ( "=" expression )? ";" ;
+namespaceDecl  → "namespace" IDENTIFIER block ;
 
 statement      → exprStmt
                | forStmt
@@ -60,7 +59,6 @@ statement      → exprStmt
                | continueStmt
                | breakStmt
                | importStmt
-               | moduleStmt
                | block ;
 
 exprStmt       → expression ";" ;
@@ -75,7 +73,6 @@ whileStmt      → "while" "(" expression ")" statement ;
 continueStmt   → "continue" ";" ;
 breakStmt      → "break" ";" ;
 importStmt     → "import" STRING ;
-moduleStmt     → "module" IDENTIFIER block ;
 block          → "{" declaration* "}" ;
 
 expression     → assignment ;
@@ -171,6 +168,26 @@ var partial1 = original_fun(1);
 var partial2 = partial1(2);
 
 print partial2(3);
+```
+
+### 4. Namespace and modifier
+```
+// always use 'const' before 'namespace'!!!
+namespace foo {
+    var x = 2;
+}
+foo = 2; // the namespace foo would become 2
+
+const namespace bar {
+    var x = 2;
+}
+bar = 2; // runtime error
+
+// nested namespace is allowed
+namespace foofoo {
+    namespace barbar{
+    }
+}
 ```
 
 ## References

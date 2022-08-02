@@ -9,25 +9,25 @@
 #include "Error.hpp"
 #include "SurpherInstance.hpp"
 #include "SurpherCallable.hpp"
-#include "SurpherModule.hpp"
+#include "SurpherNamespace.hpp"
 
 using namespace std::string_literals;
 
 static uint32_t force_diff_hash = 1;
 
-struct funArgsPair {
+struct FunArgsPair {
     std::string name;
     std::vector<std::any> args;
 
-    funArgsPair(std::string name, std::vector<std::any> args) : name(std::move(name)), args(std::move(args)) {
+    FunArgsPair(std::string name, std::vector<std::any> args) : name(std::move(name)), args(std::move(args)) {
     }
 
-    bool operator==(const funArgsPair &other) const {
+    bool operator==(const FunArgsPair &other) const {
         if (other.name != name) return false;
 
         if (args.empty()) return true;
 
-        bool result = true;
+        bool result {true};
         std::any curr_arg;
         for (size_t i = 0; i < args.size(); i++) {
             if (args[i].type() == typeid(double)) {
@@ -49,9 +49,9 @@ struct funArgsPair {
     }
 };
 
-struct funArgsPairHash {
-    size_t operator()(const funArgsPair &type) const {
-        size_t result = std::hash<std::string>()(type.name);
+struct FunArgsPairHash {
+    size_t operator()(const FunArgsPair &type) const {
+        size_t result {std::hash<std::string>()(type.name)};
 
         for (const auto &arg: type.args) {
             if (arg.type() == typeid(double)) {
@@ -74,7 +74,7 @@ struct funArgsPairHash {
 };
 
 static std::unordered_map<std::string, uint32_t> recursion_counter;
-static std::unordered_map<funArgsPair, std::any, funArgsPairHash> function_memoized_tbl;
+static std::unordered_map<FunArgsPair, std::any, FunArgsPairHash> function_memoized_tbl;
 
 std::any Interpreter::visitLiteralExpr(const std::shared_ptr<Literal> &expr) {
     return expr->value;
@@ -219,7 +219,7 @@ std::any Interpreter::visitVarStmt(const std::shared_ptr<Var> &stmt) {
     std::any value;
     if (stmt->initializer.has_value()) value = evaluate(stmt->initializer.value());
 
-    environment->define(stmt->name.lexeme, std::move(value));
+    environment->define(stmt->name.lexeme, std::move(value), stmt->is_const);
     return {};
 }
 
@@ -316,8 +316,8 @@ std::string Interpreter::stringify(const std::any &value) {
         return (std::any_cast<std::shared_ptr<SurpherInstance>>(value))->SurpherInstanceToString();
     } else if (value.type() == typeid(std::shared_ptr<SurpherClass>)) {
         return (std::any_cast<std::shared_ptr<SurpherClass>>(value))->SurpherCallableToString();
-    } else if(value.type() == typeid(std::shared_ptr<SurpherModule>)) {
-        return (std::any_cast<std::shared_ptr<SurpherModule>>(value))->SurpherModuleToString();
+    } else if(value.type() == typeid(std::shared_ptr<SurpherNamespace>)) {
+        return (std::any_cast<std::shared_ptr<SurpherNamespace>>(value))->SurpherNamespaceToString();
     }
     return "Error in stringify: un-recognized literal type."s;
 }
@@ -417,19 +417,19 @@ std::any Interpreter::visitCallExpr(const std::shared_ptr<Call> &expr) {
                           fun_callable->declaration->name.token_type, fun_callable->declaration->name.line),
                     std::vector<Token>(fun_callable->declaration->params.begin() + arguments.size(),
                                        fun_callable->declaration->params.end()),
-                    fun_callable->declaration->body, fun_callable->is_virtual));
+                    fun_callable->declaration->body, fun_callable->is_virtual, true));
             for (size_t i = 0; i < arguments.size(); i++) {
-                fun_callable->closure->define( fun_callable->declaration->params[i].lexeme, arguments[i]);
+                fun_callable->closure->define(fun_callable->declaration->params[i].lexeme, arguments[i], true);
             }
             std::shared_ptr<SurpherFunction> new_fun(std::make_shared<SurpherFunction>(partial_fun, fun_callable->closure,
                                                              fun_callable->is_initializer, true));
             return new_fun;
         } else {
-            if (recursion_counter[fun_callable->declaration->name.lexeme] > (4096)) {
+            if (recursion_counter[fun_callable->declaration->name.lexeme] > 4096) {
                 throw RuntimeError(fun_callable->declaration->name, "Maximum recursion depth exceeded.");
             }
 
-            funArgsPair fun_args_pair(fun_callable->declaration->name.lexeme, arguments);
+            FunArgsPair fun_args_pair(fun_callable->declaration->name.lexeme, arguments);
             std::any return_val;
             if (function_memoized_tbl.find(fun_args_pair) != function_memoized_tbl.end()) {
                 return_val = function_memoized_tbl[fun_args_pair];
@@ -457,12 +457,12 @@ std::any Interpreter::visitCallExpr(const std::shared_ptr<Call> &expr) {
 }
 
 Interpreter::Interpreter() : globals{new Environment} {
-    environment->define("clock", std::make_shared<Clock>());
+    environment->define("clock", std::make_shared<Clock>(), true);
 }
 
 std::any Interpreter::visitFunctionStmt(const std::shared_ptr<Function> &stmt) {
     std::shared_ptr<SurpherFunction> function(std::make_shared<SurpherFunction>(stmt, environment, false, false));
-    environment->define(stmt->name.lexeme, std::move(function));
+    environment->define(stmt->name.lexeme, std::move(function), stmt->is_const);
     return {};
 }
 
@@ -484,7 +484,7 @@ std::any Interpreter::visitLambdaExpr(const std::shared_ptr<Lambda> &expr) {
     lambda_return.emplace_back(std::make_shared<Return>(Token("return", {}, RETURN, expr->name.line), expr->body));
 
     auto function = std::make_shared<SurpherFunction>(
-            std::make_shared<Function>(expr->name, expr->params, std::move(lambda_return), false), environment, false,
+            std::make_shared<Function>(expr->name, expr->params, std::move(lambda_return), false, true), environment, false,
             false);
     return function;
 }
@@ -506,11 +506,11 @@ std::any Interpreter::lookUpVariable(const Token &name, const std::shared_ptr<Ex
     }
 }
 
-std::any Interpreter::visitModuleStmt(const std::shared_ptr<Module> &stmt) {
+std::any Interpreter::visitNamespaceStmt(const std::shared_ptr<Namespace> &stmt) {
     std::shared_ptr<Environment> new_environment (std::make_shared<Environment>(environment));
-    environment->define(stmt->name.lexeme, {});
+    environment->define(stmt->name.lexeme, {}, stmt->is_const);
     executeBlock(stmt->statements, new_environment);
-    environment->assign(stmt->name, std::make_shared<SurpherModule>(stmt->name.lexeme, new_environment));
+    environment->assign(stmt->name, std::make_shared<SurpherNamespace>(stmt->name.lexeme, new_environment));
 
     return {};
 }
@@ -532,11 +532,11 @@ std::any Interpreter::visitClassStmt(const std::shared_ptr<Class> &stmt) {
         superclass_instance_methods = superclass_cast->instance_methods;
     }
 
-    environment->define(stmt->name.lexeme, {});
+    environment->define(stmt->name.lexeme, {}, stmt->is_const);
 
     if (stmt->superclass.has_value()) {
         environment = std::make_shared<Environment>(environment);
-        environment->define("super", superclass);
+        environment->define("super", superclass, true);
     }
 
     std::unordered_map<std::string, std::shared_ptr<SurpherFunction>> instance_methods;
@@ -587,8 +587,8 @@ std::any Interpreter::visitGetExpr(const std::shared_ptr<Get> &expr) {
         return (std::any_cast<std::shared_ptr<SurpherInstance>>(object))->get(expr->name);
     } else if (object.type() == typeid(std::shared_ptr<SurpherClass>)) {
         return std::static_pointer_cast<SurpherInstance>((std::any_cast<std::shared_ptr<SurpherClass>>)(object))->get(expr->name);
-    }else if(object.type() == typeid(std::shared_ptr<SurpherModule>)){
-        return (std::any_cast<std::shared_ptr<SurpherModule>>(object))->get(expr->name);
+    }else if(object.type() == typeid(std::shared_ptr<SurpherNamespace>)){
+        return (std::any_cast<std::shared_ptr<SurpherNamespace>>(object))->get(expr->name);
     }
     throw RuntimeError(expr->name, "Can only get from a module or a class instance.");
 }
@@ -600,9 +600,9 @@ std::any Interpreter::visitSetExpr(const std::shared_ptr<Set> &expr) {
         std::any value(evaluate(expr->value));
         (std::any_cast<std::shared_ptr<SurpherInstance>>(object))->set(expr->name, value);
         return value;
-    }else if(object.type() == typeid(std::shared_ptr<SurpherModule>)){
+    }else if(object.type() == typeid(std::shared_ptr<SurpherNamespace>)){
         std::any value(evaluate(expr->value));
-        (std::any_cast<std::shared_ptr<SurpherModule>>(object))->set(expr->name, value);
+        (std::any_cast<std::shared_ptr<SurpherNamespace>>(object))->set(expr->name, value);
         return value;
     }
 
