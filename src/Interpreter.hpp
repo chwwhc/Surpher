@@ -10,6 +10,21 @@ struct SurpherCallable;
 struct SurpherInstance;
 class SurpherFunction;
 
+struct FunArgsPair {
+    std::string name;
+    std::vector<std::any> args;
+
+    FunArgsPair(std::string name, std::vector<std::any> args);
+
+    bool operator==(const FunArgsPair &other) const;
+};
+
+struct FunArgsPairHash {
+    static uint32_t force_diff_hash;
+
+    size_t operator()(const FunArgsPair &type) const;
+};
+
 class Interpreter : public ExprVisitor, public StmtVisitor {
 public:
     const std::shared_ptr<Environment> globals;
@@ -17,6 +32,9 @@ private:
     std::list<std::list<std::shared_ptr<Stmt>>> scripts;
     std::shared_ptr<Environment> environment = globals;
     std::unordered_map<std::shared_ptr<Expr>, uint32_t> locals;
+    uint16_t max_recursion_depth {4096};
+    std::unordered_map<std::string, uint16_t> recursion_counter;
+    std::unordered_map<FunArgsPair, std::any, FunArgsPairHash> function_memoized_tbl;
 
     static bool isTruthy(const std::any &val);
 
@@ -31,6 +49,8 @@ private:
     std::any lookUpVariable(const Token &name, const std::shared_ptr<Expr> &expr);
 
     void execute(const std::shared_ptr<Stmt> &stmt);
+
+    void auxCleanUp();
 
 public:
     Interpreter();

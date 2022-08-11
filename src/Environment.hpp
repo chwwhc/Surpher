@@ -16,6 +16,8 @@ public:
 
     void define(const std::string &var, std::any val, const bool is_const);
 
+    void define(const Token &var, std::any val, const bool is_const);
+
     void erase(const std::string &var);
 
     void assign(const Token &name, const std::any &value);

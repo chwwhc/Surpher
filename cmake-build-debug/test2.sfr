@@ -1,5 +1,5 @@
 
-module test2{
+namespace test2{
     class Doughnut {
       cook() {
         print "Fry until golden brown.";

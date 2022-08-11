@@ -21,7 +21,7 @@ void error(const uint32_t &line, const std::string_view &message);
 struct RuntimeError : public std::runtime_error {
     const Token token;
 
-    RuntimeError(Token  token, const std::string_view &message);
+    RuntimeError(Token token, const std::string_view &message);
 };
 
 struct BreakError : public std::runtime_error {

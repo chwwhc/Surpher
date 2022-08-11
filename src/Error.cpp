@@ -21,7 +21,6 @@ void error(const uint32_t &line, const std::string_view &message) {
 
 RuntimeError::RuntimeError(Token token, const std::string_view &message)
         : std::runtime_error(message.data()), token(std::move(token)) {
-
 }
 
 void runtimeError(const RuntimeError &error) {

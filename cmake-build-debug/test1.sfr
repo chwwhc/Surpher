@@ -1,6 +1,6 @@
 import "test2.sfr";
 
-module test1{
+namespace test1{
     var y_combinator = \f -> (\x -> x(x))(\x -> f(\y -> x(x)(y)));
 
     var factorial = \f -> (\x -> (x == 1 ? x : x * f(x - 1)));

@@ -13,68 +13,58 @@
 
 using namespace std::string_literals;
 
-static uint32_t force_diff_hash = 1;
+FunArgsPair::FunArgsPair(std::string name, std::vector<std::any> args) : name(std::move(name)), args(std::move(args)) {
+}
 
-struct FunArgsPair {
-    std::string name;
-    std::vector<std::any> args;
+bool FunArgsPair::operator==(const FunArgsPair &other) const    {
+    if (other.name != name) return false;
 
-    FunArgsPair(std::string name, std::vector<std::any> args) : name(std::move(name)), args(std::move(args)) {
-    }
+    if (args.empty()) return true;
 
-    bool operator==(const FunArgsPair &other) const {
-        if (other.name != name) return false;
-
-        if (args.empty()) return true;
-
-        bool result {true};
-        std::any curr_arg;
-        for (size_t i = 0; i < args.size(); i++) {
-            if (args[i].type() == typeid(double)) {
-                result = result && (std::any_cast<double>(args[i]) == std::any_cast<double>(other.args[i]));
-            } else if (args[i].type() == typeid(bool)) {
-                result = result && (std::any_cast<bool>(args[i]) == std::any_cast<bool>(other.args[i]));
-            } else if (args[i].type() == typeid(std::string)) {
-                result = result && (std::any_cast<std::string>(args[i]) == std::any_cast<std::string>(other.args[i]));
-            } else if (args[i].type() == typeid(int64_t)) {
-                result = result && (std::any_cast<int64_t>(args[i]) == std::any_cast<int64_t>(other.args[i]));
-            } else if (args[i].type() == typeid(std::shared_ptr<SurpherFunction>)) {
-                result =
-                        result && (std::any_cast<std::shared_ptr<SurpherFunction>>(args[i])->declaration->name.lexeme ==
-                                   std::any_cast<std::shared_ptr<SurpherFunction>>(
-                                           other.args[i])->declaration->name.lexeme);
-            }
+    bool result {true};
+    std::any curr_arg;
+    for (size_t i = 0; i < args.size(); i++) {
+        if (args[i].type() == typeid(double)) {
+            result = result && (std::any_cast<double>(args[i]) == std::any_cast<double>(other.args[i]));
+        } else if (args[i].type() == typeid(bool)) {
+            result = result && (std::any_cast<bool>(args[i]) == std::any_cast<bool>(other.args[i]));
+        } else if (args[i].type() == typeid(std::string)) {
+            result = result && (std::any_cast<std::string>(args[i]) == std::any_cast<std::string>(other.args[i]));
+        } else if (args[i].type() == typeid(int64_t)) {
+            result = result && (std::any_cast<int64_t>(args[i]) == std::any_cast<int64_t>(other.args[i]));
+        } else if (args[i].type() == typeid(std::shared_ptr<SurpherFunction>)) {
+            result =
+                    result && (std::any_cast<std::shared_ptr<SurpherFunction>>(args[i])->declaration->name.lexeme ==
+                               std::any_cast<std::shared_ptr<SurpherFunction>>(
+                                       other.args[i])->declaration->name.lexeme);
         }
-        return result;
     }
-};
+    return result;
+}
 
-struct FunArgsPairHash {
-    size_t operator()(const FunArgsPair &type) const {
-        size_t result {std::hash<std::string>()(type.name)};
+uint32_t FunArgsPairHash::force_diff_hash = 1;
 
-        for (const auto &arg: type.args) {
-            if (arg.type() == typeid(double)) {
-                result ^= std::hash<double>()(std::any_cast<double>(arg));
-            } else if (arg.type() == typeid(bool)) {
-                result ^= std::hash<bool>()(std::any_cast<bool>(arg));
-            } else if (arg.type() == typeid(std::string)) {
-                result ^= std::hash<std::string>()(std::any_cast<std::string>(arg));
-            } else if (arg.type() == typeid(int64_t)) {
-                result ^= std::hash<int64_t>()(std::any_cast<int64_t>(arg));
-            } else if (arg.type() == typeid(std::shared_ptr<SurpherFunction>)) {
-                result ^= std::hash<std::string>()(
-                        std::any_cast<std::shared_ptr<SurpherFunction>>(arg)->declaration->name.lexeme);
-            } else {
-                return std::hash<uint32_t>()(force_diff_hash++);
-            }
+size_t FunArgsPairHash::operator()(const FunArgsPair &type) const {
+    size_t result {std::hash<std::string>()(type.name)};
+
+    for (const auto &arg: type.args) {
+        if (arg.type() == typeid(double)) {
+            result ^= std::hash<double>()(std::any_cast<double>(arg));
+        } else if (arg.type() == typeid(bool)) {
+            result ^= std::hash<bool>()(std::any_cast<bool>(arg));
+        } else if (arg.type() == typeid(std::string)) {
+            result ^= std::hash<std::string>()(std::any_cast<std::string>(arg));
+        } else if (arg.type() == typeid(int64_t)) {
+            result ^= std::hash<int64_t>()(std::any_cast<int64_t>(arg));
+        } else if (arg.type() == typeid(std::shared_ptr<SurpherFunction>)) {
+            result ^= std::hash<std::string>()(
+                    std::any_cast<std::shared_ptr<SurpherFunction>>(arg)->declaration->name.lexeme);
+        } else {
+            return std::hash<uint32_t>()(force_diff_hash++);
         }
-        return result;
     }
-};
-
-static std::unordered_map<std::string, uint32_t> recursion_counter;
-static std::unordered_map<FunArgsPair, std::any, FunArgsPairHash> function_memoized_tbl;
+    return result;
+}
 
 std::any Interpreter::visitLiteralExpr(const std::shared_ptr<Literal> &expr) {
     return expr->value;
@@ -166,11 +156,6 @@ std::any Interpreter::visitBinaryExpr(const std::shared_ptr<Binary> &expr) {
     }
 }
 
-void auxCleanUp(){
-    function_memoized_tbl.clear();
-    recursion_counter.clear();
-}
-
 void Interpreter::interpret() {
     assert(!scripts.empty());
     auto curr_script {scripts.front()};
@@ -219,7 +204,7 @@ std::any Interpreter::visitVarStmt(const std::shared_ptr<Var> &stmt) {
     std::any value;
     if (stmt->initializer.has_value()) value = evaluate(stmt->initializer.value());
 
-    environment->define(stmt->name.lexeme, std::move(value), stmt->is_const);
+    environment->define(stmt->name, std::move(value), stmt->is_const);
     return {};
 }
 
@@ -262,31 +247,17 @@ void Interpreter::executeBlock(const std::list<std::shared_ptr<Stmt>> &stmts,
 }
 
 bool Interpreter::isTruthy(const std::any &value) {
-    if (value.type() == typeid(nullptr)) {
-        return false;
-    }
-    if (value.type() == typeid(bool)) {
-        return std::any_cast<bool>(value);
-    }
+    if (value.type() == typeid(nullptr)) return false;
+    if (value.type() == typeid(bool)) return std::any_cast<bool>(value);
     return true;
 }
 
 bool Interpreter::isEqual(const std::any &a, const std::any &b) {
-    if (a.type() == typeid(nullptr) && b.type() == typeid(nullptr)) {
-        return true;
-    }
-    if (a.type() == typeid(nullptr)) {
-        return false;
-    }
-    if (a.type() == typeid(std::string) && b.type() == typeid(std::string)) {
-        return std::any_cast<std::string>(a) == std::any_cast<std::string>(b);
-    }
-    if (a.type() == typeid(double) && b.type() == typeid(double)) {
-        return std::any_cast<double>(a) == std::any_cast<double>(b);
-    }
-    if (a.type() == typeid(bool) && b.type() == typeid(bool)) {
-        return std::any_cast<bool>(a) == std::any_cast<bool>(b);
-    }
+    if (a.type() == typeid(nullptr) && b.type() == typeid(nullptr)) return true;
+    if (a.type() == typeid(nullptr)) return false;
+    if (a.type() == typeid(std::string) && b.type() == typeid(std::string)) return std::any_cast<std::string>(a) == std::any_cast<std::string>(b);
+    if (a.type() == typeid(double) && b.type() == typeid(double)) return std::any_cast<double>(a) == std::any_cast<double>(b);
+    if (a.type() == typeid(bool) && b.type() == typeid(bool)) return std::any_cast<bool>(a) == std::any_cast<bool>(b);
     return false;
 }
 
@@ -323,25 +294,25 @@ std::string Interpreter::stringify(const std::any &value) {
 }
 
 void Interpreter::checkNumberOperands(const Token &operator_token, const std::vector<std::any> &operands) {
-    bool result = std::transform_reduce(
+    bool result {std::transform_reduce(
             operands.begin(), operands.end(), true,
             [&](const bool &a, const bool &b) {
                 return a && b;
             },
             [&](const std::any &operand) { return operand.type() == typeid(double); }
-    );
+    )};
     if (result) return;
     throw RuntimeError{operator_token, "Operand must be a number."};
 }
 
 void Interpreter::checkZero(const Token &operator_token, const std::vector<double> &operands) {
-    bool result = std::transform_reduce(
+    bool result {std::transform_reduce(
             operands.begin(), operands.end(), true,
             [&](const bool &a, const bool &b) {
                 return a && b;
             },
             [&](const double &operand) { return operand != 0; }
-    );
+    )};
     if (result) return;
     throw RuntimeError(operator_token, "Denominator must be non-zero.");
 }
@@ -359,13 +330,9 @@ std::any Interpreter::visitLogicalExpr(const std::shared_ptr<Logical> &expr) {
     std::any left(evaluate(expr->left));
 
     if (expr->op.token_type == OR) {
-        if (isTruthy(left)) {
-            return left;
-        }
+        if (isTruthy(left)) return left;
     } else {
-        if (!isTruthy(left)) {
-            return left;
-        }
+        if (!isTruthy(left)) return left;
     }
 
     return evaluate(expr->right);
@@ -425,9 +392,10 @@ std::any Interpreter::visitCallExpr(const std::shared_ptr<Call> &expr) {
                                                              fun_callable->is_initializer, true));
             return new_fun;
         } else {
-            if (recursion_counter[fun_callable->declaration->name.lexeme] > 4096) {
-                throw RuntimeError(fun_callable->declaration->name, "Maximum recursion depth exceeded.");
+            if (recursion_counter[fun_callable->declaration->name.lexeme] == max_recursion_depth) {
+                throw RuntimeError(fun_callable->declaration->name, "Maximum recursion depth reached. (depth limit: " + std::to_string(max_recursion_depth) + ")");
             }
+            recursion_counter[fun_callable->declaration->name.lexeme]++;
 
             FunArgsPair fun_args_pair(fun_callable->declaration->name.lexeme, arguments);
             std::any return_val;
@@ -437,7 +405,7 @@ std::any Interpreter::visitCallExpr(const std::shared_ptr<Call> &expr) {
                 return_val = fun_callable->call(*this, arguments);
                 function_memoized_tbl[fun_args_pair] = return_val;
             }
-            recursion_counter[fun_callable->declaration->name.lexeme]++;
+
             return return_val;
         }
     } else if (callee.type() == typeid(std::shared_ptr<SurpherClass>)) {
@@ -462,7 +430,7 @@ Interpreter::Interpreter() : globals{new Environment} {
 
 std::any Interpreter::visitFunctionStmt(const std::shared_ptr<Function> &stmt) {
     std::shared_ptr<SurpherFunction> function(std::make_shared<SurpherFunction>(stmt, environment, false, false));
-    environment->define(stmt->name.lexeme, std::move(function), stmt->is_const);
+    environment->define(stmt->name, std::move(function), stmt->is_const);
     return {};
 }
 
@@ -555,8 +523,8 @@ std::any Interpreter::visitClassStmt(const std::shared_ptr<Class> &stmt) {
             (instance_methods.find(i.first) == instance_methods.end() || instance_methods[i.first]->is_virtual)) {
             environment->erase(stmt->name.lexeme);
             throw RuntimeError(i.second->declaration->name,
-                               "Derived class \"" +  stmt->name.lexeme + "\" must implement the virtual method \"" + i.first +
-                               "\" from the super class \"" + superclass_cast->name + "\".");
+                               "Derived class \"" +  stmt->name.lexeme + "\" must implement virtual method \"" + i.first +
+                               "\" from super class \"" + superclass_cast->name + "\".");
         }
     }
     for (const auto &c: superclass_class_methods) {
@@ -564,8 +532,8 @@ std::any Interpreter::visitClassStmt(const std::shared_ptr<Class> &stmt) {
             (class_methods.find(c.first) == class_methods.end() || class_methods[c.first]->is_virtual)) {
             environment->erase(stmt->name.lexeme);
             throw RuntimeError(c.second->declaration->name,
-                               "Derived class \"" +  stmt->name.lexeme + "\" must implement the virtual method \"" + c.first +
-                               "\" from the super class \"" + superclass_cast->name + "\".");
+                               "Derived class \"" +  stmt->name.lexeme + "\" must implement virtual method \"" + c.first +
+                               "\" from super class \"" + superclass_cast->name + "\".");
         }
     }
 
@@ -633,5 +601,10 @@ void Interpreter::appendScriptFront(const std::list<std::shared_ptr<Stmt>> &scri
 
 void Interpreter::appendScriptBack(const std::list<std::shared_ptr<Stmt>> &script) {
     scripts.emplace_back(script);
+}
+
+void Interpreter::auxCleanUp() {
+    function_memoized_tbl.clear();
+    recursion_counter.clear();
 }
 

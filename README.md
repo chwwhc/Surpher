@@ -15,7 +15,7 @@ is a tree-walk interpreter implemented in C++17.
 Some add-on features to vanilla Lox:
 <ul>
 <li>Runtime optimization for recursive functions by caching</li>
-<li>Maximum recursion depth of 4096 to avoid stackoverflow error</li>
+<li>Maximum recursion depth of <strong>2^13(8192)</strong> to avoid stackoverflow error</li>
 <li>Virtual methods in classes</li>
 <li>Static and non-static methods in classes</li>
 <li>Namespaces to avoid name collision</li>
