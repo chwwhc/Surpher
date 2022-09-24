@@ -117,12 +117,6 @@ Set::Set(std::shared_ptr<Expr> object, Token name, std::shared_ptr<Expr> value) 
 
 }
 
-/*
-Set::Set(std::shared_ptr<Expr> object, Token name, std::shared_ptr<Expr> value, std::optional<Token> module) : object(std::move(object)), name(std::move(name)), value(std::move(value)), module(std::move(module)){
-
-}
- */
-
 std::any Set::accept(ExprVisitor &visitor) {
     return visitor.visitSetExpr(shared_from_this());
 }

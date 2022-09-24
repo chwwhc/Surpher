@@ -1,4 +1,5 @@
 #include <utility>
+#include <sstream>
 
 #include "SurpherNamespace.hpp"
 #include "Expr.hpp"
@@ -11,7 +12,10 @@ SurpherNamespace::SurpherNamespace(std::string name, std::shared_ptr<Environment
 }
 
 std::string SurpherNamespace::SurpherNamespaceToString() {
-    return "<namespace " + name + ">";
+    void* self {this};
+    std::ostringstream self_addr;
+    self_addr << self;
+    return "<namespace " + name + ">" + " at: " + self_addr.str();;
 }
 
 std::any SurpherNamespace::get(const Token &var_name) {

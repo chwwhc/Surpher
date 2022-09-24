@@ -9,7 +9,7 @@ static void report(const uint32_t &line, const std::string_view &location, const
 
 void error(const Token &token, const std::string_view &message) {
     if (token.token_type == EOF_TOKEN) {
-        report(token.line, " at EOF", message);
+        report(token.line, "at EOF", message);
     } else {
         report(token.line, "at '" + token.lexeme + "'", message);
     }

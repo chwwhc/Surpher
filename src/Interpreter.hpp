@@ -29,10 +29,10 @@ class Interpreter : public ExprVisitor, public StmtVisitor {
 public:
     const std::shared_ptr<Environment> globals;
 private:
+    static constexpr uint16_t max_recursion_depth {3200};
     std::list<std::list<std::shared_ptr<Stmt>>> scripts;
     std::shared_ptr<Environment> environment = globals;
     std::unordered_map<std::shared_ptr<Expr>, uint32_t> locals;
-    uint16_t max_recursion_depth {4096};
     std::unordered_map<std::string, uint16_t> recursion_counter;
     std::unordered_map<FunArgsPair, std::any, FunArgsPairHash> function_memoized_tbl;
 

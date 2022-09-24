@@ -6,25 +6,9 @@
 
 #IncludeRegexTransform: 
 
-/home/han3816/projects/Surpher/src/Environment.cpp
-utility
--
-cassert
--
-Environment.hpp
-/home/han3816/projects/Surpher/src/Environment.hpp
-Token.hpp
-/home/han3816/projects/Surpher/src/Token.hpp
+/home/han3816/projects/Surpher/src/Error.cpp
 Error.hpp
 /home/han3816/projects/Surpher/src/Error.hpp
-
-/home/han3816/projects/Surpher/src/Environment.hpp
-unordered_map
--
-memory
--
-any
--
 utility
 -
 

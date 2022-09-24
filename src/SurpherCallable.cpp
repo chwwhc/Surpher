@@ -1,5 +1,6 @@
 #include <utility>
 #include <chrono>
+#include <sstream>
 
 #include "SurpherCallable.hpp"
 #include "Error.hpp"
@@ -36,7 +37,10 @@ uint32_t SurpherFunction::arity() {
 }
 
 std::string SurpherFunction::SurpherCallableToString() {
-    return "<function "s + declaration->name.lexeme + ">"s;
+    void* self = this;
+    std::ostringstream self_addr;
+    self_addr << self;
+    return "<function "s + declaration->name.lexeme + ">"s + " at: "s + self_addr.str();
 }
 
 std::shared_ptr<SurpherFunction> SurpherFunction::bind(const std::shared_ptr<SurpherInstance> &instance) {
@@ -71,7 +75,10 @@ uint32_t SurpherClass::arity() {
 }
 
 std::string SurpherClass::SurpherCallableToString() {
-    return "<class " + name + ">";
+    void* self = this;
+    std::ostringstream self_addr;
+    self_addr << self;
+    return "<class " + name + ">" + " at: "s + self_addr.str();
 }
 
 std::shared_ptr<SurpherFunction> SurpherClass::findInstanceMethod(const std::string &methodName) {
@@ -100,5 +107,8 @@ std::any Clock::call(Interpreter &interpreter, const std::vector<std::any> &argu
 }
 
 std::string Clock::SurpherCallableToString() {
-    return "<native fn>"s;
+    void* self = this;
+    std::ostringstream self_addr;
+    self_addr << self;
+    return "<native fn>"s + " at: "s + self_addr.str();
 }
