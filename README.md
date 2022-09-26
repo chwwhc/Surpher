@@ -22,6 +22,11 @@ Some add-on features to vanilla Lox:
 </ul>
 
 ## How to use
+Run `make` in the `cmake-build-debug` directory:
+```
+user@name:~/.../cmake-build-debug$ make
+```
+
 Run the following command to open the REPL:
 ```
 ./Surpher
@@ -184,9 +189,41 @@ const namespace bar {
 bar = 2; // runtime error
 
 // nested namespace is allowed
-namespace foofoo {
-    namespace barbar{
+const namespace Math {
+
+    const fun factorial(x) {
+        return x == 0 ? 1 : x * factorial(x - 1);
     }
+
+    const fun power(x, pow) {
+        return pow == 0 ? 1 : x * power(x, pow - 1);
+    }
+
+    // approximate cos(x) using taylor series
+    const namespace Trigonometry {
+        const fun cos(x) {
+            var flag = true;
+            var result = 0;
+            var pow = 0;
+
+            for(var i = 0; i < 100; i = i + 1){
+                var curr;
+                if(flag){
+                    curr = power(x, pow) / factorial(pow);
+                }else{
+                    curr = -power(x, pow) / factorial(pow);
+                }
+                flag = !flag;
+                result = result + curr;
+                pow = pow + 2;
+            }
+            
+            return result;
+        }
+   
+        print cos(10); // displays -0.839072
+    }
+
 }
 ```
 

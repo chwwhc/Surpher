@@ -204,7 +204,7 @@ std::any Interpreter::visitVarStmt(const std::shared_ptr<Var> &stmt) {
     std::any value;
     if (stmt->initializer.has_value()) value = evaluate(stmt->initializer.value());
 
-    environment->define(stmt->name, std::move(value), stmt->is_const);
+    environment->define(stmt->name, value, stmt->is_const);
     return {};
 }
 
@@ -476,9 +476,8 @@ std::any Interpreter::lookUpVariable(const Token &name, const std::shared_ptr<Ex
 
 std::any Interpreter::visitNamespaceStmt(const std::shared_ptr<Namespace> &stmt) {
     std::shared_ptr<Environment> new_environment (std::make_shared<Environment>(environment));
-    environment->define(stmt->name.lexeme, {}, stmt->is_const);
     executeBlock(stmt->statements, new_environment);
-    environment->assign(stmt->name, std::make_shared<SurpherNamespace>(stmt->name.lexeme, new_environment));
+    environment->define(stmt->name, std::make_shared<SurpherNamespace>(stmt->name.lexeme, new_environment), stmt->is_const);
 
     return {};
 }

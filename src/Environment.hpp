@@ -14,7 +14,7 @@ class Environment : public std::enable_shared_from_this<Environment> {
 public:
     std::shared_ptr<Environment> getEnclosing();
 
-    void define(const std::string &var, std::any val, const bool is_const);
+    void define(const std::string &var, const std::any& val, const bool is_const);
 
     void define(const Token &var, std::any val, const bool is_const);
 

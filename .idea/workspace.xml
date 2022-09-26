@@ -19,19 +19,12 @@
   <component name="ChangeListManager">
     <list default="true" id="7a543f62-54f1-4d89-9ce5-22fa4a010cd9" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/Surpher.dir/CXX.includecache" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/Surpher.dir/CXX.includecache" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/Surpher.dir/src/Expr.cpp.o" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/Surpher.dir/src/Expr.cpp.o" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/Surpher.dir/src/Interpreter.cpp.o" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/Surpher.dir/src/Interpreter.cpp.o" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/Surpher.dir/src/Resolver.cpp.o" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/Surpher.dir/src/Resolver.cpp.o" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/Surpher.dir/src/Surpher.cpp.o" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/Surpher.dir/src/Surpher.cpp.o" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/Surpher.dir/src/SurpherCallable.cpp.o" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/Surpher.dir/src/SurpherCallable.cpp.o" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/Surpher.dir/src/SurpherNamespace.cpp.o" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/Surpher.dir/src/SurpherNamespace.cpp.o" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmake-build-debug/Surpher" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/Surpher" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Error.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/Error.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Expr.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/Expr.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Interpreter.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/Interpreter.hpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/SurpherCallable.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/SurpherCallable.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/SurpherNamespace.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/SurpherNamespace.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Environment.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/Environment.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Environment.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/Environment.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Interpreter.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/Interpreter.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Parser.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/Parser.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Surpher.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/Surpher.cpp" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -184,6 +177,10 @@
       <workItem from="1659464101932" duration="3833000" />
       <workItem from="1659579511611" duration="2438000" />
       <workItem from="1660196429674" duration="1645000" />
+      <workItem from="1664093778277" duration="2240000" />
+      <workItem from="1664096073946" duration="944000" />
+      <workItem from="1664169085712" duration="2903000" />
+      <workItem from="1664172093929" duration="2000" />
     </task>
     <servers />
   </component>
@@ -208,6 +205,11 @@
           <url>file://$PROJECT_DIR$/src/tool/ASTPrinter.cpp</url>
           <line>166</line>
           <option name="timeStamp" value="1" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
+          <url>file://$PROJECT_DIR$/src/Environment.cpp</url>
+          <line>64</line>
+          <option name="timeStamp" value="5" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

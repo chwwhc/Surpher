@@ -17,7 +17,7 @@ void runScript(const std::string &path, Interpreter &interpreter) {
     std::ifstream input_file(path);
     if (input_file.fail()) {
         std::cerr << "Failed to open file " << path << ": " << std::endl;
-        std::exit(74);
+        return;
     }
 
     std::stringstream source_code;
@@ -25,9 +25,9 @@ void runScript(const std::string &path, Interpreter &interpreter) {
 
     run(source_code.str(), interpreter);
     if (had_error) {
-        std::exit(65);
+        return;
     } else if (had_runtime_error) {
-        std::exit(70);
+        return;
     }
 }
 

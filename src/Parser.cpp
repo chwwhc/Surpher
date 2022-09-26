@@ -314,12 +314,14 @@ std::shared_ptr<Stmt> Parser::namespaceDeclaration(const bool is_const) {
 std::shared_ptr<Stmt> Parser::varDeclaration(const bool is_const) {
     Token name(consume(IDENTIFIER, "Expect variable name."));
 
-    std::shared_ptr<Expr> initializer;
     if (match(SINGLE_EQUAL)) {
-        initializer = expression();
+        std::shared_ptr<Expr> initializer {expression()};
+        consume(SINGLE_SEMICOLON, "Expect ';' after variable declaration.");
+        return std::make_shared<Var>(name, initializer, is_const);
     }
+
     consume(SINGLE_SEMICOLON, "Expect ';' after variable declaration.");
-    return std::make_shared<Var>(name, initializer, is_const);
+    return std::make_shared<Var>(name, is_const);
 }
 
 std::shared_ptr<Stmt> Parser::expressionStatement() {

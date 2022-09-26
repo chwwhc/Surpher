@@ -1,0 +1,34 @@
+const namespace Math {
+
+    const fun factorial(x) {
+        return x == 0 ? 1 : x * factorial(x - 1);
+    }
+
+    const fun power(x, pow) {
+        return pow == 0 ? 1 : x * power(x, pow - 1);
+    }
+
+    // approximate cos(x) using taylor series
+    const namespace Trigonometry {
+        const fun cos(x) {
+            var flag = true;
+            var result = 0;
+            var pow = 0;
+
+            for(var i = 0; i < 100; i = i + 1){
+                var curr;
+                if(flag){
+                    curr = power(x, pow) / factorial(pow);
+                }else{
+                    curr = -power(x, pow) / factorial(pow);
+                }
+                flag = !flag;
+                result = result + curr;
+                pow = pow + 2;
+            }
+
+            return result;
+        }
+    }
+
+}
