@@ -509,7 +509,7 @@ std::any Interpreter::visitClassStmt(const std::shared_ptr<Class> &stmt) {
     std::unordered_map<std::string, std::shared_ptr<SurpherFunction>> instance_methods;
     std::unordered_map<std::string, std::shared_ptr<SurpherFunction>> class_methods;
     for (const auto &i: stmt->instance_methods) {
-        std::shared_ptr<SurpherFunction> function(std::make_shared<SurpherFunction>(i, environment, "init", false));
+        std::shared_ptr<SurpherFunction> function(std::make_shared<SurpherFunction>(i, environment, i->name.lexeme == "init", false));
         instance_methods[i->name.lexeme] = function;
     }
     for (const auto &c: stmt->class_methods) {

@@ -1,4 +1,5 @@
 #include <utility>
+#include <sstream>
 
 #include "SurpherInstance.hpp"
 #include "SurpherCallable.hpp"
@@ -11,10 +12,13 @@ SurpherInstance::SurpherInstance(std::optional<std::shared_ptr<SurpherClass>> su
 }
 
 std::string SurpherInstance::SurpherInstanceToString() {
+    void* self = this;
+    std::ostringstream self_addr;
+    self_addr << self;
     if(surpher_class.has_value()){
-        return "<" + surpher_class.value()->name + " instance>";
+        return "<" + surpher_class.value()->name + " instance>" + " at: " + self_addr.str();
     }else{
-        return "<" + dynamic_cast<SurpherClass *>(this)->name + " instance>";
+        return "<" + dynamic_cast<SurpherClass *>(this)->name + " instance>" + " at: " + self_addr.str();
     }
 }
 
