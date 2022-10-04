@@ -30,10 +30,11 @@ std::any Environment::get(const Token &name) {
 
 
 void Environment::define(const std::string &var, const std::any& val, const bool is_const) {
-    assert(var_val_pairs.find(var) == var_val_pairs.end());
+   // assert(var_val_pairs.find(var) == var_val_pairs.end());
 
     var_val_pairs[var] = {is_const, val};
 }
+
 
 
 void Environment::define(const Token &var, std::any val, const bool is_const){

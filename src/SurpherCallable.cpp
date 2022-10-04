@@ -7,6 +7,7 @@
 #include "Interpreter.hpp"
 
 using namespace std::string_literals;
+using SurpherArray = std::vector<std::any>;
 
 SurpherFunction::SurpherFunction(std::shared_ptr<Function> declaration, std::shared_ptr<Environment> closure,
                                  bool is_initializer, bool is_partial) : is_virtual(declaration->is_virtual), declaration(std::move(declaration)),
@@ -107,8 +108,23 @@ std::any Clock::call(Interpreter &interpreter, const std::vector<std::any> &argu
 }
 
 std::string Clock::SurpherCallableToString() {
-    void* self = this;
-    std::ostringstream self_addr;
-    self_addr << self;
-    return "<native fn>"s + " at: "s + self_addr.str();
+    return {};
+}
+
+uint32_t ArraySize::arity() {
+    return 1;
+}
+
+std::any ArraySize::call(Interpreter &interpreter, const std::vector<std::any> &arguments) {
+    auto value {arguments[0]};
+    if(value.type() == typeid(std::shared_ptr<SurpherArray>)){
+        auto value_cast {std::any_cast<std::shared_ptr<SurpherArray>>(value)};
+        return static_cast<uint64_t>(value_cast->size());
+    }
+
+    return 0;
+}
+
+std::string ArraySize::SurpherCallableToString() {
+    return {};
 }

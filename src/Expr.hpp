@@ -23,6 +23,9 @@ struct Get;
 struct Set;
 struct This;
 struct Super;
+struct Array;
+struct Access;
+struct ArraySet;
 
 struct ExprVisitor {
     virtual std::any visitBinaryExpr(const std::shared_ptr<Binary> &expr) = 0;
@@ -52,6 +55,12 @@ struct ExprVisitor {
     virtual std::any visitThisExpr(const std::shared_ptr<This> &expr) = 0;
 
     virtual std::any visitSuperExpr(const std::shared_ptr<Super> &expr) = 0;
+
+    virtual std::any visitArrayExpr(const std::shared_ptr<Array> &expr) = 0;
+
+    virtual std::any visitAccessExpr(const std::shared_ptr<Access> &expr) = 0;
+
+    virtual std::any visitArraySetExpr(const std::shared_ptr<ArraySet> &expr) = 0;
 };
 
 struct Expr {
@@ -108,7 +117,7 @@ struct Assign: Expr, public std::enable_shared_from_this<Assign>{
     const std::shared_ptr<Expr> value;
 
 
-    Assign(Token  name, std::shared_ptr<Expr> value);
+    Assign(Token name, std::shared_ptr<Expr> value);
     std::any accept(ExprVisitor &visitor) override;
 };
 
@@ -185,6 +194,39 @@ struct Super : Expr, public std::enable_shared_from_this<Super>{
     const Token method;
 
     Super(Token keyword, Token method);
+
+    std::any accept(ExprVisitor &visitor) override;
+};
+
+struct Array: Expr, public std::enable_shared_from_this<Array>{
+    const Token op;
+    const std::vector<std::shared_ptr<Expr>> expr_vector;
+    uint64_t size;
+    const std::shared_ptr<Expr> dynamic_size;
+
+    Array(Token op, std::vector<std::shared_ptr<Expr>> expr_vector, std::shared_ptr<Expr> dynamic_size);
+
+    void setArraySize(uint64_t new_size);
+
+    std::any accept(ExprVisitor &visitor) override;
+};
+
+struct Access: Expr, public std::enable_shared_from_this<Access>{
+    const std::shared_ptr<Expr> index;
+    const std::shared_ptr<Expr> arr_name;
+    const Token op;
+
+    Access(std::shared_ptr<Expr> index, std::shared_ptr<Expr> arr_name, Token op);
+
+    std::any accept(ExprVisitor &visitor) override;
+};
+
+struct ArraySet: Expr, public std::enable_shared_from_this<ArraySet>{
+    const std::shared_ptr<Expr> assignee;
+    const std::shared_ptr<Expr> value;
+    const Token op;
+
+    ArraySet(std::shared_ptr<Expr> assignee, std::shared_ptr<Expr> value, Token op);
 
     std::any accept(ExprVisitor &visitor) override;
 };

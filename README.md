@@ -14,6 +14,7 @@ is a tree-walk interpreter implemented in C++17.
 
 Some add-on features to vanilla Lox:
 <ul>
+<li>Array expression</li>
 <li>Runtime optimization for recursive functions by caching</li>
 <li>Maximum recursion depth of <strong>3200</strong> to avoid stackoverflow error</li>
 <li>Virtual methods in classes</li>
@@ -22,9 +23,9 @@ Some add-on features to vanilla Lox:
 </ul>
 
 ## How to use
-Run `make` in the `cmake-build-debug` directory:
+Run `make` in the `build` directory:
 ```
-user@name:~/.../cmake-build-debug$ make
+user@name:~/.../build$ make
 ```
 
 Run the following command to open the REPL:
@@ -81,12 +82,10 @@ importStmt     → "import" STRING ;
 block          → "{" declaration* "}" ;
 
 expression     → assignment ;
-
-assignment     → ( call "." )? IDENTIFIER "=" assignment
-               | ternary ;
-             
+assignment     → (( call "." )? IDENTIFIER | access) "=" assignment
+               | array ;
+array          → "[" array? "]" | ternary ;
 ternary        → logical_or "?" ternary ":" ternary ;
-
 logic_or       → logic_and ( "or" logic_and )* ;
 logic_and      → bit_wise_or ( "and" bit_wise_or )* ;
 bit_wise_or    → bit_wise_xor ( "|" bit_wise_xor )* ;
@@ -96,13 +95,12 @@ equality       → comparison ( ( "!=" | "==" ) comparison )* ;
 comparison     → term ( ( ">" | ">=" | "<" | "<=" ) term )* ;
 term           → factor ( ( "-" | "+" ) factor )* ;
 factor         → unary ( ( "/" | "*" | "%" ) unary )* ;
-
-unary          → ( "!" | "-" ) unary | call ;
+unary          → ( "!" | "-" ) unary | access ;
+access         → "@" access ":" access | call ;
 call           → primary ( "(" arguments? ")" | "." IDENTIFIER )* ;
 primary        → "true" | "false" | "nil" | "this"
                | NUMBER | STRING | IDENTIFIER | "(" expression ")"
                | "super" "." IDENTIFIER | "\" IDENTIFIER* "->" expression ;
-               
 function       → "virtual"? "class"? IDENTIFIER "(" parameters? ")" block ;
 parameters     → IDENTIFIER ( "," IDENTIFIER )* ;
 arguments      → expression ( "," expression )* ;

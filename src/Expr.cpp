@@ -39,12 +39,6 @@ Assign::Assign(Token name, std::shared_ptr<Expr> value) : name{std::move(name)},
 
 }
 
-/*
-Assign::Assign(Token name, std::shared_ptr<Expr> value, std::optional<Token> module) : name(std::move(name)), value(std::move(value)), module(std::move(module)){
-
-}
- */
-
 std::any Assign::accept(ExprVisitor &visitor) {
     return visitor.visitAssignExpr(shared_from_this());
 }
@@ -101,12 +95,6 @@ Get::Get(std::shared_ptr<Expr> object, Token name) : object(std::move(object)), 
 
 }
 
-/*
-Get::Get(std::shared_ptr<Expr> object, Token name, std::optional<Token> module) : object(std::move(object)), name(std::move(name)), module(std::move(module)){
-
-}
- */
-
 std::any Get::accept(ExprVisitor &visitor) {
     return visitor.visitGetExpr(shared_from_this());
 }
@@ -135,4 +123,31 @@ Super::Super(Token keyword, Token method) : keyword(std::move(keyword)), method(
 
 std::any Super::accept(ExprVisitor &visitor) {
     return visitor.visitSuperExpr(shared_from_this());
+}
+
+Array::Array(Token op, std::vector<std::shared_ptr<Expr>> expr_vector, std::shared_ptr<Expr> dynamic_size) : op(std::move(op)), expr_vector(std::move(expr_vector)), dynamic_size(std::move(dynamic_size)) {
+}
+
+std::any Array::accept(ExprVisitor &visitor) {
+    return visitor.visitArrayExpr(shared_from_this());
+}
+
+void Array::setArraySize(uint64_t new_size) {
+    this->size = new_size;
+}
+
+Access::Access(std::shared_ptr<Expr> index, std::shared_ptr<Expr> arr_name, Token op) : index(std::move(index)), arr_name(std::move(arr_name)), op(std::move(op)) {
+
+}
+
+std::any Access::accept(ExprVisitor &visitor) {
+    return visitor.visitAccessExpr(shared_from_this());
+}
+
+ArraySet::ArraySet(std::shared_ptr<Expr> assignee, std::shared_ptr<Expr> value, Token op) : assignee(std::move(assignee)), value(std::move(value)), op(std::move(op)){
+
+}
+
+std::any ArraySet::accept(ExprVisitor &visitor) {
+    return visitor.visitArraySetExpr(shared_from_this());
 }

@@ -64,7 +64,7 @@ std::shared_ptr<Expr> Parser::primary() {
         Token method(consume(IDENTIFIER, "Expect superclass method name."));
         return std::make_shared<Super>(keyword, method);
     }
-    throw error(peek(0), "Expected expression.");
+    throw error(peek(0), "Expect expression.");
 }
 
 Token Parser::consume(TokenType type, std::string_view message) {
@@ -111,7 +111,7 @@ void Parser::synchronize() {
 }
 
 Token Parser::peek(const uint32_t offset) {
-    return tokens[current + offset];
+    return current + offset < tokens.size() ? tokens[current + offset] : tokens.back();
 }
 
 bool Parser::isAtEnd() {
@@ -362,7 +362,7 @@ std::shared_ptr<Stmt> Parser::classDeclaration(const bool is_const) {
 }
 
 std::shared_ptr<Expr> Parser::assignment() {
-    std::shared_ptr<Expr> expr(ternary());
+    std::shared_ptr<Expr> expr(array());
 
     if (match(SINGLE_EQUAL)) {
         Token equals(previous());
@@ -372,6 +372,8 @@ std::shared_ptr<Expr> Parser::assignment() {
             return std::make_shared<Assign>(var_expr->name, value);
         } else if (auto *get = dynamic_cast<Get *>(expr.get())) {
             return std::make_shared<Set>(get->object, get->name, value);
+        } else if(dynamic_cast<Access *>(expr.get())){
+            return std::make_shared<ArraySet>(expr, value, equals);
         }
         error(equals, "Invalid assignment target.");
     }
@@ -451,6 +453,41 @@ Parser::Parser(std::vector<Token> tokens) : tokens(std::move(tokens)){
 
 }
 
+std::shared_ptr<Expr> Parser::array() {
+    if(match(LEFT_BRACKET)){
+        auto op {previous()};
+        std::vector<std::shared_ptr<Expr>> expr_vector;
 
+        if(match(RIGHT_BRACKET)){
+            return std::make_shared<Array>(op, expr_vector, nullptr);
+        }else if(match(ALLOC)){
+            consume(SINGLE_COLON, "Expect ':' after 'alloc'.");
+            auto dynamic_size {ternary()};
+            consume(RIGHT_BRACKET, "Expect ']' for array expression.");
+
+            return std::make_shared<Array>(op, expr_vector, dynamic_size);
+        }
+
+        do{
+            expr_vector.emplace_back(array());
+        }while(match(COMMA));
+
+        consume(RIGHT_BRACKET, "Expect ']' for array expression.");
+
+        return std::make_shared<Array>(op, expr_vector, nullptr);
+    }
+
+    return ternary();
+}
+
+std::shared_ptr<Expr> Parser::access() {
+    if(match(AT)){
+        auto index {access()};
+        auto op {consume(SINGLE_COLON, "Expect ':' after index.")};
+        return std::make_shared<Access>(index, access(), op);
+    }
+
+    return call();
+}
 
 

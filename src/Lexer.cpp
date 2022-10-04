@@ -32,7 +32,8 @@ static std::unordered_map<std::string, TokenType> keyWords = {
         {"virtual",  VIRTUAL},
         {"import",   IMPORT},
         {"namespace", NAMESPACE},
-        {"const", CONST}};
+        {"const", CONST},
+        {"alloc", ALLOC}};
 
 Lexer::Lexer(std::string source_code) : source_code(std::move(source_code)){
 }
@@ -145,6 +146,9 @@ void Lexer::scanToken() {
         case '[':
             addToken(LEFT_BRACKET);
             break;
+        case '@':
+            addToken(AT);
+            break;
         case ']':
             addToken(RIGHT_BRACKET);
             break;
@@ -171,11 +175,7 @@ void Lexer::scanToken() {
             addToken(QUESTION);
             break;
         case ':':
-            if(matchNextChar(':')){
-                addToken(DOUBLE_COLON);
-            }else{
-                addToken(SINGLE_COLON);
-            }
+            addToken(SINGLE_COLON);
             break;
         case '%':
             addToken(PERCENT);

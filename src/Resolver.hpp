@@ -100,6 +100,12 @@ public:
 
     std::any visitSuperExpr(const std::shared_ptr<Super> &expr) override;
 
+    std::any visitArrayExpr(const std::shared_ptr<Array> &expr) override;
+
+    std::any visitAccessExpr(const std::shared_ptr<Access> &expr) override;
+
+    std::any visitArraySetExpr(const std::shared_ptr<ArraySet> &expr) override;
+
     void resolve(const std::list<std::shared_ptr<Stmt>> &statements);
 
     explicit Resolver(Interpreter &interpreter);

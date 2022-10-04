@@ -63,4 +63,10 @@ struct Clock : SurpherCallable {
     std::string SurpherCallableToString() override;
 };
 
+struct ArraySize : SurpherCallable {
+    uint32_t arity() override;
+    std::any call(Interpreter &interpreter, const std::vector<std::any> &arguments) override;
+    std::string SurpherCallableToString() override;
+};
+
 #endif //SURPHER_SURPHERCALLABLE_HPP

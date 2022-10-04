@@ -108,6 +108,12 @@ public:
 
     std::any visitSuperExpr(const std::shared_ptr<Super> &expr) override;
 
+    std::any visitArrayExpr(const std::shared_ptr<Array> &expr) override;
+
+    std::any visitAccessExpr(const std::shared_ptr<Access> &expr) override;
+
+    std::any visitArraySetExpr(const std::shared_ptr<ArraySet> &expr) override;
+
     std::any visitImportStmt(const std::shared_ptr<Import> &stmt) override;
 
     std::any visitNamespaceStmt(const std::shared_ptr<Namespace> &stmt) override;

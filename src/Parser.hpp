@@ -30,17 +30,19 @@ class Parser {
     std::function<std::shared_ptr<Expr>()> bit_wise_and = [this]() { return parseBinary(equality, SINGLE_AMPERSAND); };
     std::function<std::shared_ptr<Expr>()> bit_wise_xor = [this]() { return parseBinary(bit_wise_and, CARET); };
     std::function<std::shared_ptr<Expr>()> bit_wise_or = [this]() { return parseBinary(bit_wise_xor, SINGLE_BAR); };
-
     std::function<std::shared_ptr<Expr>()> expression = [this]() { return assignment(); };
-
     std::function<std::shared_ptr<Expr>()> unary = [this]() {
         if (match(BANG, MINUS)) {
             Token op = previous();
             std::shared_ptr<Expr> right = unary();
-            return std::shared_ptr<Expr>(new Unary{op, right});
+            return std::shared_ptr<Expr>(new Unary(op, right));
         }
-        return call();
+        return access();
     };
+
+    std::shared_ptr<Expr> access();
+
+    std::shared_ptr<Expr> array();
 
     std::shared_ptr<Expr> call();
 
@@ -56,7 +58,7 @@ class Parser {
 
     std::shared_ptr<Stmt> declaration();
 
-    std::shared_ptr<Stmt> varDeclaration(const bool is_const);
+    std::shared_ptr<Stmt> varDeclaration(bool is_const);
 
     std::shared_ptr<Stmt> ifStatement();
 

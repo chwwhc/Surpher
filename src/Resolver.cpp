@@ -307,3 +307,23 @@ std::any Resolver::visitSuperExpr(const std::shared_ptr<Super> &expr) {
     resolveLocal(expr, expr->keyword);
     return {};
 }
+
+std::any Resolver::visitArrayExpr(const std::shared_ptr<Array> &expr) {
+    std::for_each(expr->expr_vector.begin(), expr->expr_vector.end(), [this](const auto& entry){resolve(entry);});
+
+    return {};
+}
+
+std::any Resolver::visitAccessExpr(const std::shared_ptr<Access>& expr) {
+    resolve(expr->arr_name);
+    resolve(expr->index);
+
+    return {};
+}
+
+std::any Resolver::visitArraySetExpr(const std::shared_ptr<ArraySet>& expr) {
+    resolve(expr->assignee);
+    resolve(expr->value);
+
+    return {};
+}

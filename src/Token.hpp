@@ -36,6 +36,7 @@ enum TokenType {
     SINGLE_COLON,
     DOUBLE_COLON,
     RIGHT_ARROW,
+    AT,
 
     // Literal
     IDENTIFIER,
@@ -70,6 +71,7 @@ enum TokenType {
     IMPORT,
     NAMESPACE,
     CONST,
+    ALLOC,
 
     EOF_TOKEN
 };
