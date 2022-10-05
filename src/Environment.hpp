@@ -14,13 +14,15 @@ class Environment : public std::enable_shared_from_this<Environment> {
 public:
     std::shared_ptr<Environment> getEnclosing();
 
-    void define(const std::string &var, const std::any& val, const bool is_const);
+    void define(const std::string &var, const std::any& val, const bool is_fixed);
 
-    void define(const Token &var, std::any val, const bool is_const);
+    void define(const Token &var, std::any val, const bool is_fixed);
 
     void erase(const std::string &var);
 
     void assign(const Token &name, const std::any &value);
+
+    void setFixed(const Token &name, const bool is_fixed);
 
     void assignAt(uint32_t distance, const Token &name, std::any value);
 

@@ -7,7 +7,7 @@
 
 void Environment::assign(const Token &name, const std::any &value) {
     if (var_val_pairs.find(name.lexeme) != var_val_pairs.end()) {
-        if(var_val_pairs[name.lexeme].first) throw RuntimeError(name, "Can't modify constant \"" + name.lexeme + "\".");
+        if(var_val_pairs[name.lexeme].first) throw RuntimeError(name, "Can't modify fixed binding \"" + name.lexeme + "\".");
 
         var_val_pairs[name.lexeme] = {false, value};
         return;
@@ -39,7 +39,7 @@ void Environment::define(const std::string &var, const std::any& val, const bool
 
 void Environment::define(const Token &var, std::any val, const bool is_const){
     if (var_val_pairs.find(var.lexeme) != var_val_pairs.end()) {
-        if(var_val_pairs[var.lexeme].first) throw RuntimeError(var, "Can't modify constant \"" + var.lexeme + "\".");
+        if(var_val_pairs[var.lexeme].first) throw RuntimeError(var, "Can't modify fixed binding \"" + var.lexeme + "\".");
     }
 
     var_val_pairs[var.lexeme] = {is_const, std::move(val)};
@@ -63,7 +63,7 @@ std::shared_ptr<Environment> Environment::ancestor(uint32_t distance) {
 }
 
 void Environment::assignAt(uint32_t distance, const Token &name, std::any value) {
-    if(ancestor(distance)->var_val_pairs[name.lexeme].first) throw RuntimeError(name, "Can't modify constant \"" + name.lexeme + "\".");
+    if(ancestor(distance)->var_val_pairs[name.lexeme].first) throw RuntimeError(name, "Can't modify fixed binding \"" + name.lexeme + "\".");
     ancestor(distance)->var_val_pairs[name.lexeme] = {false, std::move(value)};
 }
 
@@ -73,4 +73,8 @@ std::shared_ptr<Environment> Environment::getEnclosing() {
 
 void Environment::erase(const std::string &var) {
         var_val_pairs.erase(var);
+}
+
+void Environment::setFixed(const Token& name, const bool is_fixed){
+    var_val_pairs[name.lexeme].first = is_fixed;
 }

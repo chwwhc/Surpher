@@ -198,6 +198,8 @@ std::any Interpreter::visitBinaryExpr(const std::shared_ptr<Binary> &expr)
 
 void Interpreter::interpret()
 {
+    if(scripts.empty()) return;
+
     auto curr_script{scripts.front()};
     scripts.pop_front();
 
@@ -259,7 +261,7 @@ std::any Interpreter::visitVarStmt(const std::shared_ptr<Var> &stmt)
     if (stmt->initializer.has_value())
         value = evaluate(stmt->initializer.value());
 
-    environment->define(stmt->name, value, stmt->is_const);
+    environment->define(stmt->name, value, stmt->is_fixed);
     return {};
 }
 
@@ -572,9 +574,9 @@ std::any Interpreter::visitCallExpr(const std::shared_ptr<Call> &expr)
     {
         callable = std::make_shared<Clock>();
     }
-    else if (callee.type() == typeid(std::shared_ptr<ArraySize>))
+    else if (callee.type() == typeid(std::shared_ptr<Sizeof>))
     {
-        callable = std::make_shared<ArraySize>();
+        callable = std::make_shared<Sizeof>();
     }
     else
     {
@@ -593,13 +595,13 @@ std::any Interpreter::visitCallExpr(const std::shared_ptr<Call> &expr)
 Interpreter::Interpreter() : globals{new Environment}
 {
     environment->define("clock", std::make_shared<Clock>(), true);
-    environment->define("arraySize", std::make_shared<ArraySize>(), true);
+    environment->define("sizeof", std::make_shared<Sizeof>(), true);
 }
 
 std::any Interpreter::visitFunctionStmt(const std::shared_ptr<Function> &stmt)
 {
     std::shared_ptr<SurpherFunction> function(std::make_shared<SurpherFunction>(stmt, environment, false, false));
-    environment->define(stmt->name, std::move(function), stmt->is_const);
+    environment->define(stmt->name, std::move(function), stmt->is_fixed);
     return {};
 }
 
@@ -657,7 +659,7 @@ std::any Interpreter::visitNamespaceStmt(const std::shared_ptr<Namespace> &stmt)
 {
     std::shared_ptr<Environment> new_environment(std::make_shared<Environment>(environment));
     executeBlock(stmt->statements, new_environment);
-    environment->define(stmt->name, std::make_shared<SurpherNamespace>(stmt->name.lexeme, new_environment), stmt->is_const);
+    environment->define(stmt->name, std::make_shared<SurpherNamespace>(stmt->name.lexeme, new_environment), stmt->is_fixed);
 
     return {};
 }
@@ -682,7 +684,7 @@ std::any Interpreter::visitClassStmt(const std::shared_ptr<Class> &stmt)
         superclass_instance_methods = superclass_cast->instance_methods;
     }
 
-    environment->define(stmt->name, {}, stmt->is_const);
+    environment->define(stmt->name, {}, false);
 
     if (stmt->superclass.has_value())
     {
@@ -735,6 +737,7 @@ std::any Interpreter::visitClassStmt(const std::shared_ptr<Class> &stmt)
     }
 
     environment->assign(stmt->name, surpher_class);
+    environment->setFixed(stmt->name, stmt->is_fixed);
     return {};
 }
 

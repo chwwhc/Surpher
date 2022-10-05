@@ -310,6 +310,7 @@ std::any Resolver::visitSuperExpr(const std::shared_ptr<Super> &expr) {
 
 std::any Resolver::visitArrayExpr(const std::shared_ptr<Array> &expr) {
     std::for_each(expr->expr_vector.begin(), expr->expr_vector.end(), [this](const auto& entry){resolve(entry);});
+    if(expr->dynamic_size != nullptr) resolve(expr->dynamic_size);
 
     return {};
 }

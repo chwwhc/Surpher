@@ -67,10 +67,10 @@ enum TokenType {
     PRINT,
     AND,
     OR,
-    VIRTUAL,
+    SIG,
     IMPORT,
     NAMESPACE,
-    CONST,
+    FIXED,
     ALLOC,
 
     EOF_TOKEN

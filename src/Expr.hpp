@@ -123,9 +123,9 @@ struct Assign: Expr, public std::enable_shared_from_this<Assign>{
 
 struct Variable: Expr, public std::enable_shared_from_this<Variable> {
     const Token name;
-    const bool is_const;
+    const bool is_fixed;
 
-    Variable(Token name, bool is_const);
+    Variable(Token name, bool is_fixed);
 
     std::any accept(ExprVisitor& visitor) override;
 };

@@ -1,19 +1,19 @@
-const namespace Math {
+fixed namespace Math {
 
-    const fun factorial(x) {
+    fixed fun factorial(x) {
         return x == 0 ? 1 : x * factorial(x - 1);
     }
 
-    const fun power(x, pow) {
+    fixed fun power(x, pow) {
         return pow == 0 ? 1 : x * power(x, pow - 1);
     }
 
-    const var min = \a b -> a < b ? a : b;
+    fixed var min = \a b -> a < b ? a : b;
 
-    const var max = \a b -> a > b ? a : b;
+    fixed var max = \a b -> a > b ? a : b;
 
-    const namespace Trigonometry {
-        const fun cos(x) {
+    fixed namespace Trigonometry {
+        fixed fun cos(x) {
             var flag = true;
             var result = 0;
             var pow = 0;
@@ -33,7 +33,7 @@ const namespace Math {
             return result;
         }
 
-        const fun sin(x) {
+        fixed fun sin(x) {
             var flag = true;
             var result = 0;
             var pow = 1;

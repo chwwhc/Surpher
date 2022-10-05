@@ -111,20 +111,23 @@ std::string Clock::SurpherCallableToString() {
     return {};
 }
 
-uint32_t ArraySize::arity() {
+uint32_t Sizeof::arity() {
     return 1;
 }
 
-std::any ArraySize::call(Interpreter &interpreter, const std::vector<std::any> &arguments) {
+std::any Sizeof::call(Interpreter &interpreter, const std::vector<std::any> &arguments) {
     auto value {arguments[0]};
     if(value.type() == typeid(std::shared_ptr<SurpherArray>)){
         auto value_cast {std::any_cast<std::shared_ptr<SurpherArray>>(value)};
-        return static_cast<uint64_t>(value_cast->size());
+        return static_cast<double>(value_cast->size());
+    }else if(value.type() == typeid(std::shared_ptr<SurpherInstance>)){
+        auto value_cast {std::any_cast<std::shared_ptr<SurpherInstance>>(value)};
+        return std::any_cast<std::shared_ptr<SurpherFunction>>(value_cast->get(Token("__sizeof__", {}, STRING, 0)))->call(interpreter, {});
     }
 
-    return 0;
+    return nullptr;
 }
 
-std::string ArraySize::SurpherCallableToString() {
+std::string Sizeof::SurpherCallableToString() {
     return {};
 }

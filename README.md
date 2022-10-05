@@ -17,7 +17,7 @@ Some add-on features to vanilla Lox:
 <li>Array expression</li>
 <li>Runtime optimization for recursive functions by caching</li>
 <li>Maximum recursion depth of <strong>3200</strong> to avoid stackoverflow error</li>
-<li>Virtual methods in classes</li>
+<li>Function signatures in classes</li>
 <li>Static and non-static methods in classes</li>
 <li>Namespaces to avoid name collision</li>
 </ul>
@@ -47,7 +47,7 @@ run the following command to exit:
 ``` 
 program        → declaration* EOF ;
 
-declaration    → "const"? ( classDecl | funDecl | varDecl | namespaceDecl )
+declaration    → "fixed"? ( classDecl | funDecl | varDecl | namespaceDecl )
                | statement ;
 
 classDecl      → "class" IDENTIFIER ( "<" IDENTIFIER )?
@@ -101,7 +101,7 @@ call           → primary ( "(" arguments? ")" | "." IDENTIFIER )* ;
 primary        → "true" | "false" | "nil" | "this"
                | NUMBER | STRING | IDENTIFIER | "(" expression ")"
                | "super" "." IDENTIFIER | "\" IDENTIFIER* "->" expression ;
-function       → "virtual"? "class"? IDENTIFIER "(" parameters? ")" block ;
+function       → "sig"? "class"? IDENTIFIER "(" parameters? ")" block ;
 parameters     → IDENTIFIER ( "," IDENTIFIER )* ;
 arguments      → expression ( "," expression )* ;
 
@@ -175,31 +175,31 @@ print partial2(3);
 
 ### 4. Namespace and modifier
 ```
-// always use 'const' before 'namespace'!!!
+// always use 'fixed' before 'namespace'!!!
 namespace foo {
     var x = 2;
 }
 foo = 2; // the namespace foo would become 2
 
-const namespace bar {
+fixed namespace bar {
     var x = 2;
 }
 bar = 2; // runtime error
 
 // nested namespace is allowed
-const namespace Math {
+fixed namespace Math {
 
-    const fun factorial(x) {
+    fixed fun factorial(x) {
         return x == 0 ? 1 : x * factorial(x - 1);
     }
 
-    const fun power(x, pow) {
+    fixed fun power(x, pow) {
         return pow == 0 ? 1 : x * power(x, pow - 1);
     }
 
     // approximate cos(x) using taylor series
-    const namespace Trigonometry {
-        const fun cos(x) {
+    fixed namespace Trigonometry {
+        fixed fun cos(x) {
             var flag = true;
             var result = 0;
             var pow = 0;

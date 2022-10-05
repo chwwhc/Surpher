@@ -170,13 +170,13 @@ std::shared_ptr<Stmt> Parser::statement() {
     }
 }
 
-std::shared_ptr<Function> Parser::functionStatement(const std::string &type, bool is_virtual, bool is_const) {
+std::shared_ptr<Function> Parser::functionStatement(const std::string &type, bool is_virtual, bool is_fixed) {
     Token name(consume(IDENTIFIER, "Expect " + type + " name."));
     if(is_virtual){
         consume(LEFT_PAREN, "Expect '(' after declaring a virtual function.");
         consume(RIGHT_PAREN, "Expect ')' after declaring a virtual function.");
         consume(SINGLE_SEMICOLON, "Expect ';' after declaring a virtual function.");
-        return std::make_shared<Function>(name, std::vector<Token>(), std::list<std::shared_ptr<Stmt>>(), is_virtual, is_const);
+        return std::make_shared<Function>(name, std::vector<Token>(), std::list<std::shared_ptr<Stmt>>(), is_virtual, is_fixed);
     }
 
     consume(LEFT_PAREN, "Expect '(' after " + type + " name.");
@@ -190,7 +190,7 @@ std::shared_ptr<Function> Parser::functionStatement(const std::string &type, boo
 
     consume(LEFT_BRACE, "Expect '{' before " + type + " body.");
     std::list<std::shared_ptr<Stmt>> body(blockStatement());
-    return std::make_shared<Function>(name, params, body, is_virtual, is_const);
+    return std::make_shared<Function>(name, params, body, is_virtual, is_fixed);
 }
 
 std::shared_ptr<Stmt> Parser::returnStatement() {
@@ -278,16 +278,16 @@ std::shared_ptr<Stmt> Parser::ifStatement() {
 
 std::shared_ptr<Stmt> Parser::declaration() {
     try {
-        bool is_const {match(CONST)};
+        bool is_fixed {match(FIXED)};
 
         if (match(FUN)) {
-            return functionStatement("function", false, is_const);
+            return functionStatement("function", false, is_fixed);
         } else if (match(VAR)) {
-                return varDeclaration(is_const);
+                return varDeclaration(is_fixed);
         } else if (match(CLASS)) {
-            return classDeclaration(is_const);
+            return classDeclaration(is_fixed);
         } else if(match(NAMESPACE)){
-            return namespaceDeclaration(is_const);
+            return namespaceDeclaration(is_fixed);
         }
         return statement();
     } catch (ParseError &e) {
@@ -305,23 +305,23 @@ std::list<std::shared_ptr<Stmt>> Parser::blockStatement() {
     return statements;
 }
 
-std::shared_ptr<Stmt> Parser::namespaceDeclaration(const bool is_const) {
+std::shared_ptr<Stmt> Parser::namespaceDeclaration(const bool is_fixed) {
     auto name (consume(IDENTIFIER, "Expect module name."));
     consume(LEFT_BRACE, "Expect '{' before module body.");
-    return std::make_shared<Namespace>(name, blockStatement(), is_const);
+    return std::make_shared<Namespace>(name, blockStatement(), is_fixed);
 }
 
-std::shared_ptr<Stmt> Parser::varDeclaration(const bool is_const) {
+std::shared_ptr<Stmt> Parser::varDeclaration(const bool is_fixed) {
     Token name(consume(IDENTIFIER, "Expect variable name."));
 
     if (match(SINGLE_EQUAL)) {
         std::shared_ptr<Expr> initializer {expression()};
         consume(SINGLE_SEMICOLON, "Expect ';' after variable declaration.");
-        return std::make_shared<Var>(name, initializer, is_const);
+        return std::make_shared<Var>(name, initializer, is_fixed);
     }
 
     consume(SINGLE_SEMICOLON, "Expect ';' after variable declaration.");
-    return std::make_shared<Var>(name, is_const);
+    return std::make_shared<Var>(name, is_fixed);
 }
 
 std::shared_ptr<Stmt> Parser::expressionStatement() {
@@ -336,7 +336,7 @@ std::shared_ptr<Stmt> Parser::printStatement() {
     return std::make_shared<Print>(value);
 }
 
-std::shared_ptr<Stmt> Parser::classDeclaration(const bool is_const) {
+std::shared_ptr<Stmt> Parser::classDeclaration(const bool is_fixed) {
     Token name(consume(IDENTIFIER, "Expect class name."));
 
     std::optional<std::shared_ptr<Expr>> superclass(std::nullopt);
@@ -347,18 +347,18 @@ std::shared_ptr<Stmt> Parser::classDeclaration(const bool is_const) {
     std::vector<std::shared_ptr<Function>> class_methods;
     std::vector<std::shared_ptr<Function>> instance_methods;
     while (!isAtEnd() && !check(RIGHT_BRACE, 0)) {
-        bool is_virtual {match(VIRTUAL)};
+        bool is_virtual {match(SIG)};
 
         if (match(CLASS)) {
-            class_methods.emplace_back(functionStatement("class_method", is_virtual, is_const));
+            class_methods.emplace_back(functionStatement("class_method", is_virtual, is_fixed));
         } else {
-            instance_methods.emplace_back(functionStatement("instance_method", is_virtual, is_const));
+            instance_methods.emplace_back(functionStatement("instance_method", is_virtual, is_fixed));
         }
     }
 
     consume(RIGHT_BRACE, "Expect '}' after class body.");
 
-    return std::make_shared<Class>(name, instance_methods, class_methods, superclass, is_const);
+    return std::make_shared<Class>(name, instance_methods, class_methods, superclass, is_fixed);
 }
 
 std::shared_ptr<Expr> Parser::assignment() {
@@ -483,7 +483,7 @@ std::shared_ptr<Expr> Parser::array() {
 std::shared_ptr<Expr> Parser::access() {
     if(match(AT)){
         auto index {access()};
-        auto op {consume(SINGLE_COLON, "Expect ':' after index.")};
+        auto op {consume(RIGHT_ARROW, "Expect '->' after index.")};
         return std::make_shared<Access>(index, access(), op);
     }
 

@@ -29,10 +29,10 @@ static std::unordered_map<std::string, TokenType> keyWords = {
         {"print",    PRINT},
         {"and",      AND},
         {"or",       OR},
-        {"virtual",  VIRTUAL},
+        {"sig",  SIG},
         {"import",   IMPORT},
         {"namespace", NAMESPACE},
-        {"const", CONST},
+        {"fixed", FIXED},
         {"alloc", ALLOC}};
 
 Lexer::Lexer(std::string source_code) : source_code(std::move(source_code)){

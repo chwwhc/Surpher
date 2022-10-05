@@ -58,7 +58,7 @@ class Parser {
 
     std::shared_ptr<Stmt> declaration();
 
-    std::shared_ptr<Stmt> varDeclaration(bool is_const);
+    std::shared_ptr<Stmt> varDeclaration(bool is_fixed);
 
     std::shared_ptr<Stmt> ifStatement();
 
@@ -74,13 +74,13 @@ class Parser {
 
     std::shared_ptr<Stmt> printStatement();
 
-    std::shared_ptr<Stmt> classDeclaration(const bool is_const);
+    std::shared_ptr<Stmt> classDeclaration(const bool is_fixed);
 
     std::shared_ptr<Stmt> importStatement();
 
-    std::shared_ptr<Stmt> namespaceDeclaration(const bool is_const);
+    std::shared_ptr<Stmt> namespaceDeclaration(const bool is_fixed);
 
-    std::shared_ptr<Function> functionStatement(const std::string &type, const bool is_virtual, const bool is_const);
+    std::shared_ptr<Function> functionStatement(const std::string &type, const bool is_virtual, const bool is_fixed);
 
     std::shared_ptr<Stmt> statement();
 

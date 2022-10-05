@@ -88,12 +88,12 @@ struct Print : Stmt, public std::enable_shared_from_this<Print> {
 
 struct Var : Stmt, public std::enable_shared_from_this<Var> {
     const Token name;
-    const bool is_const;
+    const bool is_fixed;
     std::optional<std::shared_ptr<Expr>> initializer{std::nullopt};
 
-    Var(Token name, std::shared_ptr<Expr> initializer, bool is_const);
+    Var(Token name, std::shared_ptr<Expr> initializer, bool is_fixed);
 
-    Var(Token name, bool is_const);
+    Var(Token name, bool is_fixed);
 
     std::any accept(StmtVisitor &visitor) override;
 };
@@ -139,10 +139,10 @@ struct Function : Stmt, public std::enable_shared_from_this<Function> {
     const std::vector<Token> params;
     const std::list<std::shared_ptr<Stmt>> body;
     const bool is_virtual;
-    const bool is_const;
+    const bool is_fixed;
 
     Function(Token name, std::vector<Token> params, std::list<std::shared_ptr<Stmt>> body, bool is_virtual,
-             bool is_const);
+             bool is_fixed);
 
     std::any accept(StmtVisitor &visitor) override;
 };
@@ -169,21 +169,21 @@ struct Class : Stmt, public std::enable_shared_from_this<Class> {
     std::optional<std::shared_ptr<Expr>> superclass;
     const std::vector<std::shared_ptr<Function>> instance_methods;
     const std::vector<std::shared_ptr<Function>> class_methods;
-    const bool is_const;
+    const bool is_fixed;
 
     Class(Token name, std::vector<std::shared_ptr<Function>> instance_methods,
           std::vector<std::shared_ptr<Function>> class_methods, std::optional<std::shared_ptr<Expr>> superclass,
-          bool is_const);
+          bool is_fixed);
 
     std::any accept(StmtVisitor &visitor) override;
 };
 
 struct Namespace : Stmt, public std::enable_shared_from_this<Namespace> {
     const Token name;
-    const bool is_const;
+    const bool is_fixed;
     const std::list<std::shared_ptr<Stmt>> statements;
 
-    Namespace(Token name, std::list<std::shared_ptr<Stmt>> statements, bool is_const);
+    Namespace(Token name, std::list<std::shared_ptr<Stmt>> statements, bool is_fixed);
 
     std::any accept(StmtVisitor &visitor) override;
 };

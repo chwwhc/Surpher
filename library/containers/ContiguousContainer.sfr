@@ -1,26 +1,27 @@
-const namespace ContiguousContainer{
+fixed namespace ContiguousContainer{
 
-    class ContiguousContainer {
-        virtual size();
-        virtual getIdx();
-        virtual popBack();
-        virtual popFront();
-       // virtual popIdx();
+    fixed class ContiguousContainer {
+        sig getIdx();
+        sig popBack();
+        sig popFront();
+       // sig popIdx();
+
+        sig __sizeof__();
     }
 
-    class Vector < ContiguousContainer {
+    fixed class Vector < ContiguousContainer {
         init(arr){
             this.arr = arr;
-            this.size = arraySize(arr);
+            this.size = sizeof(arr);
         }
 
-        size(){
+        __sizeof__(){
             return this.size;
         }
 
         getIdx(idx){
             if(idx < this.size and idx >= 0){
-                return arr[idx];
+                return @idx->this.arr;
             }else{
                 print "invalid index.";
             }
@@ -28,11 +29,12 @@ const namespace ContiguousContainer{
 
         popBack(){
             if(this.size > 0){
-                new_arr = [alloc: this.size - 1];
+                var new_arr = [alloc: this.size - 1];
                 for(var i = 0; i < this.size - 1; i = i + 1){
-                    new_arr[i] = this.arr[i];
+                    @i->new_arr = @i->this.arr;
                 }
                 this.arr = new_arr;
+                this.size = this.size - 1;
             }else{
                 print "cannot pop from an empty vector.";
             }
@@ -40,11 +42,12 @@ const namespace ContiguousContainer{
 
         popFront(){
             if(this.size > 0){
-                new_arr = [alloc: this.size - 1];
+                var new_arr = [alloc: this.size - 1];
                 for(var i = 1; i < this.size; i = i + 1){
-                    new_arr[i - 1] = this.arr[i];
+                    @(i - 1)->new_arr = @i->this.arr;
                 }
                 this.arr = new_arr;
+                this.size = this.size - 1;
             }else{
                 print "cannot pop from an empty vector.";
             }
