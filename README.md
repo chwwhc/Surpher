@@ -23,11 +23,14 @@ Some add-on features to vanilla Lox:
 </ul>
 
 ## How to use
-Run `make` in the `build` directory:
+Load CMake project:
 ```
-user@name:~/.../build$ make
+user@name:~/.../Surpher$ cmake .
 ```
-
+Compile the project:
+```
+user@name:~/.../Surpher$ make
+```
 Run the following command to open the REPL:
 ```
 ./Surpher
