@@ -25,7 +25,7 @@ Some add-on features to vanilla Lox:
 ## How to use
 Load CMake project:
 ```
-user@name:~/.../Surpher$ cmake .
+user@name:~/.../Surpher$ cmake [options] -S <path-to-source> -B <path-to-build>
 ```
 Compile the project:
 ```
