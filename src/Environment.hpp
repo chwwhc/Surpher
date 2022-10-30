@@ -14,15 +14,15 @@ class Environment : public std::enable_shared_from_this<Environment> {
 public:
     std::shared_ptr<Environment> getEnclosing();
 
-    void define(const std::string &var, const std::any& val, const bool is_fixed);
+    void define(const std::string &var, const std::any& val, bool is_fixed);
 
-    void define(const Token &var, std::any val, const bool is_fixed);
+    void define(const Token &var, std::any val, bool is_fixed);
 
     void erase(const std::string &var);
 
     void assign(const Token &name, const std::any &value);
 
-    void setFixed(const Token &name, const bool is_fixed);
+    void setFixed(const Token &name, bool is_fixed);
 
     void assignAt(uint32_t distance, const Token &name, std::any value);
 
@@ -32,9 +32,9 @@ public:
 
     std::shared_ptr<Environment> ancestor(uint32_t distance);
 
-    Environment();
+    Environment() = default;
 
-    Environment(std::shared_ptr<Environment> enclosing);
+    Environment(const std::shared_ptr<Environment>& enclosing);
 };
 
 #endif //SURPHER_ENVIRONMENT_HPP

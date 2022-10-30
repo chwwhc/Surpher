@@ -10,7 +10,8 @@ struct SurpherCallable;
 struct SurpherInstance;
 class SurpherFunction;
 
-struct FunArgsPair {
+struct FunArgsPair
+{
     std::string name;
     std::vector<std::any> args;
 
@@ -19,17 +20,20 @@ struct FunArgsPair {
     bool operator==(const FunArgsPair &other) const;
 };
 
-struct FunArgsPairHash {
+struct FunArgsPairHash
+{
     static uint32_t force_diff_hash;
 
     size_t operator()(const FunArgsPair &type) const;
 };
 
-class Interpreter : public ExprVisitor, public StmtVisitor {
+class Interpreter : public ExprVisitor, public StmtVisitor
+{
 public:
-    const std::shared_ptr<Environment> globals;
+    std::shared_ptr<Environment> globals{std::make_shared<Environment>()};
+
 private:
-    static constexpr uint16_t max_recursion_depth {3200};
+    static constexpr uint16_t max_recursion_depth{3200};
     std::list<std::list<std::shared_ptr<Stmt>>> scripts;
     std::shared_ptr<Environment> environment = globals;
     std::unordered_map<std::shared_ptr<Expr>, uint32_t> locals;
@@ -129,4 +133,4 @@ public:
     void interpret();
 };
 
-#endif //SURPHER_INTERPRETER_HPP
+#endif // SURPHER_INTERPRETER_HPP

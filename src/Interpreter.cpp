@@ -550,7 +550,7 @@ std::any Interpreter::visitCallExpr(const std::shared_ptr<Call> &expr)
                 throw RuntimeError(fun_callable->declaration->name, "Maximum recursion depth reached. (depth limit: " + std::to_string(max_recursion_depth) + ")");
             }
             recursion_counter[fun_callable->declaration->name.lexeme]++;
-
+/*
             FunArgsPair fun_args_pair(fun_callable->declaration->name.lexeme, arguments);
             std::any return_val;
             if (function_memoized_tbl.find(fun_args_pair) != function_memoized_tbl.end())
@@ -562,8 +562,9 @@ std::any Interpreter::visitCallExpr(const std::shared_ptr<Call> &expr)
                 return_val = fun_callable->call(*this, arguments);
                 function_memoized_tbl[fun_args_pair] = return_val;
             }
-
-            return return_val;
+*/
+          //  return return_val;
+            return fun_callable->call(*this, arguments);
         }
     }
     else if (callee.type() == typeid(std::shared_ptr<SurpherClass>))
@@ -592,7 +593,7 @@ std::any Interpreter::visitCallExpr(const std::shared_ptr<Call> &expr)
     return callable->call(*this, arguments);
 }
 
-Interpreter::Interpreter() : globals{new Environment}
+Interpreter::Interpreter()
 {
     environment->define("clock", std::make_shared<Clock>(), true);
     environment->define("sizeof", std::make_shared<Sizeof>(), true);
@@ -657,7 +658,7 @@ std::any Interpreter::lookUpVariable(const Token &name, const std::shared_ptr<Ex
 
 std::any Interpreter::visitNamespaceStmt(const std::shared_ptr<Namespace> &stmt)
 {
-    std::shared_ptr<Environment> new_environment(std::make_shared<Environment>(environment));
+    auto new_environment(std::make_shared<Environment>(environment));
     executeBlock(stmt->statements, new_environment);
     environment->define(stmt->name, std::make_shared<SurpherNamespace>(stmt->name.lexeme, new_environment), stmt->is_fixed);
 
@@ -875,7 +876,7 @@ std::any Interpreter::visitAccessExpr(const std::shared_ptr<Access> &expr)
 std::any Interpreter::visitArraySetExpr(const std::shared_ptr<ArraySet> &expr)
 {
     auto value{evaluate(expr->value)};
-    auto assignee {static_pointer_cast<Access>(expr->assignee)};
+    auto assignee {std::static_pointer_cast<Access>(expr->assignee)};
     auto index{evaluate(assignee->index)}, arr_name{evaluate(assignee->arr_name)};
     if (arr_name.type() != typeid(SurpherArrayPtr))
     {

@@ -15,8 +15,8 @@ is a tree-walk interpreter implemented in C++17.
 Some add-on features to vanilla Lox:
 <ul>
 <li>Array expression</li>
-<li>Runtime optimization for recursive functions by caching</li>
-<li>Maximum recursion depth of <strong>3200</strong> to avoid stackoverflow error</li>
+<li>Runtime optimization for recursive functions by caching (currently disabled)</li>
+<li>Maximum recursion depth of <strong>3200</strong> to avoid stackoverflow error (buggy)</li>
 <li>Function signatures in classes</li>
 <li>Static and non-static methods in classes</li>
 <li>Namespaces to avoid name collision</li>
@@ -116,6 +116,21 @@ DIGIT          → "0" ... "9" ;
 ```
 
 ## Example programs
+### 0. Don Knuth's Man or Boy test 
+```
+var x = \x -> (\ -> x);
+
+fun A(k, x1, x2, x3, x4, x5) {
+    fun B() {
+        k = k - 1;
+        return A(k, B, x1, x2, x3, x4); //decrement k before use
+    }
+    return (k > 0) ? B() : x4() + x5();
+}
+
+print A(10, x(1), x(-1), x(-1), x(1), x(0)); // result: -67
+```
+
 ### 1. Implementing Y-combinator
 ``` 
 // Y-combinator as a lambda expression

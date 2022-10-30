@@ -47,8 +47,10 @@ std::shared_ptr<Expr> Parser::primary() {
 
         std::vector<Token> params;
         do{
-            Token param(consume(IDENTIFIER, "Expect bound variables after lambda."));
-            params.emplace_back(param);
+            if(match(IDENTIFIER)){
+                Token param(previous());
+                params.emplace_back(param);
+            }
         } while(!check(RIGHT_ARROW, 0));
 
         consume(RIGHT_ARROW, "Expect '->' after bound variables.");

@@ -16,7 +16,7 @@ SurpherFunction::SurpherFunction(std::shared_ptr<Function> declaration, std::sha
 }
 
 std::any SurpherFunction::call(Interpreter &interpreter, const std::vector<std::any> &arguments) {
-    std::shared_ptr<Environment> environment {is_partial ? closure : std::make_shared<Environment>(closure)};
+    auto environment {is_partial ? closure : std::make_shared<Environment>(closure)};
     for (size_t i = 0; i < declaration->params.size(); i++) {
         environment->define(declaration->params[i], arguments[i], false);
     }
@@ -45,9 +45,9 @@ std::string SurpherFunction::SurpherCallableToString() {
 }
 
 std::shared_ptr<SurpherFunction> SurpherFunction::bind(const std::shared_ptr<SurpherInstance> &instance) {
-    auto environment(std::make_shared<Environment>(closure));
+    auto environment = closure;
     environment->define("this", instance, true);
-    return std::make_shared<SurpherFunction>(declaration, environment, is_initializer, is_partial);
+    return std::make_shared<SurpherFunction>(declaration, std::move(environment), is_initializer, is_partial);
 }
 
 SurpherClass::SurpherClass(std::string name,

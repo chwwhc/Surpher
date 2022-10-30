@@ -74,7 +74,7 @@ void Resolver::transferStack(std::stack<std::unordered_map<std::string, bool>> &
 void Resolver::resolveLocal(const std::shared_ptr<Expr> &expr, const Token &name) {
     std::stack<std::unordered_map<std::string, bool>> aux_stack;
     uint32_t scopes_size (scopes.size());
-    for (uint32_t i = 0; i < scopes_size; i++) {
+    for (auto i = 0; i < scopes_size; i++) {
         if (scopes.top().find(name.lexeme) != scopes.top().end()) {
             interpreter.resolve(expr, i);
             transferStack(aux_stack);
