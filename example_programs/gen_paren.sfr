@@ -1,0 +1,38 @@
+/*
+    Solution to LeetCode 22. Generate Parentheses
+*/
+import "../library/containers/ContiguousContainer.sfr";
+
+fixed var Vec = ContiguousContainer.Vector;
+
+fun generateParenthesis(n){
+    var ret = Vec([]);
+    var curr = Vec([]);
+    
+    fun backTrack(n, num_of_left){
+        if(n < 0 or num_of_left < 0){
+            return;
+        }else if(n == 0 and num_of_left == 0){
+            var result = "";
+            for(var i = 0; i < sizeof(curr); i = i + 1){
+                result = result + @i->curr.arr;
+            }
+            ret.addBack(result);
+            return;
+        }
+
+        curr.addBack("(");
+        backTrack(n - 1, num_of_left + 1);
+        curr.popBack();
+
+        curr.addBack(")");
+        backTrack(n - 1, num_of_left - 1);
+        curr.popBack();
+    }
+
+    backTrack(2 * n, 0);
+    return ret;
+}
+
+for(var i = 0; i <= 7; i = i + 1)
+    print generateParenthesis(i).arr;

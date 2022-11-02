@@ -5,7 +5,8 @@
 #include <iostream>
 #include <any>
 
-enum TokenType {
+enum TokenType
+{
     // symbol
     LEFT_PAREN = 0,
     RIGHT_PAREN,
@@ -41,7 +42,7 @@ enum TokenType {
     // Literal
     IDENTIFIER,
     STRING,
-    NUMBER,
+    FLOAT,
     LAMBDA,
 
     // reserved
@@ -72,18 +73,19 @@ enum TokenType {
     NAMESPACE,
     FIXED,
     ALLOC,
+    HALT,
 
     EOF_TOKEN
 };
 
-struct Token {
+struct Token
+{
     const std::string lexeme;
     const std::any literal;
     const TokenType token_type;
     const uint32_t line;
 
     Token(std::string lexeme, std::any literal, const enum TokenType &token_type, const uint32_t &line);
-
 };
 
 std::ostream &operator<<(std::ostream &strm, const Token &tok);

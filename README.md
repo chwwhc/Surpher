@@ -15,8 +15,7 @@ is a tree-walk interpreter implemented in C++17.
 Some add-on features to vanilla Lox:
 <ul>
 <li>Array expression</li>
-<li>Runtime optimization for recursive functions by caching (currently disabled)</li>
-<li>Maximum recursion depth of <strong>3200</strong> to avoid stackoverflow error (buggy)</li>
+<li>Maximum recursion depth of <strong>8192</strong> to avoid stackoverflow error</li>
 <li>Function signatures in classes</li>
 <li>Static and non-static methods in classes</li>
 <li>Namespaces to avoid name collision</li>
@@ -35,10 +34,9 @@ Run the following command to open the REPL:
 ```
 ./Surpher
 ```
-In the REPL session, 
-run the following command to execute a script that's in the same directory:
+run the following command to execute a script:
 ```
-import "some_script.sfr";
+./Surpher [path to script]
 ```
 In the REPL session,
 run the following command to exit:
@@ -87,7 +85,7 @@ block          → "{" declaration* "}" ;
 expression     → assignment ;
 assignment     → (( call "." )? IDENTIFIER | access) "=" assignment
                | array ;
-array          → "[" array? "]" | ternary ;
+array          → "[" array? "]" | "[" "alloc" ":" expression "]" | ternary ;
 ternary        → logical_or "?" ternary ":" ternary ;
 logic_or       → logic_and ( "or" logic_and )* ;
 logic_and      → bit_wise_or ( "and" bit_wise_or )* ;
@@ -99,7 +97,7 @@ comparison     → term ( ( ">" | ">=" | "<" | "<=" ) term )* ;
 term           → factor ( ( "-" | "+" ) factor )* ;
 factor         → unary ( ( "/" | "*" | "%" ) unary )* ;
 unary          → ( "!" | "-" ) unary | access ;
-access         → "@" access ":" access | call ;
+access         → "@" access "->" access | call ;
 call           → primary ( "(" arguments? ")" | "." IDENTIFIER )* ;
 primary        → "true" | "false" | "nil" | "this"
                | NUMBER | STRING | IDENTIFIER | "(" expression ")"
@@ -125,7 +123,7 @@ fun A(k, x1, x2, x3, x4, x5) {
         k = k - 1;
         return A(k, B, x1, x2, x3, x4); //decrement k before use
     }
-    return (k > 0) ? B() : x4() + x5();
+    return k > 0 ? B() : x4() + x5();
 }
 
 print A(10, x(1), x(-1), x(-1), x(1), x(0)); // result: -67

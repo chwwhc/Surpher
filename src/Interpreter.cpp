@@ -12,88 +12,6 @@
 #include "SurpherNamespace.hpp"
 
 using namespace std::string_literals;
-using SurpherArrayPtr = std::shared_ptr<std::vector<std::any>>;
-
-FunArgsPair::FunArgsPair(std::string name, std::vector<std::any> args) : name(std::move(name)), args(std::move(args))
-{
-}
-
-bool FunArgsPair::operator==(const FunArgsPair &other) const
-{
-    if (other.name != name)
-        return false;
-
-    if (args.empty())
-        return true;
-
-    bool result{true};
-    std::any curr_arg;
-    for (size_t i = 0; i < args.size(); i++)
-    {
-        if (args[i].type() == typeid(double))
-        {
-            result = result && (std::any_cast<double>(args[i]) == std::any_cast<double>(other.args[i]));
-        }
-        else if (args[i].type() == typeid(bool))
-        {
-            result = result && (std::any_cast<bool>(args[i]) == std::any_cast<bool>(other.args[i]));
-        }
-        else if (args[i].type() == typeid(std::string))
-        {
-            result = result && (std::any_cast<std::string>(args[i]) == std::any_cast<std::string>(other.args[i]));
-        }
-        else if (args[i].type() == typeid(int64_t))
-        {
-            result = result && (std::any_cast<int64_t>(args[i]) == std::any_cast<int64_t>(other.args[i]));
-        }
-        else if (args[i].type() == typeid(std::shared_ptr<SurpherFunction>))
-        {
-            result =
-                result && (std::any_cast<std::shared_ptr<SurpherFunction>>(args[i])->declaration->name.lexeme ==
-                           std::any_cast<std::shared_ptr<SurpherFunction>>(
-                               other.args[i])
-                               ->declaration->name.lexeme);
-        }
-    }
-    return result;
-}
-
-uint32_t FunArgsPairHash::force_diff_hash = 1;
-
-size_t FunArgsPairHash::operator()(const FunArgsPair &type) const
-{
-    size_t result{std::hash<std::string>()(type.name)};
-
-    for (const auto &arg : type.args)
-    {
-        if (arg.type() == typeid(double))
-        {
-            result ^= std::hash<double>()(std::any_cast<double>(arg));
-        }
-        else if (arg.type() == typeid(bool))
-        {
-            result ^= std::hash<bool>()(std::any_cast<bool>(arg));
-        }
-        else if (arg.type() == typeid(std::string))
-        {
-            result ^= std::hash<std::string>()(std::any_cast<std::string>(arg));
-        }
-        else if (arg.type() == typeid(int64_t))
-        {
-            result ^= std::hash<int64_t>()(std::any_cast<int64_t>(arg));
-        }
-        else if (arg.type() == typeid(std::shared_ptr<SurpherFunction>))
-        {
-            result ^= std::hash<std::string>()(
-                std::any_cast<std::shared_ptr<SurpherFunction>>(arg)->declaration->name.lexeme);
-        }
-        else
-        {
-            return std::hash<uint32_t>()(force_diff_hash++);
-        }
-    }
-    return result;
-}
 
 std::any Interpreter::visitLiteralExpr(const std::shared_ptr<Literal> &expr)
 {
@@ -113,7 +31,14 @@ std::any Interpreter::visitUnaryExpr(const std::shared_ptr<Unary> &expr)
     {
     case MINUS:
         checkNumberOperands(expr->op, {right});
-        return -std::any_cast<double>(right);
+        if (right.type() == typeid(double))
+        {
+            return -std::any_cast<double>(right);
+        }
+        else
+        {
+            return -std::any_cast<int64_t>(right);
+        }
     case BANG:
         return !isTruthy(right);
     default:
@@ -124,6 +49,7 @@ std::any Interpreter::visitUnaryExpr(const std::shared_ptr<Unary> &expr)
 std::any Interpreter::visitBinaryExpr(const std::shared_ptr<Binary> &expr)
 {
     std::any left(evaluate(expr->left)), right(evaluate(expr->right));
+
     switch (expr->op.token_type)
     {
     case MINUS:
@@ -132,7 +58,8 @@ std::any Interpreter::visitBinaryExpr(const std::shared_ptr<Binary> &expr)
                std::any_cast<double>(right);
     case SLASH:
         checkNumberOperands(expr->op, {left, right});
-        checkZero(expr->op, {std::any_cast<double>(right)});
+        if (std::any_cast<double>(right) == 0)
+            throw RuntimeError(expr->op, "Denominator cannot be 0.");
         return std::any_cast<double>(left) /
                std::any_cast<double>(right);
     case STAR:
@@ -161,7 +88,8 @@ std::any Interpreter::visitBinaryExpr(const std::shared_ptr<Binary> &expr)
         return (int64_t)std::any_cast<double>(left) ^ (int64_t)std::any_cast<double>(right);
     case PERCENT:
         checkNumberOperands(expr->op, {left, right});
-        checkZero(expr->op, {std::any_cast<double>(right)});
+        if (std::any_cast<double>(right) == 0)
+            throw RuntimeError(expr->op, "Denominator cannot be 0.");
         return std::fmod(std::any_cast<double>(left), std::any_cast<double>(right));
     case SINGLE_AMPERSAND:
         checkNumberOperands(expr->op, {left, right});
@@ -198,7 +126,8 @@ std::any Interpreter::visitBinaryExpr(const std::shared_ptr<Binary> &expr)
 
 void Interpreter::interpret()
 {
-    if(scripts.empty()) return;
+    if (scripts.empty())
+        return;
 
     auto curr_script{scripts.front()};
     scripts.pop_front();
@@ -210,26 +139,21 @@ void Interpreter::interpret()
         try
         {
             execute(curr_stmt);
-            auxCleanUp();
         }
         catch (RuntimeError &e)
         {
-            auxCleanUp();
             runtimeError(e);
         }
         catch (BreakError &e)
         {
-            auxCleanUp();
             breakError(e);
         }
         catch (ContinueError &e)
         {
-            auxCleanUp();
             continueError(e);
         }
         catch (ImportError &e)
         {
-            auxCleanUp();
             appendScriptBack(curr_script);
             throw ImportError(std::move(e));
         }
@@ -351,7 +275,7 @@ std::string Interpreter::stringify(const std::any &value)
         std::string num_str(std::to_string(double_val));
         if (floor(double_val) == double_val)
         {
-            uint32_t point_index{0};
+            uint32_t point_index = 0;
             while (point_index < num_str.size() && num_str[point_index] != '.')
             {
                 point_index++;
@@ -367,10 +291,6 @@ std::string Interpreter::stringify(const std::any &value)
     else if (value.type() == typeid(bool))
     {
         return std::any_cast<bool>(value) ? "true"s : "false"s;
-    }
-    else if (value.type() == typeid(int64_t))
-    {
-        return std::to_string(std::any_cast<int64_t>(value));
     }
     else if (value.type() == typeid(std::shared_ptr<SurpherFunction>))
     {
@@ -424,21 +344,6 @@ void Interpreter::checkNumberOperands(const Token &operator_token, const std::ve
     if (result)
         return;
     throw RuntimeError{operator_token, "Operand must be a number."};
-}
-
-void Interpreter::checkZero(const Token &operator_token, const std::vector<double> &operands)
-{
-    bool result{std::transform_reduce(
-        operands.begin(), operands.end(), true,
-        [&](const bool &a, const bool &b)
-        {
-            return a && b;
-        },
-        [&](const double &operand)
-        { return operand != 0; })};
-    if (result)
-        return;
-    throw RuntimeError(operator_token, "Denominator must be non-zero.");
 }
 
 std::any Interpreter::visitIfStmt(const std::shared_ptr<If> &stmt)
@@ -550,20 +455,7 @@ std::any Interpreter::visitCallExpr(const std::shared_ptr<Call> &expr)
                 throw RuntimeError(fun_callable->declaration->name, "Maximum recursion depth reached. (depth limit: " + std::to_string(max_recursion_depth) + ")");
             }
             recursion_counter[fun_callable->declaration->name.lexeme]++;
-/*
-            FunArgsPair fun_args_pair(fun_callable->declaration->name.lexeme, arguments);
-            std::any return_val;
-            if (function_memoized_tbl.find(fun_args_pair) != function_memoized_tbl.end())
-            {
-                return_val = function_memoized_tbl[fun_args_pair];
-            }
-            else
-            {
-                return_val = fun_callable->call(*this, arguments);
-                function_memoized_tbl[fun_args_pair] = return_val;
-            }
-*/
-          //  return return_val;
+
             return fun_callable->call(*this, arguments);
         }
     }
@@ -571,13 +463,21 @@ std::any Interpreter::visitCallExpr(const std::shared_ptr<Call> &expr)
     {
         callable = std::any_cast<std::shared_ptr<SurpherClass>>(callee);
     }
-    else if (callee.type() == typeid(std::shared_ptr<Clock>))
+    else if (callee.type() == typeid(std::shared_ptr<NativeFunction::Clock>))
     {
-        callable = std::make_shared<Clock>();
+        callable = std::make_shared<NativeFunction::Clock>();
     }
-    else if (callee.type() == typeid(std::shared_ptr<Sizeof>))
+    else if (callee.type() == typeid(std::shared_ptr<NativeFunction::Sizeof>))
     {
-        callable = std::make_shared<Sizeof>();
+        if (arguments[0].type() != typeid(std::shared_ptr<SurpherArray>) && arguments[0].type() != typeid(std::shared_ptr<SurpherInstance>) && arguments[0].type() != typeid(std::string))
+            throw RuntimeError(expr->paren, "Type not supported for \"sizeof\".");
+        callable = std::make_shared<NativeFunction::Sizeof>();
+    }
+    else if (callee.type() == typeid(std::shared_ptr<NativeFunction::Floor>))
+    {
+        if (arguments[0].type() != typeid(double))
+            throw RuntimeError(expr->paren, "Can only cast a numerical value to an integer.");
+        callable = std::make_shared<NativeFunction::Floor>();
     }
     else
     {
@@ -595,8 +495,9 @@ std::any Interpreter::visitCallExpr(const std::shared_ptr<Call> &expr)
 
 Interpreter::Interpreter()
 {
-    environment->define("clock", std::make_shared<Clock>(), true);
-    environment->define("sizeof", std::make_shared<Sizeof>(), true);
+    environment->define("clock", std::make_shared<NativeFunction::Clock>(), true);
+    environment->define("sizeof", std::make_shared<NativeFunction::Sizeof>(), true);
+    environment->define("floor", std::make_shared<NativeFunction::Floor>(), true);
 }
 
 std::any Interpreter::visitFunctionStmt(const std::shared_ptr<Function> &stmt)
@@ -813,12 +714,6 @@ void Interpreter::appendScriptBack(const std::list<std::shared_ptr<Stmt>> &scrip
     scripts.emplace_back(script);
 }
 
-void Interpreter::auxCleanUp()
-{
-    function_memoized_tbl.clear();
-    recursion_counter.clear();
-}
-
 std::any Interpreter::visitArrayExpr(const std::shared_ptr<Array> &expr)
 {
     if (expr->dynamic_size)
@@ -834,10 +729,10 @@ std::any Interpreter::visitArrayExpr(const std::shared_ptr<Array> &expr)
         }
 
         auto size_cast{static_cast<uint64_t>((std::any_cast<double>(actual_size)))};
-        return std::make_shared<std::vector<std::any>>(size_cast, nullptr);
+        return std::make_shared<SurpherArray>(size_cast, nullptr);
     }
 
-    SurpherArrayPtr result{std::make_shared<std::vector<std::any>>(expr->expr_vector.size())};
+    SurpherArrayPtr result{std::make_shared<SurpherArray>(expr->expr_vector.size())};
     for (size_t i = 0; i < expr->expr_vector.size(); i++)
     {
         (*result)[i] = evaluate(expr->expr_vector[i]);
@@ -855,11 +750,7 @@ std::any Interpreter::visitAccessExpr(const std::shared_ptr<Access> &expr)
     }
     else if (index.type() != typeid(double))
     {
-        throw RuntimeError(expr->op, "Index for access operator can only be a number.");
-    }
-    else if (std::any_cast<double>(index) < 0)
-    {
-        throw RuntimeError(expr->op, "Index cannot be a negative number.");
+        throw RuntimeError(expr->op, "Index for access operator can only be a positive integer.");
     }
 
     auto index_cast{static_cast<uint64_t>((std::any_cast<double>(index)))};
@@ -876,7 +767,7 @@ std::any Interpreter::visitAccessExpr(const std::shared_ptr<Access> &expr)
 std::any Interpreter::visitArraySetExpr(const std::shared_ptr<ArraySet> &expr)
 {
     auto value{evaluate(expr->value)};
-    auto assignee {std::static_pointer_cast<Access>(expr->assignee)};
+    auto assignee{std::static_pointer_cast<Access>(expr->assignee)};
     auto index{evaluate(assignee->index)}, arr_name{evaluate(assignee->arr_name)};
     if (arr_name.type() != typeid(SurpherArrayPtr))
     {

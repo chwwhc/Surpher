@@ -1,15 +1,18 @@
 fixed namespace ContiguousContainer{
 
-    fixed class ContiguousContainer {
-        sig getIdx();
-        sig popBack();
-        sig popFront();
+    fixed class ContiguousContainerSignature {
+        sig class copy();
+        // sig sort();
+        // sig getIdx();
+        // sig popBack();
+        // sig addBack();
+        // sig popFront();
        // sig popIdx();
 
         sig __sizeof__();
     }
 
-    fixed class Vector < ContiguousContainer {
+    fixed class Vector < ContiguousContainerSignature {
         init(arr){
             this.arr = arr;
             this.size = sizeof(arr);
@@ -17,6 +20,80 @@ fixed namespace ContiguousContainer{
 
         __sizeof__(){
             return this.size;
+        }
+
+        class copy(other){
+            var new_arr = [alloc: other.size];
+            for(var i = 0; i < other.size; i = i + 1){
+                @i->new_arr = @i->other.arr;
+            }
+            return ContiguousContainer.Vector(new_arr);
+        }
+
+        getMost(cmp){
+            var ret = nil;
+            for(var i = 0; i < sizeof(this.arr); i = i + 1){
+                var curr = @i->this.arr;
+                ret = ret == nil ? curr : (cmp(ret, curr) ? ret : curr);
+            }
+
+            return ret;
+        }
+
+        sort(cmp){
+            fun merge(arr, left, right){
+                var i = 0;
+                var j = 0;
+                var k = 0;
+                var left_len = sizeof(left);
+                var right_len = sizeof(right);
+
+                while(i < left_len and j < right_len){
+                    if(cmp(@i->left, @j->right)){
+                        @k->arr = @i->left;
+                        i = i + 1;
+                    }else{
+                        @k->arr = @j->right;
+                        j = j + 1;
+                    }
+                    k = k + 1;
+                }
+
+                while(i < left_len){
+                    @k->arr = @i->left;
+                    i = i + 1;
+                    k = k + 1;
+                }
+
+                while(j < right_len){
+                    @k->arr = @j->right;
+                    j = j + 1;
+                    k = k + 1;
+                }
+            }
+
+            fun mergeSort(arr){
+                if(sizeof(arr) < 2) return;
+
+                var len = sizeof(arr);
+                var mid = floor(len / 2);
+                var left = [alloc: mid];
+                var right = [alloc: len - mid];
+
+                for(var i = 0; i < mid; i = i + 1){
+                    @i->left = @i->arr;
+                }
+
+                for(var i = mid; i < len; i = i + 1)
+                    @(i - mid)->right = @i->arr;
+
+                mergeSort(left);
+                mergeSort(right);
+
+                merge(arr, left, right);
+            }
+
+            mergeSort(this.arr);
         }
 
         getIdx(idx){
@@ -38,6 +115,16 @@ fixed namespace ContiguousContainer{
             }else{
                 print "cannot pop from an empty vector.";
             }
+        }
+
+        addBack(new_elem){
+            var new_arr = [alloc: this.size + 1];
+            for(var i = 0; i < this.size; i = i + 1){
+                @i->new_arr = @i->this.arr;
+            }
+            @(this.size)->new_arr = new_elem;
+            this.arr = new_arr;
+            this.size = this.size + 1;
         }
 
         popFront(){

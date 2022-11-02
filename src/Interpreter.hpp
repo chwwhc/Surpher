@@ -10,22 +10,8 @@ struct SurpherCallable;
 struct SurpherInstance;
 class SurpherFunction;
 
-struct FunArgsPair
-{
-    std::string name;
-    std::vector<std::any> args;
-
-    FunArgsPair(std::string name, std::vector<std::any> args);
-
-    bool operator==(const FunArgsPair &other) const;
-};
-
-struct FunArgsPairHash
-{
-    static uint32_t force_diff_hash;
-
-    size_t operator()(const FunArgsPair &type) const;
-};
+using SurpherArray = std::vector<std::any>;
+using SurpherArrayPtr = std::shared_ptr<std::vector<std::any>>;
 
 class Interpreter : public ExprVisitor, public StmtVisitor
 {
@@ -33,20 +19,17 @@ public:
     std::shared_ptr<Environment> globals{std::make_shared<Environment>()};
 
 private:
-    static constexpr uint16_t max_recursion_depth{3200};
+    const uint16_t max_recursion_depth{8192};
     std::list<std::list<std::shared_ptr<Stmt>>> scripts;
     std::shared_ptr<Environment> environment = globals;
     std::unordered_map<std::shared_ptr<Expr>, uint32_t> locals;
     std::unordered_map<std::string, uint16_t> recursion_counter;
-    std::unordered_map<FunArgsPair, std::any, FunArgsPairHash> function_memoized_tbl;
 
-    static bool isTruthy(const std::any &val);
+    bool isTruthy(const std::any &val);
 
-    static bool isEqual(const std::any &a, const std::any &b);
+    bool isEqual(const std::any &a, const std::any &b);
 
-    static void checkNumberOperands(const Token &operator_token, const std::vector<std::any> &operands);
-
-    static void checkZero(const Token &operator_token, const std::vector<double> &operands);
+    void checkNumberOperands(const Token &operator_token, const std::vector<std::any> &operands);
 
     std::any evaluate(const std::shared_ptr<Expr> &expr);
 

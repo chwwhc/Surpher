@@ -2,8 +2,7 @@ cmake_minimum_required(VERSION 3.16)
 project(Surpher)
 
 set(CMAKE_CXX_STANDARD 17)
-set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
-
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
 add_compile_options("-O3")
 
 include_directories(src)

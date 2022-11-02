@@ -11,9 +11,10 @@
 #include "Interpreter.hpp"
 #include "Resolver.hpp"
 
-void run(const std::string &source, Interpreter &interpreter);
+Interpreter interpreter;
+void run(const std::string &source);
 
-void runScript(const std::string &path, Interpreter &interpreter) {
+void runScript(const std::string &path) {
     std::ifstream input_file(path);
     if (input_file.fail()) {
         std::cerr << "Failed to open file " << path << ": " << std::endl;
@@ -23,7 +24,7 @@ void runScript(const std::string &path, Interpreter &interpreter) {
     std::stringstream source_code;
     source_code << input_file.rdbuf();
 
-    run(source_code.str(), interpreter);
+    run(source_code.str());
     if (had_error) {
         return;
     } else if (had_runtime_error) {
@@ -31,7 +32,7 @@ void runScript(const std::string &path, Interpreter &interpreter) {
     }
 }
 
-void run(const std::string &source, Interpreter &interpreter) {
+void run(const std::string &source) {
     Lexer lexer(source);
     std::vector<Token> tokens{lexer.scanTokens()};
     Parser parser{tokens};
@@ -49,13 +50,12 @@ void run(const std::string &source, Interpreter &interpreter) {
     try {
         interpreter.interpret();
     } catch (ImportError &e) {
-        runScript(e.script, interpreter);
+        runScript(e.script);
         interpreter.interpret();
     }
 }
 
 void runRepl() {
-    Interpreter interpreter;
     std::string cmd;
     while (true) {
         std::cout << "Surpher> ";
@@ -70,15 +70,22 @@ void runRepl() {
                 curr++;
             }
             std::string file_path = cmd.substr(curr, cmd.size() - curr);
-            runScript(file_path, interpreter);
+            runScript(file_path);
             continue;
         }
-        run(cmd, interpreter);
+        run(cmd);
         cmd.clear();
         had_error = false;
     }
 }
 
 int main(int argc, char *argv[]) {
-    runRepl();
+    if(argc == 1){
+        runRepl();
+    }else if(argc == 2){
+        runScript(argv[1]);
+        runRepl();
+    }else{
+        std::cerr << "Usage: Surpher [path to script]*\n";
+    }
 }

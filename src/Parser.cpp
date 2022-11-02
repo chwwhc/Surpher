@@ -33,7 +33,7 @@ std::shared_ptr<Expr> Parser::primary() {
         return std::make_shared<Literal>(true);
     } else if (match(NIL)) {
         return std::make_shared<Literal>(nullptr);
-    } else if (match(NUMBER, STRING)) {
+    } else if (match(FLOAT, STRING)) {
         return std::make_shared<Literal>(previous().literal);
     } else if (match(LEFT_PAREN)) {
         std::shared_ptr<Expr> expr_in(expression());
@@ -197,9 +197,11 @@ std::shared_ptr<Function> Parser::functionStatement(const std::string &type, boo
 
 std::shared_ptr<Stmt> Parser::returnStatement() {
     Token keyword = previous();
-    std::shared_ptr<Expr> value;
+    std::optional<std::shared_ptr<Expr>> value;
     if (!check(SINGLE_SEMICOLON, 0)) {
         value = expression();
+    }else{
+        value = std::nullopt;
     }
 
     consume(SINGLE_SEMICOLON, "Expect ';' after return value.");

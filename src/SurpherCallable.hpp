@@ -12,13 +12,15 @@
 
 class Interpreter;
 
-struct SurpherCallable{
+struct SurpherCallable
+{
     virtual uint32_t arity() = 0;
     virtual std::any call(Interpreter &interpreter, const std::vector<std::any> &arguments) = 0;
     virtual std::string SurpherCallableToString() = 0;
 };
 
-struct SurpherFunction : SurpherCallable{
+struct SurpherFunction : SurpherCallable
+{
     const bool is_initializer;
     const bool is_partial;
     const bool is_virtual;
@@ -33,7 +35,8 @@ struct SurpherFunction : SurpherCallable{
     std::shared_ptr<SurpherFunction> bind(const std::shared_ptr<SurpherInstance> &instance);
 };
 
-struct SurpherClass : SurpherCallable, SurpherInstance{
+struct SurpherClass : SurpherCallable, SurpherInstance
+{
     const std::string name;
 
     std::unordered_map<std::string, std::shared_ptr<SurpherFunction>> instance_methods;
@@ -52,21 +55,33 @@ struct SurpherClass : SurpherCallable, SurpherInstance{
 
     std::string SurpherCallableToString() override;
 
-    std::shared_ptr<SurpherFunction> findInstanceMethod(const std::string& methodName);
+    std::shared_ptr<SurpherFunction> findInstanceMethod(const std::string &methodName);
 
-    std::shared_ptr<SurpherFunction> findClassMethod(const std::string& methodName);
+    std::shared_ptr<SurpherFunction> findClassMethod(const std::string &methodName);
 };
 
-struct Clock : SurpherCallable {
-    uint32_t arity() override;
-    std::any call(Interpreter &interpreter, const std::vector<std::any> &arguments) override;
-    std::string SurpherCallableToString() override;
-};
+namespace NativeFunction
+{
+    struct Clock : SurpherCallable
+    {
+        uint32_t arity() override;
+        std::any call(Interpreter &interpreter, const std::vector<std::any> &arguments) override;
+        std::string SurpherCallableToString() override;
+    };
 
-struct Sizeof : SurpherCallable {
-    uint32_t arity() override;
-    std::any call(Interpreter &interpreter, const std::vector<std::any> &arguments) override;
-    std::string SurpherCallableToString() override;
-};
+    struct Sizeof : SurpherCallable
+    {
+        uint32_t arity() override;
+        std::any call(Interpreter &interpreter, const std::vector<std::any> &arguments) override;
+        std::string SurpherCallableToString() override;
+    };
 
-#endif //SURPHER_SURPHERCALLABLE_HPP
+    struct Floor : SurpherCallable
+    {
+        uint32_t arity() override;
+        std::any call(Interpreter &interpreter, const std::vector<std::any> &arguments) override;
+        std::string SurpherCallableToString() override;
+    };
+}
+
+#endif // SURPHER_SURPHERCALLABLE_HPP
