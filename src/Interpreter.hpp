@@ -104,6 +104,8 @@ public:
 
     std::any visitImportStmt(const std::shared_ptr<Import> &stmt) override;
 
+    std::any visitHaltStmt(const std::shared_ptr<Halt> &stmt) override;
+
     std::any visitNamespaceStmt(const std::shared_ptr<Namespace> &stmt) override;
 
     void resolve(const std::shared_ptr<Expr> &expr, uint32_t depth);

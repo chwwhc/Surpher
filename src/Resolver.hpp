@@ -72,6 +72,8 @@ public:
 
     std::any visitNamespaceStmt(const std::shared_ptr<Namespace> &stmt) override;
 
+    std::any visitHaltStmt(const std::shared_ptr<Halt> &stmt) override;
+
     std::any visitBinaryExpr(const std::shared_ptr<Binary> &expr) override;
 
     std::any visitGroupExpr(const std::shared_ptr<Group> &expr) override;

@@ -143,6 +143,7 @@ std::any Resolver::visitBreakStmt(const std::shared_ptr<Break> &stmt) {
 }
 
 std::any Resolver::visitImportStmt(const std::shared_ptr<Import> &stmt) {
+    resolve(stmt->script);
     return {};
 }
 
@@ -164,6 +165,11 @@ std::any Resolver::visitReturnStmt(const std::shared_ptr<Return> &stmt) {
 std::any Resolver::visitWhileStmt(const std::shared_ptr<While> &stmt) {
     resolve(stmt->condition);
     resolve(stmt->body);
+    return {};
+}
+
+std::any Resolver::visitHaltStmt(const std::shared_ptr<Halt> &stmt){
+    resolve(stmt->message);
     return {};
 }
 

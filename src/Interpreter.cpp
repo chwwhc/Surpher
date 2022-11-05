@@ -173,6 +173,19 @@ std::any Interpreter::visitPrintStmt(const std::shared_ptr<Print> &stmt)
     return {};
 }
 
+std::any Interpreter::visitHaltStmt(const std::shared_ptr<Halt> &stmt)
+{
+    std::any message_str = evaluate(stmt->message);
+    if (message_str.type() != typeid(std::string))
+    {
+        throw RuntimeError(stmt->keyword, "Message after \"halt\" should be a string.");
+    }
+    else
+    {
+        throw RuntimeError(stmt->keyword, std::any_cast<std::string>(message_str));
+    }
+}
+
 std::any Interpreter::visitBlockStmt(const std::shared_ptr<Block> &stmt)
 {
     executeBlock(stmt->statements, std::make_shared<Environment>(this->environment));

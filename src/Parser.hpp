@@ -85,6 +85,8 @@ class Parser
 
     std::shared_ptr<Stmt> printStatement();
 
+    std::shared_ptr<Stmt> haltStatement();
+
     std::shared_ptr<Stmt> classDeclaration(const bool is_fixed);
 
     std::shared_ptr<Stmt> importStatement();

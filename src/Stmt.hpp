@@ -1,7 +1,6 @@
 #ifndef SURPHER_STMT_HPP
 #define SURPHER_STMT_HPP
 
-
 #include <vector>
 #include <optional>
 #include <list>
@@ -20,8 +19,10 @@ struct Return;
 struct Class;
 struct Import;
 struct Namespace;
+struct Halt;
 
-struct StmtVisitor {
+struct StmtVisitor
+{
     virtual std::any visitBlockStmt(const std::shared_ptr<Block> &stmt) = 0;
 
     virtual std::any visitExpressionStmt(const std::shared_ptr<Expression> &stmt) = 0;
@@ -47,46 +48,44 @@ struct StmtVisitor {
     virtual std::any visitImportStmt(const std::shared_ptr<Import> &stmt) = 0;
 
     virtual std::any visitNamespaceStmt(const std::shared_ptr<Namespace> &stmt) = 0;
+
+    virtual std::any visitHaltStmt(const std::shared_ptr<Halt> &stmt) = 0;
 };
 
-struct Stmt {
+struct Stmt
+{
     virtual std::any accept(StmtVisitor &visitor) = 0;
 };
 
-struct Block : Stmt, public std::enable_shared_from_this<Block> {
+struct Block : Stmt, public std::enable_shared_from_this<Block>
+{
     const std::list<std::shared_ptr<Stmt>> statements;
 
     explicit Block(std::list<std::shared_ptr<Stmt>> statements);
 
-
     std::any accept(StmtVisitor &visitor) override;
-
-
 };
 
-struct Expression : Stmt, public std::enable_shared_from_this<Expression> {
+struct Expression : Stmt, public std::enable_shared_from_this<Expression>
+{
     const std::shared_ptr<Expr> expression;
 
     explicit Expression(std::shared_ptr<Expr> expression);
 
-
     std::any accept(StmtVisitor &visitor) override;
-
-
 };
 
-struct Print : Stmt, public std::enable_shared_from_this<Print> {
+struct Print : Stmt, public std::enable_shared_from_this<Print>
+{
     const std::shared_ptr<Expr> expression;
 
     explicit Print(std::shared_ptr<Expr> expression);
 
-
     std::any accept(StmtVisitor &visitor) override;
-
-
 };
 
-struct Var : Stmt, public std::enable_shared_from_this<Var> {
+struct Var : Stmt, public std::enable_shared_from_this<Var>
+{
     const Token name;
     const bool is_fixed;
     std::optional<std::shared_ptr<Expr>> initializer{std::nullopt};
@@ -98,7 +97,8 @@ struct Var : Stmt, public std::enable_shared_from_this<Var> {
     std::any accept(StmtVisitor &visitor) override;
 };
 
-struct If : Stmt, public std::enable_shared_from_this<If> {
+struct If : Stmt, public std::enable_shared_from_this<If>
+{
     const std::shared_ptr<Expr> condition;
     const std::shared_ptr<Stmt> true_branch;
     const std::optional<std::shared_ptr<Stmt>> else_branch;
@@ -109,7 +109,8 @@ struct If : Stmt, public std::enable_shared_from_this<If> {
     std::any accept(StmtVisitor &visitor) override;
 };
 
-struct While : Stmt, public std::enable_shared_from_this<While> {
+struct While : Stmt, public std::enable_shared_from_this<While>
+{
     const std::shared_ptr<Expr> condition;
     const std::shared_ptr<Stmt> body;
 
@@ -118,7 +119,8 @@ struct While : Stmt, public std::enable_shared_from_this<While> {
     std::any accept(StmtVisitor &visitor) override;
 };
 
-struct Break : Stmt, public std::enable_shared_from_this<Break> {
+struct Break : Stmt, public std::enable_shared_from_this<Break>
+{
     const Token break_tok;
 
     explicit Break(Token break_tok);
@@ -126,7 +128,8 @@ struct Break : Stmt, public std::enable_shared_from_this<Break> {
     std::any accept(StmtVisitor &visitor) override;
 };
 
-struct Continue : Stmt, public std::enable_shared_from_this<Continue> {
+struct Continue : Stmt, public std::enable_shared_from_this<Continue>
+{
     const Token continue_tok;
 
     explicit Continue(Token continue_tok);
@@ -134,7 +137,8 @@ struct Continue : Stmt, public std::enable_shared_from_this<Continue> {
     std::any accept(StmtVisitor &visitor) override;
 };
 
-struct Function : Stmt, public std::enable_shared_from_this<Function> {
+struct Function : Stmt, public std::enable_shared_from_this<Function>
+{
     const Token name;
     const std::vector<Token> params;
     const std::list<std::shared_ptr<Stmt>> body;
@@ -147,7 +151,8 @@ struct Function : Stmt, public std::enable_shared_from_this<Function> {
     std::any accept(StmtVisitor &visitor) override;
 };
 
-struct Return : Stmt, public std::enable_shared_from_this<Return> {
+struct Return : Stmt, public std::enable_shared_from_this<Return>
+{
     const Token keyword;
     const std::optional<std::shared_ptr<Expr>> value;
 
@@ -156,7 +161,8 @@ struct Return : Stmt, public std::enable_shared_from_this<Return> {
     std::any accept(StmtVisitor &visitor) override;
 };
 
-struct Import : Stmt, public std::enable_shared_from_this<Import> {
+struct Import : Stmt, public std::enable_shared_from_this<Import>
+{
     const std::shared_ptr<Expr> script;
 
     explicit Import(std::shared_ptr<Expr> script);
@@ -164,7 +170,8 @@ struct Import : Stmt, public std::enable_shared_from_this<Import> {
     std::any accept(StmtVisitor &visitor) override;
 };
 
-struct Class : Stmt, public std::enable_shared_from_this<Class> {
+struct Class : Stmt, public std::enable_shared_from_this<Class>
+{
     const Token name;
     std::optional<std::shared_ptr<Expr>> superclass;
     const std::vector<std::shared_ptr<Function>> instance_methods;
@@ -178,7 +185,8 @@ struct Class : Stmt, public std::enable_shared_from_this<Class> {
     std::any accept(StmtVisitor &visitor) override;
 };
 
-struct Namespace : Stmt, public std::enable_shared_from_this<Namespace> {
+struct Namespace : Stmt, public std::enable_shared_from_this<Namespace>
+{
     const Token name;
     const bool is_fixed;
     const std::list<std::shared_ptr<Stmt>> statements;
@@ -188,5 +196,14 @@ struct Namespace : Stmt, public std::enable_shared_from_this<Namespace> {
     std::any accept(StmtVisitor &visitor) override;
 };
 
+struct Halt : Stmt, public std::enable_shared_from_this<Halt>
+{
+    const Token keyword;
+    const std::shared_ptr<Expr> message;
 
-#endif //SURPHER_STMT_HPP
+    Halt(Token keyword, std::shared_ptr<Expr> message);
+
+    std::any accept(StmtVisitor &visitor) override;
+};
+
+#endif // SURPHER_STMT_HPP
