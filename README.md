@@ -15,7 +15,8 @@ is a tree-walk interpreter implemented in C++17.
 Some add-on features to vanilla Lox:
 <ul>
 <li>Array expression</li>
-<li>Maximum recursion depth of <strong>8192</strong> to avoid stackoverflow error</li>
+<li>Rich native functions</li>
+<li>Maximum recursion depth of <strong>8192</strong> to avoid stackoverflow error(temporarily disabled)</li>
 <li>Function signatures in classes</li>
 <li>Static and non-static methods in classes</li>
 <li>Namespaces to avoid name collision</li>
@@ -163,83 +164,12 @@ class BostonCream < Doughnut {
 BostonCream().cook();
 ```
 
-### 3. Curried function
-```   
-// original function that takes 3 inputs
-fun original_fun(a, b, c){
-    return a + b + c;
-}
-
-/* 
-    partial1 is the same as
-    fun partial1(b, c){
-        return 1 + b + c;
-    }
-*/
-var partial1 = original_fun(1);
-
-/*
-    partial2 is the same as 
-    fun partial2(c){
-        return 1 + 2 + c;
-    }
-*/
-var partial2 = partial1(2);
-
-print partial2(3);
+### 3. Rendering a Mandelbrot set
+Please see
 ```
-
-### 4. Namespace and modifier
+./example_programs/fractal_renderer/mandelbrot_set_renderer.sfr
 ```
-// always use 'fixed' before 'namespace'!!!
-namespace foo {
-    var x = 2;
-}
-foo = 2; // the namespace foo would become 2
-
-fixed namespace bar {
-    var x = 2;
-}
-bar = 2; // runtime error
-
-// nested namespace is allowed
-fixed namespace Math {
-
-    fixed fun factorial(x) {
-        return x == 0 ? 1 : x * factorial(x - 1);
-    }
-
-    fixed fun power(x, pow) {
-        return pow == 0 ? 1 : x * power(x, pow - 1);
-    }
-
-    // approximate cos(x) using taylor series
-    fixed namespace Trigonometry {
-        fixed fun cos(x) {
-            var flag = true;
-            var result = 0;
-            var pow = 0;
-
-            for(var i = 0; i < 100; i = i + 1){
-                var curr;
-                if(flag){
-                    curr = power(x, pow) / factorial(pow);
-                }else{
-                    curr = -power(x, pow) / factorial(pow);
-                }
-                flag = !flag;
-                result = result + curr;
-                pow = pow + 2;
-            }
-            
-            return result;
-        }
-   
-        print cos(10); // displays -0.839072
-    }
-
-}
-```
+<img src=pics/mandelbrot.jpg>
 
 ## References
 <ul>

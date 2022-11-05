@@ -41,13 +41,20 @@ uint32_t Write::arity()
 
 std::any Write::call(Interpreter &interpreter, const std::vector<std::any> &arguments)
 {
-    if (arguments[0].type() == typeid(std::shared_ptr<std::fstream>) && arguments[1].type() == typeid(std::string))
+    if (arguments[0].type() == typeid(std::shared_ptr<std::fstream>) && (arguments[1].type() == typeid(std::string) || arguments[1].type() == typeid(double)))
     {
         auto any_file_ptr = arguments[0], any_data = arguments[1];
         auto file_ptr = std::any_cast<std::shared_ptr<std::fstream>>(any_file_ptr);
-        auto data = std::any_cast<std::string>(any_data);
 
-        *file_ptr << data;
+        if(any_data.type() == typeid(std::string)){
+            *file_ptr << std::any_cast<std::string>(any_data);
+        }else{
+            auto data_val = std::any_cast<double>(any_data);
+            if(data_val < INT8_MIN || data_val > UINT8_MAX){
+                        throw RuntimeError(paren, "Binary data out of range for \"fileWrite\". Binary data range: 0 to 255.");
+            }
+            *file_ptr << static_cast<char>(data_val);
+        }
     }
     else
     {

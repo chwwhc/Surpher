@@ -16,6 +16,11 @@ std::shared_ptr<SurpherNamespace> IO()
 std::shared_ptr<SurpherNamespace> Math()
 {
     std::shared_ptr<Environment> new_environment = std::make_shared<Environment>();
+    new_environment->define("complexNum", std::shared_ptr<NativeFunction>(new ComplexNumber(dummy)), true);
+    new_environment->define("complexAdd", std::shared_ptr<NativeFunction>(new ComplexAdd(dummy)), true);
+    new_environment->define("complexSub", std::shared_ptr<NativeFunction>(new ComplexSub(dummy)), true);
+    new_environment->define("complexMul", std::shared_ptr<NativeFunction>(new ComplexMul(dummy)), true);
+    new_environment->define("complexDiv", std::shared_ptr<NativeFunction>(new ComplexDiv(dummy)), true);
     new_environment->define("floor", std::shared_ptr<NativeFunction>(new Floor(dummy)), true);
     new_environment->define("ceil", std::shared_ptr<NativeFunction>(new Ceil(dummy)), true);
     new_environment->define("abs", std::shared_ptr<NativeFunction>(new AbsoluteValue(dummy)), true);

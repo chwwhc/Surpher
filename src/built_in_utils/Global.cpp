@@ -1,5 +1,3 @@
-
-
 #include "Global.hpp"
 
 uint32_t Sizeof::arity()
