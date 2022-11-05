@@ -5,6 +5,7 @@
 #include "Environment.hpp"
 #include "Expr.hpp"
 #include "Stmt.hpp"
+#include "built_in_utils/Utils.hpp"
 
 struct SurpherCallable;
 struct SurpherInstance;

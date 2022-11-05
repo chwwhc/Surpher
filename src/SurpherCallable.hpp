@@ -59,29 +59,4 @@ struct SurpherClass : SurpherCallable, SurpherInstance
 
     std::shared_ptr<SurpherFunction> findClassMethod(const std::string &methodName);
 };
-
-namespace NativeFunction
-{
-    struct Clock : SurpherCallable
-    {
-        uint32_t arity() override;
-        std::any call(Interpreter &interpreter, const std::vector<std::any> &arguments) override;
-        std::string SurpherCallableToString() override;
-    };
-
-    struct Sizeof : SurpherCallable
-    {
-        uint32_t arity() override;
-        std::any call(Interpreter &interpreter, const std::vector<std::any> &arguments) override;
-        std::string SurpherCallableToString() override;
-    };
-
-    struct Floor : SurpherCallable
-    {
-        uint32_t arity() override;
-        std::any call(Interpreter &interpreter, const std::vector<std::any> &arguments) override;
-        std::string SurpherCallableToString() override;
-    };
-}
-
 #endif // SURPHER_SURPHERCALLABLE_HPP

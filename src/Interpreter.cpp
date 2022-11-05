@@ -463,21 +463,11 @@ std::any Interpreter::visitCallExpr(const std::shared_ptr<Call> &expr)
     {
         callable = std::any_cast<std::shared_ptr<SurpherClass>>(callee);
     }
-    else if (callee.type() == typeid(std::shared_ptr<NativeFunction::Clock>))
+    else if (callee.type() == typeid(std::shared_ptr<NativeFunction>))
     {
-        callable = std::make_shared<NativeFunction::Clock>();
-    }
-    else if (callee.type() == typeid(std::shared_ptr<NativeFunction::Sizeof>))
-    {
-        if (arguments[0].type() != typeid(std::shared_ptr<SurpherArray>) && arguments[0].type() != typeid(std::shared_ptr<SurpherInstance>) && arguments[0].type() != typeid(std::string))
-            throw RuntimeError(expr->paren, "Type not supported for \"sizeof\".");
-        callable = std::make_shared<NativeFunction::Sizeof>();
-    }
-    else if (callee.type() == typeid(std::shared_ptr<NativeFunction::Floor>))
-    {
-        if (arguments[0].type() != typeid(double))
-            throw RuntimeError(expr->paren, "Can only cast a numerical value to an integer.");
-        callable = std::make_shared<NativeFunction::Floor>();
+        auto native_function = static_cast<std::shared_ptr<NativeFunction>>(std::any_cast<std::shared_ptr<NativeFunction>>(callee));
+        native_function->paren = expr->paren;
+        callable = native_function;
     }
     else
     {
@@ -495,9 +485,9 @@ std::any Interpreter::visitCallExpr(const std::shared_ptr<Call> &expr)
 
 Interpreter::Interpreter()
 {
-    environment->define("clock", std::make_shared<NativeFunction::Clock>(), true);
-    environment->define("sizeof", std::make_shared<NativeFunction::Sizeof>(), true);
-    environment->define("floor", std::make_shared<NativeFunction::Floor>(), true);
+    glodbalFunctionSetup(*environment);
+    environment->define("IO", IO(), true);
+    environment->define("Math", Math(), true);
 }
 
 std::any Interpreter::visitFunctionStmt(const std::shared_ptr<Function> &stmt)

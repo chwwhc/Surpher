@@ -1,4 +1,5 @@
 #include <string>
+#include <sstream>
 #include <unordered_map>
 #include <utility>
 
@@ -40,44 +41,74 @@ Lexer::Lexer(std::string source_code) : source_code(std::move(source_code))
 {
 }
 
-char Lexer::anyChar()
+inline char Lexer::anyChar()
 {
     return source_code[current++];
 }
 
-bool Lexer::matchNextChar(const char &expected)
+bool Lexer::matchNextChar(char expected)
 {
-    if (isAtEnd() || source_code[current] != expected)
+    if (isAtEnd(0) || source_code[current] != expected)
         return false;
     current++;
     return true;
 }
 
-void Lexer::addToken(const TokenType &type, const std::any &literal)
+void Lexer::addToken(TokenType type, const std::any &literal)
 {
     token_list.emplace_back(Token(source_code.substr(start, current - start), literal, type, line));
 }
 
-void Lexer::addToken(const TokenType &type)
+inline void Lexer::addToken(TokenType type)
 {
     addToken(type, nullptr);
 }
 
-char Lexer::lookAHead(const uint32_t &offset)
+char Lexer::lookAHead(uint32_t offset)
 {
-    return (isAtEnd() || current + offset >= source_code.size()) ? '\0' : source_code[current + offset];
+    return (isAtEnd(0) || current + offset >= source_code.size()) ? '\0' : source_code[current + offset];
 }
 
 void Lexer::matchString()
 {
-    while (lookAHead(0) != '"' && !isAtEnd())
+    std::ostringstream str_builder;
+    while (lookAHead(0) != '"' && !isAtEnd(0))
     {
         if (lookAHead(0) == '\n')
             line++;
-        anyChar();
+        if (lookAHead(0) == '\\' && !isAtEnd(1))
+        {
+            switch (lookAHead(1))
+            {
+            case 't':
+                str_builder << '\t';
+                break;
+            case 'n':
+                str_builder << '\n';
+                break;
+            case 'b': 
+                str_builder << '\b';
+                break;
+            case 'f':
+                str_builder << 'f';
+                break;
+            case '"':
+                str_builder << '"';
+                break;
+            case '\\': 
+                str_builder << '\\';
+                break;
+            default:
+                break;
+            }
+            anyChar();
+            anyChar();
+            continue;
+        }
+        str_builder << anyChar();
     }
 
-    if (isAtEnd())
+    if (isAtEnd(0))
     {
         ::error(line, "Unterminated string.");
         return;
@@ -86,7 +117,8 @@ void Lexer::matchString()
     anyChar();
 
     TokenType type = STRING;
-    std::any str_literal = source_code.substr(start + 1, current - 2 - start);
+    //std::any str_literal = source_code.substr(start + 1, current - 2 - start);
+    std::any str_literal = str_builder.str();
     addToken(type, str_literal);
 }
 
@@ -127,7 +159,7 @@ void Lexer::skipComment()
 {
     uint32_t flag = 1;
 
-    while (flag != 0 && !isAtEnd())
+    while (flag != 0 && !isAtEnd(0))
     {
         if (matchNextChar('/') && matchNextChar('*'))
         {
@@ -136,10 +168,10 @@ void Lexer::skipComment()
         else if (matchNextChar('*') && matchNextChar('/'))
         {
             flag--;
-            if (isAtEnd())
+            if (isAtEnd(0))
                 return;
         }
-        if (isAtEnd())
+        if (isAtEnd(0))
         {
             ::error(line, "Unterminated comment.");
             return;
@@ -221,7 +253,7 @@ void Lexer::scanToken()
     case '/':
         if (matchNextChar('/'))
         {
-            while (!isAtEnd() && !matchNextChar('\n'))
+            while (!isAtEnd(0) && !matchNextChar('\n'))
             {
                 anyChar();
             }
@@ -313,7 +345,7 @@ void Lexer::scanToken()
 
 std::vector<Token> Lexer::scanTokens()
 {
-    while (!isAtEnd())
+    while (!isAtEnd(0))
     {
         start = current;
         scanToken();
@@ -324,22 +356,22 @@ std::vector<Token> Lexer::scanTokens()
     return token_list;
 }
 
-bool Lexer::isAtEnd()
+inline bool Lexer::isAtEnd(uint32_t offset)
 {
-    return current >= source_code.size();
+    return current + offset >= source_code.size();
 }
 
-bool Lexer::isDigit(const char &c)
+inline bool Lexer::isDigit(char c)
 {
     return c >= '0' && c <= '9';
 }
 
-bool Lexer::isAlpha(const char &c)
+inline bool Lexer::isAlpha(char c)
 {
     return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || (c == '_');
 }
 
-bool Lexer::isAlphaNumeric(const char &c)
+inline bool Lexer::isAlphaNumeric(char c)
 {
     return isDigit(c) || isAlpha(c);
 }

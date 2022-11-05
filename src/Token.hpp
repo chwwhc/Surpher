@@ -80,11 +80,12 @@ enum TokenType
 
 struct Token
 {
-    const std::string lexeme;
-    const std::any literal;
-    const TokenType token_type;
-    const uint32_t line;
+    std::string lexeme;
+    std::any literal;
+    TokenType token_type;
+    uint32_t line;
 
+    Token() : lexeme(""), literal(), token_type(EOF_TOKEN), line(0) {}
     Token(std::string lexeme, std::any literal, const enum TokenType &token_type, const uint32_t &line);
 };
 

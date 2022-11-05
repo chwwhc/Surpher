@@ -1,7 +1,7 @@
 /*
     Solution to LeetCode 22. Generate Parentheses
 */
-import "../library/containers/ContiguousContainer.sfr";
+import "../library/ContiguousContainer.sfr";
 
 fixed var Vec = ContiguousContainer.Vector;
 

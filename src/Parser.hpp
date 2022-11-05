@@ -10,29 +10,40 @@
 #include "Expr.hpp"
 #include "Stmt.hpp"
 
-struct ParseError : public std::runtime_error {
+struct ParseError : public std::runtime_error
+{
     using std::runtime_error::runtime_error;
 };
 
-
-class Parser {
+class Parser
+{
     const std::vector<Token> tokens;
     uint32_t lambdaCount = 0;
     uint32_t current = 0;
-    std::function<std::shared_ptr<Expr>()> factor = [this]() { return parseBinary(unary, STAR, SLASH, PERCENT); };
-    std::function<std::shared_ptr<Expr>()> term = [this]() { return parseBinary(factor, SINGLE_PLUS, MINUS); };
-    std::function<std::shared_ptr<Expr>()> comparison = [this]() {
+    std::function<std::shared_ptr<Expr>()> factor = [this]()
+    { return parseBinary(unary, STAR, SLASH, PERCENT); };
+    std::function<std::shared_ptr<Expr>()> term = [this]()
+    { return parseBinary(factor, SINGLE_PLUS, MINUS); };
+    std::function<std::shared_ptr<Expr>()> comparison = [this]()
+    {
         return parseBinary(term, LESS, LESS_EQUAL, GREATER, GREATER_EQUAL);
     };
-    std::function<std::shared_ptr<Expr>()> equality = [this]() {
+    std::function<std::shared_ptr<Expr>()> equality = [this]()
+    {
         return parseBinary(comparison, DOUBLE_EQUAL, BANG_EQUAL);
     };
-    std::function<std::shared_ptr<Expr>()> bit_wise_and = [this]() { return parseBinary(equality, SINGLE_AMPERSAND); };
-    std::function<std::shared_ptr<Expr>()> bit_wise_xor = [this]() { return parseBinary(bit_wise_and, CARET); };
-    std::function<std::shared_ptr<Expr>()> bit_wise_or = [this]() { return parseBinary(bit_wise_xor, SINGLE_BAR); };
-    std::function<std::shared_ptr<Expr>()> expression = [this]() { return assignment(); };
-    std::function<std::shared_ptr<Expr>()> unary = [this]() {
-        if (match(BANG, MINUS)) {
+    std::function<std::shared_ptr<Expr>()> bit_wise_and = [this]()
+    { return parseBinary(equality, SINGLE_AMPERSAND); };
+    std::function<std::shared_ptr<Expr>()> bit_wise_xor = [this]()
+    { return parseBinary(bit_wise_and, CARET); };
+    std::function<std::shared_ptr<Expr>()> bit_wise_or = [this]()
+    { return parseBinary(bit_wise_xor, SINGLE_BAR); };
+    std::function<std::shared_ptr<Expr>()> expression = [this]()
+    { return assignment(); };
+    std::function<std::shared_ptr<Expr>()> unary = [this]()
+    {
+        if (match(BANG, MINUS))
+        {
             Token op = previous();
             std::shared_ptr<Expr> right = unary();
             return std::shared_ptr<Expr>(new Unary(op, right));
@@ -98,10 +109,10 @@ class Parser {
 
     Token anyToken();
 
-    template<typename... T>
+    template <typename... T>
     bool match(T... types);
 
-    template<typename... T>
+    template <typename... T>
     std::shared_ptr<Expr> parseBinary(const std::function<std::shared_ptr<Expr>()> &operand, T... types);
 
     std::shared_ptr<Expr> primary();
@@ -118,4 +129,4 @@ public:
     std::list<std::shared_ptr<Stmt>> parse();
 };
 
-#endif //SURPHER_PARSER_HPP
+#endif // SURPHER_PARSER_HPP

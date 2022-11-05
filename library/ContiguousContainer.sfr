@@ -76,7 +76,7 @@ fixed namespace ContiguousContainer{
                 if(sizeof(arr) < 2) return;
 
                 var len = sizeof(arr);
-                var mid = floor(len / 2);
+                var mid = len /- 2;
                 var left = [alloc: mid];
                 var right = [alloc: len - mid];
 

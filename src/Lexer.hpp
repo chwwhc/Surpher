@@ -7,7 +7,8 @@
 
 #include "Token.hpp"
 
-class Lexer {
+class Lexer
+{
     const std::string source_code;
     std::vector<Token> token_list;
     uint32_t line = 1;
@@ -16,25 +17,25 @@ class Lexer {
 
     void scanToken();
 
-    bool isAtEnd();
+    inline bool isAtEnd(uint32_t offset);
 
-    static bool isDigit(const char &c);
+    inline bool isDigit(char c);
 
-    static bool isAlpha(const char &c);
+    inline bool isAlpha(char c);
 
-    static bool isAlphaNumeric(const char &c);
+    inline bool isAlphaNumeric(char c);
 
     void skipComment();
 
-    char anyChar();
+    inline char anyChar();
 
-    char lookAHead(const uint32_t &offset);
+    char lookAHead(uint32_t offset);
 
-    void addToken(const TokenType &type);
+    inline void addToken(TokenType type);
 
-    void addToken(const TokenType &type, const std::any &literal);
+    void addToken(TokenType type, const std::any &literal);
 
-    bool matchNextChar(const char &expected);
+    bool matchNextChar(char expected);
 
     void matchString();
 
