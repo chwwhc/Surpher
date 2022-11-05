@@ -144,7 +144,7 @@ void Parser::synchronize()
     }
 }
 
-Token Parser::peek(const uint32_t offset)
+Token Parser::peek(uint32_t offset)
 {
     return current + offset < tokens.size() ? tokens[current + offset] : tokens.back();
 }
@@ -154,7 +154,7 @@ bool Parser::isAtEnd()
     return peek(0).token_type == EOF_TOKEN;
 }
 
-bool Parser::check(const TokenType &type, const uint32_t offset)
+bool Parser::check(TokenType type, uint32_t offset)
 {
     return !isAtEnd() && peek(offset).token_type == type;
 }
@@ -242,9 +242,9 @@ std::shared_ptr<Function> Parser::functionStatement(const std::string &type, boo
     Token name(consume(IDENTIFIER, "Expect " + type + " name."));
     if (is_virtual)
     {
-        consume(LEFT_PAREN, "Expect '(' after declaring a virtual function.");
-        consume(RIGHT_PAREN, "Expect ')' after declaring a virtual function.");
-        consume(SINGLE_SEMICOLON, "Expect ';' after declaring a virtual function.");
+        consume(LEFT_PAREN, "Expect '(' after declaring a function signature.");
+        consume(RIGHT_PAREN, "Expect ')' after declaring a function signature.");
+        consume(SINGLE_SEMICOLON, "Expect ';' after declaring a function signature.");
         return std::make_shared<Function>(name, std::vector<Token>(), std::list<std::shared_ptr<Stmt>>(), is_virtual, is_fixed);
     }
 
@@ -284,20 +284,20 @@ std::shared_ptr<Stmt> Parser::returnStatement()
 std::shared_ptr<Stmt> Parser::continueStatement()
 {
     Token continue_tok(previous());
-    consume(SINGLE_SEMICOLON, "Expect ';' after 'continue'.");
+    consume(SINGLE_SEMICOLON, "Expect ';' after \"continue\".");
     return std::make_shared<Continue>(continue_tok);
 }
 
 std::shared_ptr<Stmt> Parser::breakStatement()
 {
     Token break_tok(previous());
-    consume(SINGLE_SEMICOLON, "Expect ';' after 'break'.");
+    consume(SINGLE_SEMICOLON, "Expect ';' after \"break\".");
     return std::make_shared<Break>(break_tok);
 }
 
 std::shared_ptr<Stmt> Parser::forStatement()
 {
-    consume(LEFT_PAREN, "Expect '(' after 'for'.");
+    consume(LEFT_PAREN, "Expect '(' after \"for\".");
     std::shared_ptr<Stmt> initializer;
     if (match(VAR))
     {
@@ -313,14 +313,14 @@ std::shared_ptr<Stmt> Parser::forStatement()
     {
         condition = expression();
     }
-    consume(SINGLE_SEMICOLON, "Expect ';' after 'for' condition.");
+    consume(SINGLE_SEMICOLON, "Expect ';' after \"for\" condition.");
 
     std::shared_ptr<Expr> increment;
     if (!check(RIGHT_PAREN, 0))
     {
         increment = expression();
     }
-    consume(RIGHT_PAREN, "Expect ')' after 'for' clauses.");
+    consume(RIGHT_PAREN, "Expect ')' after \"for\" clauses.");
 
     std::shared_ptr<Stmt> body(statement());
 
@@ -363,7 +363,7 @@ std::shared_ptr<Stmt> Parser::whileStatement()
 
 std::shared_ptr<Stmt> Parser::ifStatement()
 {
-    consume(LEFT_PAREN, "Expect '(' after 'if'.");
+    consume(LEFT_PAREN, "Expect '(' after \"if\".");
     std::shared_ptr<Expr> condition(expression());
     consume(RIGHT_PAREN, "Expect ')' after if condition.");
 
@@ -426,24 +426,31 @@ std::shared_ptr<Stmt> Parser::namespaceDeclaration(const bool is_fixed)
     return std::make_shared<Namespace>(name, blockStatement(), is_fixed);
 }
 
-std::shared_ptr<Stmt> Parser::varDeclaration(const bool is_fixed)
+std::shared_ptr<Stmt> Parser::varDeclaration(bool is_fixed)
 {
-    Token name(consume(IDENTIFIER, "Expect variable name."));
-
-    if (match(SINGLE_EQUAL))
+    std::vector<std::tuple<Token, bool, std::shared_ptr<Expr>>> var_inits;
+    do
     {
-        std::shared_ptr<Expr> initializer{expression()};
-        consume(SINGLE_SEMICOLON, "Expect ';' after variable declaration.");
-        return std::make_shared<Var>(name, initializer, is_fixed);
-    }
+        Token name(consume(IDENTIFIER, "Expect variable name."));
+
+        if (match(SINGLE_EQUAL))
+        {
+            std::shared_ptr<Expr> initializer{expression()};
+            var_inits.emplace_back(name, is_fixed, initializer);
+        }
+        else
+        {
+            var_inits.emplace_back(name, is_fixed, std::make_shared<Literal>(nullptr));
+        }
+    } while (match(COMMA));
 
     consume(SINGLE_SEMICOLON, "Expect ';' after variable declaration.");
-    return std::make_shared<Var>(name, is_fixed);
+    return std::make_shared<Var>(var_inits);
 }
 
 std::shared_ptr<Stmt> Parser::expressionStatement()
 {
-    std::shared_ptr<Expr> expr(expression());
+    std::shared_ptr<Expr> expr(comma());
     consume(SINGLE_SEMICOLON, "Expect ';' after expression.");
     return std::make_shared<Expression>(expr);
 }
@@ -484,6 +491,17 @@ std::shared_ptr<Stmt> Parser::classDeclaration(const bool is_fixed)
     consume(RIGHT_BRACE, "Expect '}' after class body.");
 
     return std::make_shared<Class>(name, instance_methods, class_methods, superclass, is_fixed);
+}
+
+std::shared_ptr<Expr> Parser::comma()
+{
+    std::vector<std::shared_ptr<Expr>> expressions;
+    do
+    {
+        expressions.emplace_back(expression());
+    } while (match(COMMA));
+
+    return std::make_shared<Comma>(expressions);
 }
 
 std::shared_ptr<Expr> Parser::assignment()
@@ -591,7 +609,7 @@ std::shared_ptr<Expr> Parser::call()
 
 std::shared_ptr<Stmt> Parser::importStatement()
 {
-    std::shared_ptr<Expr> path(expression());
+    std::shared_ptr<Expr> path(comma());
 
     consume(SINGLE_SEMICOLON, "Expect ';' after script path.");
 

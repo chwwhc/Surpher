@@ -11,8 +11,6 @@
 #include "SurpherCallable.hpp"
 #include "SurpherNamespace.hpp"
 
-using namespace std::string_literals;
-
 std::any Interpreter::visitLiteralExpr(const std::shared_ptr<Literal> &expr)
 {
     return expr->value;
@@ -66,26 +64,29 @@ std::any Interpreter::visitBinaryExpr(const std::shared_ptr<Binary> &expr)
         checkNumberOperands(expr->op, {left, right});
         return std::any_cast<double>(left) *
                std::any_cast<double>(right);
-    case SINGLE_PLUS:
+    case PLUS:
     {
-        if (left.type() == typeid(double) && right.type() == typeid(double))
-        {
-            return std::any_cast<double>(left) +
-                   std::any_cast<double>(right);
-        }
-        else if (left.type() == typeid(std::string) || right.type() == typeid(std::string))
+        if (left.type() == typeid(std::string) || right.type() == typeid(std::string))
         {
             return stringify(left) +
                    stringify(right);
         }
         else
         {
-            throw RuntimeError(expr->op, "Operands must be two numbers or two strings.");
+            checkNumberOperands(expr->op, {left, right});
+            return std::any_cast<double>(left) +
+                   std::any_cast<double>(right);
         }
     }
+    case LEFT_SHIFT:
+        checkNumberOperands(expr->op, {left, right});
+        return static_cast<double>(static_cast<int64_t>(std::any_cast<double>(left)) << static_cast<int64_t>(std::any_cast<double>(right)));
+    case RIGHT_SHIFT:
+        checkNumberOperands(expr->op, {left, right});
+        return static_cast<double>(static_cast<int64_t>(std::any_cast<double>(left)) >> static_cast<int64_t>(std::any_cast<double>(right)));
     case CARET:
         checkNumberOperands(expr->op, {left, right});
-        return (int64_t)std::any_cast<double>(left) ^ (int64_t)std::any_cast<double>(right);
+        return static_cast<double>(static_cast<int64_t>(std::any_cast<double>(left)) ^ static_cast<int64_t>(std::any_cast<double>(right)));
     case PERCENT:
         checkNumberOperands(expr->op, {left, right});
         if (std::any_cast<double>(right) == 0)
@@ -93,12 +94,12 @@ std::any Interpreter::visitBinaryExpr(const std::shared_ptr<Binary> &expr)
         return std::fmod(std::any_cast<double>(left), std::any_cast<double>(right));
     case SINGLE_AMPERSAND:
         checkNumberOperands(expr->op, {left, right});
-        return (int64_t)std::round(std::any_cast<double>(left)) &
-               (int64_t)std::round(std::any_cast<double>(right));
+        return static_cast<double>(static_cast<int64_t>(std::round(std::any_cast<double>(left))) &
+                                   static_cast<int64_t>(std::round(std::any_cast<double>(right))));
     case SINGLE_BAR:
         checkNumberOperands(expr->op, {left, right});
-        return (int64_t)std::round(std::any_cast<double>(left)) |
-               (int64_t)std::round(std::any_cast<double>(right));
+        return static_cast<double>(static_cast<int64_t>(std::round(std::any_cast<double>(left))) |
+                                   static_cast<int64_t>(std::round(std::any_cast<double>(right))));
     case GREATER:
         checkNumberOperands(expr->op, {left, right});
         return std::any_cast<double>(left) >
@@ -120,7 +121,7 @@ std::any Interpreter::visitBinaryExpr(const std::shared_ptr<Binary> &expr)
     case DOUBLE_EQUAL:
         return isEqual(left, right);
     default:
-        throw std::invalid_argument("Unexpected value: "s + expr->op.lexeme);
+        throw std::invalid_argument("Unexpected value: " + expr->op.lexeme);
     }
 }
 
@@ -194,17 +195,24 @@ std::any Interpreter::visitBlockStmt(const std::shared_ptr<Block> &stmt)
 
 std::any Interpreter::visitVarStmt(const std::shared_ptr<Var> &stmt)
 {
-    std::any value;
-    if (stmt->initializer.has_value())
-        value = evaluate(stmt->initializer.value());
+    for (const auto &var_init : stmt->var_inits)
+        environment->define(std::get<0>(var_init), evaluate(std::get<2>(var_init)), std::get<1>(var_init));
 
-    environment->define(stmt->name, value, stmt->is_fixed);
     return {};
 }
 
 std::any Interpreter::visitVariableExpr(const std::shared_ptr<Variable> &expr)
 {
     return lookUpVariable(expr->name, expr);
+}
+
+std::any Interpreter::visitCommaExpr(const std::shared_ptr<Comma> &expr)
+{
+    std::any ret;
+    for (const auto &e : expr->expressions)
+        ret = evaluate(e);
+
+    return ret;
 }
 
 std::any Interpreter::visitAssignExpr(const std::shared_ptr<Assign> &expr)
@@ -278,9 +286,9 @@ bool Interpreter::isEqual(const std::any &a, const std::any &b)
 
 std::string Interpreter::stringify(const std::any &value)
 {
-    if (value.type() == typeid(nullptr))
+    if (value.type() == typeid(nullptr) || value.type() == typeid(std::nullopt))
     {
-        return "nil"s;
+        return "nil";
     }
     else if (value.type() == typeid(double))
     {
@@ -303,7 +311,7 @@ std::string Interpreter::stringify(const std::any &value)
     }
     else if (value.type() == typeid(bool))
     {
-        return std::any_cast<bool>(value) ? "true"s : "false"s;
+        return std::any_cast<bool>(value) ? "true" : "false";
     }
     else if (value.type() == typeid(std::shared_ptr<SurpherFunction>))
     {
@@ -341,7 +349,7 @@ std::string Interpreter::stringify(const std::any &value)
         expr_vector_str.push_back(']');
         return expr_vector_str;
     }
-    return "Error in stringify: unrecognized literal type."s;
+    return "Error in stringify: unrecognized literal type.";
 }
 
 void Interpreter::checkNumberOperands(const Token &operator_token, const std::vector<std::any> &operands)
@@ -463,12 +471,6 @@ std::any Interpreter::visitCallExpr(const std::shared_ptr<Call> &expr)
         }
         else
         {
-            if (recursion_counter[fun_callable->declaration->name.lexeme] == max_recursion_depth)
-            {
-                throw RuntimeError(fun_callable->declaration->name, "Maximum recursion depth reached. (depth limit: " + std::to_string(max_recursion_depth) + ")");
-            }
-            recursion_counter[fun_callable->declaration->name.lexeme]++;
-
             return fun_callable->call(*this, arguments);
         }
     }

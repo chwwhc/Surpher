@@ -20,11 +20,9 @@ public:
     std::shared_ptr<Environment> globals{std::make_shared<Environment>()};
 
 private:
-    const uint32_t max_recursion_depth{1365536};
     std::list<std::list<std::shared_ptr<Stmt>>> scripts;
     std::shared_ptr<Environment> environment = globals;
     std::unordered_map<std::shared_ptr<Expr>, uint32_t> locals;
-    std::unordered_map<std::string, uint32_t> recursion_counter;
 
     bool isTruthy(const std::any &val);
 
@@ -97,6 +95,8 @@ public:
     std::any visitSuperExpr(const std::shared_ptr<Super> &expr) override;
 
     std::any visitArrayExpr(const std::shared_ptr<Array> &expr) override;
+
+    std::any visitCommaExpr(const std::shared_ptr<Comma> &expr) override;
 
     std::any visitAccessExpr(const std::shared_ptr<Access> &expr) override;
 

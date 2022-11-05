@@ -22,11 +22,15 @@ class Parser
     uint32_t current = 0;
     std::function<std::shared_ptr<Expr>()> factor = [this]()
     { return parseBinary(unary, STAR, SLASH, PERCENT); };
+    std::function<std::shared_ptr<Expr>()> shift = [this]()
+    {
+        return parseBinary(term, LEFT_SHIFT, RIGHT_SHIFT);
+    };
     std::function<std::shared_ptr<Expr>()> term = [this]()
-    { return parseBinary(factor, SINGLE_PLUS, MINUS); };
+    { return parseBinary(factor, PLUS, MINUS); };
     std::function<std::shared_ptr<Expr>()> comparison = [this]()
     {
-        return parseBinary(term, LESS, LESS_EQUAL, GREATER, GREATER_EQUAL);
+        return parseBinary(shift, LESS, LESS_EQUAL, GREATER, GREATER_EQUAL);
     };
     std::function<std::shared_ptr<Expr>()> equality = [this]()
     {
@@ -63,6 +67,8 @@ class Parser
 
     std::shared_ptr<Expr> ternary();
 
+    std::shared_ptr<Expr> comma();
+
     std::shared_ptr<Expr> assignment();
 
     std::list<std::shared_ptr<Stmt>> blockStatement();
@@ -87,13 +93,13 @@ class Parser
 
     std::shared_ptr<Stmt> haltStatement();
 
-    std::shared_ptr<Stmt> classDeclaration(const bool is_fixed);
+    std::shared_ptr<Stmt> classDeclaration(bool is_fixed);
 
     std::shared_ptr<Stmt> importStatement();
 
-    std::shared_ptr<Stmt> namespaceDeclaration(const bool is_fixed);
+    std::shared_ptr<Stmt> namespaceDeclaration(bool is_fixed);
 
-    std::shared_ptr<Function> functionStatement(const std::string &type, const bool is_virtual, const bool is_fixed);
+    std::shared_ptr<Function> functionStatement(const std::string &type, bool is_virtual, bool is_fixed);
 
     std::shared_ptr<Stmt> statement();
 
@@ -101,11 +107,11 @@ class Parser
 
     void synchronize();
 
-    Token peek(const uint32_t offset);
+    Token peek(uint32_t offset);
 
     bool isAtEnd();
 
-    bool check(const TokenType &type, const uint32_t offset);
+    bool check(TokenType type, uint32_t offset);
 
     Token previous();
 

@@ -14,9 +14,8 @@ is a tree-walk interpreter implemented in C++17.
 
 Some add-on features to vanilla Lox:
 <ul>
-<li>Array expression</li>
+<li>More expressions(array, comma, bit operation)</li>
 <li>Rich native functions</li>
-<li>Maximum recursion depth of <strong>8192</strong> to avoid stackoverflow error(temporarily disabled)</li>
 <li>Function signatures in classes</li>
 <li>Static and non-static methods in classes</li>
 <li>Namespaces to avoid name collision</li>
@@ -55,7 +54,7 @@ declaration    → "fixed"? ( classDecl | funDecl | varDecl | namespaceDecl )
 classDecl      → "class" IDENTIFIER ( "<" IDENTIFIER )?
                  "{" function* "}" ;
 funDecl        → "fun" function ;
-varDecl        → "var" IDENTIFIER ( "=" expression )? ";" ;
+varDecl        → "var" (IDENTIFIER ( "=" expression )*)? (IDENTIFIER ( "=" expression )*)* ";" ;
 namespaceDecl  → "namespace" IDENTIFIER block ;
 
 statement      → exprStmt
@@ -70,7 +69,7 @@ statement      → exprStmt
                | haltStmt
                | block ;
 
-exprStmt       → expression ";" ;
+exprStmt       → comma ";" ;
 forStmt        → "for" "(" ( varDecl | exprStmt | ";" )
                            expression? ";"
                            expression? ")" statement ;
@@ -85,10 +84,10 @@ importStmt     → "import" expression ;
 haltStmt       → "halt" expression ;
 block          → "{" declaration* "}" ;
 
+comma          → expression ("," expression)* ;
 expression     → assignment ;
-assignment     → (( call "." )? IDENTIFIER | access) "=" assignment
-               | array ;
-array          → "[" array? "]" | "[" "alloc" ":" expression "]" | ternary ;
+assignment     → array "=" assignment | array ;
+array          → "[" array? "]" | "[" "alloc" ":" ternary "]" | ternary ;
 ternary        → logical_or "?" ternary ":" ternary ;
 logic_or       → logic_and ( "or" logic_and )* ;
 logic_and      → bit_wise_or ( "and" bit_wise_or )* ;

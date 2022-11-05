@@ -108,6 +108,8 @@ public:
 
     std::any visitArraySetExpr(const std::shared_ptr<ArraySet> &expr) override;
 
+    std::any visitCommaExpr(const std::shared_ptr<Comma> &expr) override;
+
     void resolve(const std::list<std::shared_ptr<Stmt>> &statements);
 
     explicit Resolver(Interpreter &interpreter);

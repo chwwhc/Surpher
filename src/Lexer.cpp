@@ -83,7 +83,7 @@ void Lexer::matchString()
             case 'n':
                 str_builder << '\n';
                 break;
-            case 'b': 
+            case 'b':
                 str_builder << '\b';
                 break;
             case 'f':
@@ -92,7 +92,7 @@ void Lexer::matchString()
             case '"':
                 str_builder << '"';
                 break;
-            case '\\': 
+            case '\\':
                 str_builder << '\\';
                 break;
             default:
@@ -114,7 +114,7 @@ void Lexer::matchString()
     anyChar();
 
     TokenType type = STRING;
-    //std::any str_literal = source_code.substr(start + 1, current - 2 - start);
+    // std::any str_literal = source_code.substr(start + 1, current - 2 - start);
     std::any str_literal = str_builder.str();
     addToken(type, str_literal);
 }
@@ -220,7 +220,7 @@ void Lexer::scanToken()
         addToken(SINGLE_SEMICOLON);
         break;
     case '+':
-        addToken(SINGLE_PLUS);
+        addToken(PLUS);
         break;
     case '-':
         if (matchNextChar('>'))
@@ -299,6 +299,10 @@ void Lexer::scanToken()
         {
             addToken(GREATER_EQUAL);
         }
+        else if (matchNextChar('>'))
+        {
+            addToken(RIGHT_SHIFT);
+        }
         else
         {
             addToken(GREATER);
@@ -308,6 +312,10 @@ void Lexer::scanToken()
         if (matchNextChar('='))
         {
             addToken(LESS_EQUAL);
+        }
+        else if (matchNextChar('<'))
+        {
+            addToken(LEFT_SHIFT);
         }
         else
         {

@@ -23,19 +23,13 @@ std::any Print::accept(StmtVisitor &visitor)
     return visitor.visitPrintStmt(shared_from_this());
 }
 
-Var::Var(Token name, std::shared_ptr<Expr> initializer, bool is_fixed) : name{std::move(name)},
-                                                                         initializer{std::move(initializer)},
-                                                                         is_fixed(is_fixed)
+Var::Var(std::vector<std::tuple<Token, bool, std::shared_ptr<Expr>>> var_inits) : var_inits(std::move(var_inits))
 {
 }
 
 std::any Var::accept(StmtVisitor &visitor)
 {
     return visitor.visitVarStmt(shared_from_this());
-}
-
-Var::Var(Token name, bool is_fixed) : name(std::move(name)), is_fixed(is_fixed)
-{
 }
 
 If::If(std::shared_ptr<Expr> condition, std::shared_ptr<Stmt> true_branch,

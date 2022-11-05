@@ -46,9 +46,7 @@ std::any SysCmd::call(Interpreter &interpreter, const std::vector<std::any> &arg
     if (value.type() != typeid(std::string))
         throw RuntimeError(paren, "System command must be a string.");
 
-    std::system((std::any_cast<std::string>(value).c_str()));
-
-    return {};
+    return std::system((std::any_cast<std::string>(value).c_str()));
 }
 
 std::string SysCmd::SurpherCallableToString()

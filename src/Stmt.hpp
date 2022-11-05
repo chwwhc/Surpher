@@ -86,13 +86,9 @@ struct Print : Stmt, public std::enable_shared_from_this<Print>
 
 struct Var : Stmt, public std::enable_shared_from_this<Var>
 {
-    const Token name;
-    const bool is_fixed;
-    std::optional<std::shared_ptr<Expr>> initializer{std::nullopt};
+    std::vector<std::tuple<Token, bool, std::shared_ptr<Expr>>> var_inits;
 
-    Var(Token name, std::shared_ptr<Expr> initializer, bool is_fixed);
-
-    Var(Token name, bool is_fixed);
+    explicit Var(std::vector<std::tuple<Token, bool, std::shared_ptr<Expr>>> var_inits);
 
     std::any accept(StmtVisitor &visitor) override;
 };

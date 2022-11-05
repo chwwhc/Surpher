@@ -26,8 +26,10 @@ struct Super;
 struct Array;
 struct Access;
 struct ArraySet;
+struct Comma;
 
-struct ExprVisitor {
+struct ExprVisitor
+{
     virtual std::any visitBinaryExpr(const std::shared_ptr<Binary> &expr) = 0;
 
     virtual std::any visitGroupExpr(const std::shared_ptr<Group> &expr) = 0;
@@ -61,13 +63,17 @@ struct ExprVisitor {
     virtual std::any visitAccessExpr(const std::shared_ptr<Access> &expr) = 0;
 
     virtual std::any visitArraySetExpr(const std::shared_ptr<ArraySet> &expr) = 0;
+
+    virtual std::any visitCommaExpr(const std::shared_ptr<Comma> &expr) = 0;
 };
 
-struct Expr {
+struct Expr
+{
     virtual std::any accept(ExprVisitor &visitor) = 0;
 };
 
-struct Binary : Expr, public std::enable_shared_from_this<Binary> {
+struct Binary : Expr, public std::enable_shared_from_this<Binary>
+{
     const std::shared_ptr<Expr> left;
     const Token op;
     const std::shared_ptr<Expr> right;
@@ -77,7 +83,8 @@ struct Binary : Expr, public std::enable_shared_from_this<Binary> {
     std::any accept(ExprVisitor &visitor) override;
 };
 
-struct Logical : Expr, public std::enable_shared_from_this<Logical>{
+struct Logical : Expr, public std::enable_shared_from_this<Logical>
+{
     const std::shared_ptr<Expr> left;
     const Token op;
     const std::shared_ptr<Expr> right;
@@ -87,7 +94,8 @@ struct Logical : Expr, public std::enable_shared_from_this<Logical>{
     std::any accept(ExprVisitor &visitor) override;
 };
 
-struct Group : Expr, public std::enable_shared_from_this<Group> {
+struct Group : Expr, public std::enable_shared_from_this<Group>
+{
     const std::shared_ptr<Expr> expr_in;
 
     explicit Group(std::shared_ptr<Expr> expr);
@@ -95,7 +103,8 @@ struct Group : Expr, public std::enable_shared_from_this<Group> {
     std::any accept(ExprVisitor &visitor) override;
 };
 
-struct Literal : Expr, public std::enable_shared_from_this<Literal> {
+struct Literal : Expr, public std::enable_shared_from_this<Literal>
+{
     const std::any value;
 
     explicit Literal(std::any value);
@@ -103,7 +112,8 @@ struct Literal : Expr, public std::enable_shared_from_this<Literal> {
     std::any accept(ExprVisitor &visitor) override;
 };
 
-struct Unary : Expr, public std::enable_shared_from_this<Unary> {
+struct Unary : Expr, public std::enable_shared_from_this<Unary>
+{
     const Token op;
     const std::shared_ptr<Expr> right;
 
@@ -112,25 +122,27 @@ struct Unary : Expr, public std::enable_shared_from_this<Unary> {
     std::any accept(ExprVisitor &visitor) override;
 };
 
-struct Assign: Expr, public std::enable_shared_from_this<Assign>{
+struct Assign : Expr, public std::enable_shared_from_this<Assign>
+{
     const Token name;
     const std::shared_ptr<Expr> value;
-
 
     Assign(Token name, std::shared_ptr<Expr> value);
     std::any accept(ExprVisitor &visitor) override;
 };
 
-struct Variable: Expr, public std::enable_shared_from_this<Variable> {
+struct Variable : Expr, public std::enable_shared_from_this<Variable>
+{
     const Token name;
     const bool is_fixed;
 
     Variable(Token name, bool is_fixed);
 
-    std::any accept(ExprVisitor& visitor) override;
+    std::any accept(ExprVisitor &visitor) override;
 };
 
-struct Call : Expr, public std::enable_shared_from_this<Call> {
+struct Call : Expr, public std::enable_shared_from_this<Call>
+{
     const std::shared_ptr<Expr> callee;
     const Token paren;
     const std::vector<std::shared_ptr<Expr>> arguments;
@@ -140,7 +152,8 @@ struct Call : Expr, public std::enable_shared_from_this<Call> {
     std::any accept(ExprVisitor &visitor) override;
 };
 
-struct Lambda : Expr, public std::enable_shared_from_this<Lambda> {
+struct Lambda : Expr, public std::enable_shared_from_this<Lambda>
+{
     const Token name;
     const std::vector<Token> params;
     const std::shared_ptr<Expr> body;
@@ -150,7 +163,8 @@ struct Lambda : Expr, public std::enable_shared_from_this<Lambda> {
     std::any accept(ExprVisitor &visitor) override;
 };
 
-struct Ternary : Expr, public std::enable_shared_from_this<Ternary> {
+struct Ternary : Expr, public std::enable_shared_from_this<Ternary>
+{
     const std::shared_ptr<Expr> condition;
     const Token question;
     const std::shared_ptr<Expr> true_branch;
@@ -162,7 +176,8 @@ struct Ternary : Expr, public std::enable_shared_from_this<Ternary> {
     std::any accept(ExprVisitor &visitor) override;
 };
 
-struct Get : Expr, public std::enable_shared_from_this<Get> {
+struct Get : Expr, public std::enable_shared_from_this<Get>
+{
     const std::shared_ptr<Expr> object;
     const Token name;
 
@@ -171,7 +186,8 @@ struct Get : Expr, public std::enable_shared_from_this<Get> {
     std::any accept(ExprVisitor &visitor) override;
 };
 
-struct Set : Expr, public std::enable_shared_from_this<Set>{
+struct Set : Expr, public std::enable_shared_from_this<Set>
+{
     const std::shared_ptr<Expr> object;
     const Token name;
     const std::shared_ptr<Expr> value;
@@ -181,7 +197,8 @@ struct Set : Expr, public std::enable_shared_from_this<Set>{
     std::any accept(ExprVisitor &visitor) override;
 };
 
-struct This : Expr, public std::enable_shared_from_this<This>{
+struct This : Expr, public std::enable_shared_from_this<This>
+{
     const Token keyword;
 
     explicit This(Token keyword);
@@ -189,7 +206,8 @@ struct This : Expr, public std::enable_shared_from_this<This>{
     std::any accept(ExprVisitor &visitor) override;
 };
 
-struct Super : Expr, public std::enable_shared_from_this<Super>{
+struct Super : Expr, public std::enable_shared_from_this<Super>
+{
     const Token keyword;
     const Token method;
 
@@ -198,7 +216,8 @@ struct Super : Expr, public std::enable_shared_from_this<Super>{
     std::any accept(ExprVisitor &visitor) override;
 };
 
-struct Array: Expr, public std::enable_shared_from_this<Array>{
+struct Array : Expr, public std::enable_shared_from_this<Array>
+{
     const Token op;
     const std::vector<std::shared_ptr<Expr>> expr_vector;
     uint64_t size;
@@ -211,7 +230,8 @@ struct Array: Expr, public std::enable_shared_from_this<Array>{
     std::any accept(ExprVisitor &visitor) override;
 };
 
-struct Access: Expr, public std::enable_shared_from_this<Access>{
+struct Access : Expr, public std::enable_shared_from_this<Access>
+{
     const std::shared_ptr<Expr> index;
     const std::shared_ptr<Expr> arr_name;
     const Token op;
@@ -221,7 +241,8 @@ struct Access: Expr, public std::enable_shared_from_this<Access>{
     std::any accept(ExprVisitor &visitor) override;
 };
 
-struct ArraySet: Expr, public std::enable_shared_from_this<ArraySet>{
+struct ArraySet : Expr, public std::enable_shared_from_this<ArraySet>
+{
     const std::shared_ptr<Expr> assignee;
     const std::shared_ptr<Expr> value;
     const Token op;
@@ -231,4 +252,13 @@ struct ArraySet: Expr, public std::enable_shared_from_this<ArraySet>{
     std::any accept(ExprVisitor &visitor) override;
 };
 
-#endif //SURPHER_EXPR_HPP
+struct Comma : Expr, public std::enable_shared_from_this<Comma>
+{
+    const std::vector<std::shared_ptr<Expr>> expressions;
+
+    explicit Comma(std::vector<std::shared_ptr<Expr>> expressions);
+
+    std::any accept(ExprVisitor &visitor) override;
+};
+
+#endif // SURPHER_EXPR_HPP
