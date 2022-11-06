@@ -54,7 +54,7 @@ declaration    → "fixed"? ( classDecl | funDecl | varDecl | namespaceDecl )
 classDecl      → "class" IDENTIFIER ( "<" IDENTIFIER )?
                  "{" function* "}" ;
 funDecl        → "fun" function ;
-varDecl        → "var" (IDENTIFIER ( "=" expression )*)? (IDENTIFIER ( "=" expression )*)* ";" ;
+varDecl        → "var" (IDENTIFIER ( "=" expression )*)? ";" ;
 namespaceDecl  → "namespace" IDENTIFIER block ;
 
 statement      → exprStmt
@@ -90,8 +90,8 @@ assignment     → array "=" assignment | array ;
 array          → "[" array? "]" | "[" "alloc" ":" ternary "]" | ternary ;
 ternary        → logical_or "?" ternary ":" ternary ;
 logic_or       → logic_and ( "or" logic_and )* ;
-logic_and      → pipe ( "and" pipe )* ; 
-pipe           → bit_wise_or ("|>" bit_wise_or)* ;
+logic_and      → pipe ( "and" pipe )* ;
+pipe           → bit_wise_or ( "|>" bit_wise_or)* ;
 bit_wise_or    → bit_wise_xor ( "|" bit_wise_xor )* ;
 bit_wise_xor   → bit_wise_and ( "^" bit_wise_and )* ;
 bit_wise_and   → equality ( "&" equality )* ;

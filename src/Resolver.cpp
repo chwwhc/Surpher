@@ -254,13 +254,6 @@ std::any Resolver::visitLogicalExpr(const std::shared_ptr<Logical> &expr)
     return {};
 }
 
-std::any Resolver::visitPipeExpr(const std::shared_ptr<Pipe> &expr)
-{
-    resolve(expr->right);
-    resolve(expr->left);
-    return {};
-}
-
 std::any Resolver::visitUnaryExpr(const std::shared_ptr<Unary> &expr)
 {
     resolve(expr->right);

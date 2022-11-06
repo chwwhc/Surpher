@@ -67,8 +67,6 @@ class Parser
 
     std::shared_ptr<Expr> ternary();
 
-    std::shared_ptr<Expr> pipe();
-
     std::shared_ptr<Expr> comma();
 
     std::shared_ptr<Expr> assignment();

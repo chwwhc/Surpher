@@ -380,18 +380,6 @@ std::any Interpreter::visitIfStmt(const std::shared_ptr<If> &stmt)
     return {};
 }
 
-std::any Interpreter::visitPipeExpr(const std::shared_ptr<Pipe> &expr)
-{
-    if (Call *right_callable = dynamic_cast<Call *>(expr->right.get()))
-    {
-        right_callable->arguments.insert(right_callable->arguments.begin(), expr->left);
-
-        return evaluate(expr->right);
-    }
-
-    throw RuntimeError(expr->op, "Pipe operator can only be applied to a callable instance.");
-}
-
 std::any Interpreter::visitLogicalExpr(const std::shared_ptr<Logical> &expr)
 {
     std::any left(evaluate(expr->left));
@@ -468,7 +456,7 @@ std::any Interpreter::visitCallExpr(const std::shared_ptr<Call> &expr)
         else if (arguments.size() < fun_callable->arity())
         {
             std::shared_ptr<Function> partial_fun(std::make_shared<Function>(
-                Token("partial-" + fun_callable->declaration->name.lexeme, fun_callable->declaration->name.literal,
+                Token("partial" + fun_callable->declaration->name.lexeme, fun_callable->declaration->name.literal,
                       fun_callable->declaration->name.token_type, fun_callable->declaration->name.line),
                 std::vector<Token>(fun_callable->declaration->params.begin() + arguments.size(),
                                    fun_callable->declaration->params.end()),
