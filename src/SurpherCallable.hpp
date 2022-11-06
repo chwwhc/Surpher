@@ -4,6 +4,7 @@
 #include <vector>
 #include <any>
 #include <string>
+#include <sstream>
 #include <memory>
 
 #include "Stmt.hpp"

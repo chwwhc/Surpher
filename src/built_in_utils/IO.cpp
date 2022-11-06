@@ -1,3 +1,6 @@
+#include <iostream>
+#include <algorithm>
+
 #include "IO.hpp"
 
 uint32_t FileOpen::arity()
@@ -29,10 +32,6 @@ std::any FileOpen::call(Interpreter &interpreter, const std::vector<std::any> &a
 
     return f;
 }
-std::string FileOpen::SurpherCallableToString()
-{
-    return {};
-}
 
 uint32_t Write::arity()
 {
@@ -41,19 +40,27 @@ uint32_t Write::arity()
 
 std::any Write::call(Interpreter &interpreter, const std::vector<std::any> &arguments)
 {
-    if (arguments[0].type() == typeid(std::shared_ptr<std::fstream>) && (arguments[1].type() == typeid(std::string) || arguments[1].type() == typeid(double)))
+    if (arguments[0].type() == typeid(std::shared_ptr<std::fstream>) && (arguments[1].type() == typeid(std::string) || arguments[1].type() == typeid(SurpherArrayPtr)))
     {
         auto any_file_ptr = arguments[0], any_data = arguments[1];
         auto file_ptr = std::any_cast<std::shared_ptr<std::fstream>>(any_file_ptr);
 
-        if(any_data.type() == typeid(std::string)){
+        if (any_data.type() == typeid(std::string))
+        {
             *file_ptr << std::any_cast<std::string>(any_data);
-        }else{
-            auto data_val = std::any_cast<double>(any_data);
-            if(data_val < INT8_MIN || data_val > UINT8_MAX){
-                        throw RuntimeError(paren, "Binary data out of range for \"fileWrite\". Binary data range: 0 to 255.");
+        }
+        else
+        {
+            auto arg_arr = *std::any_cast<SurpherArrayPtr>(any_data);
+            if(std::find_if(arg_arr.begin(), arg_arr.end(), [](const std::any& a){
+                return a.type() != typeid(long double);
+            }) == arg_arr.end()){
+                char buffer[arg_arr.size()];
+                for(size_t i = 0; i < arg_arr.size(); i++){
+                    buffer[i] = static_cast<char>(std::any_cast<long double>(arg_arr[i]));
+                }
+                file_ptr->write(buffer, arg_arr.size());
             }
-            *file_ptr << static_cast<char>(data_val);
         }
     }
     else
@@ -61,11 +68,6 @@ std::any Write::call(Interpreter &interpreter, const std::vector<std::any> &argu
         throw RuntimeError(paren, "Invalid usage of \"fileWrite\". Usage: fileWrite(file, data).");
     }
 
-    return {};
-}
-
-std::string Write::SurpherCallableToString()
-{
     return {};
 }
 
@@ -89,11 +91,6 @@ std::any ReadAll::call(Interpreter &interpreter, const std::vector<std::any> &ar
     throw RuntimeError(paren, "Invalid usage of \"fileReadAll\". Usage: fileReadAll(<file path>).");
 }
 
-std::string ReadAll::SurpherCallableToString()
-{
-    return {};
-}
-
 uint32_t ReadSome::arity()
 {
     return 2;
@@ -101,13 +98,13 @@ uint32_t ReadSome::arity()
 
 std::any ReadSome::call(Interpreter &interpreter, const std::vector<std::any> &arguments)
 {
-    if (arguments[0].type() == typeid(std::shared_ptr<std::fstream>) && arguments[1].type() == typeid(double))
+    if (arguments[0].type() == typeid(std::shared_ptr<std::fstream>) && arguments[1].type() == typeid(long double))
     {
         auto any_file_ptr = arguments[0];
         auto file_ptr = std::any_cast<std::shared_ptr<std::fstream>>(any_file_ptr);
 
         auto any_size = arguments[1];
-        auto size = std::any_cast<double>(any_size);
+        auto size = std::any_cast<long double>(any_size);
         auto size_int = static_cast<int64_t>(size);
 
         char buffer[size_int];
@@ -116,11 +113,6 @@ std::any ReadSome::call(Interpreter &interpreter, const std::vector<std::any> &a
         return std::string{buffer};
     }
     throw RuntimeError(paren, "Invalid usage of \"fileReadSome\". Usage: fileReadSome(<file path>, size).");
-}
-
-std::string ReadSome::SurpherCallableToString()
-{
-    return {};
 }
 
 uint32_t FileClose::arity()
@@ -139,10 +131,26 @@ std::any FileClose::call(Interpreter &interpreter, const std::vector<std::any> &
 
         return {};
     }
-    throw RuntimeError(paren, "Invalid usage of \"fileClose\". Usage: fileClose<file path>).");
+    throw RuntimeError(paren, "Invalid usage of \"fileClose\". Usage: fileClose(<file path>).");
 }
 
-std::string FileClose::SurpherCallableToString()
+uint32_t Input::arity()
 {
-    return {};
+    return 1;
+}
+
+std::any Input::call(Interpreter &interpreter, const std::vector<std::any> &arguments)
+{
+    if (arguments[0].type() == typeid(std::string))
+    {
+        auto any_message = arguments[0];
+        auto message = std::any_cast<std::string>(any_message);
+        std::string ret;
+
+        std::cout << message;
+        std::cin >> ret;
+
+        return ret;
+    }
+    throw RuntimeError(paren, "Invalid usage of \"input\". Usage: input(<message>).");
 }

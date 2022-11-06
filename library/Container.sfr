@@ -24,7 +24,7 @@ fixed namespace Container{
         }
 
         __toString__(){
-            return toString(this.arr);
+            return String.toString(this.arr);
         }
 
         class copy(other){

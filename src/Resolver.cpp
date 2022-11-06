@@ -127,6 +127,13 @@ std::any Resolver::visitAssignExpr(const std::shared_ptr<Assign> &expr)
     return {};
 }
 
+std::any Resolver::visitPipeExpr(const std::shared_ptr<Pipe> &expr)
+{
+    resolve(expr->right);
+    resolve(expr->left);
+    return {};
+}
+
 std::any Resolver::visitFunctionStmt(const std::shared_ptr<Function> &stmt)
 {
     declare(stmt->name);

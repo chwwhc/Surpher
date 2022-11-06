@@ -10,14 +10,17 @@
 
 class Interpreter;
 
-class Resolver : ExprVisitor, StmtVisitor {
-    enum class FunctionType {
+class Resolver : ExprVisitor, StmtVisitor
+{
+    enum class FunctionType
+    {
         NONE = 0,
         FUNCTION,
         METHOD,
         INITIALIZER
     };
-    enum class ClassType {
+    enum class ClassType
+    {
         NONE = 0,
         CLASS,
         SUBCLASS
@@ -110,10 +113,11 @@ public:
 
     std::any visitCommaExpr(const std::shared_ptr<Comma> &expr) override;
 
+    std::any visitPipeExpr(const std::shared_ptr<Pipe> &expr) override;
+
     void resolve(const std::list<std::shared_ptr<Stmt>> &statements);
 
     explicit Resolver(Interpreter &interpreter);
 };
 
-
-#endif //SURPHER_RESOLVER_HPP
+#endif // SURPHER_RESOLVER_HPP

@@ -31,6 +31,7 @@ enum TokenType
     BANG_EQUAL,
     SINGLE_EQUAL,
     DOUBLE_EQUAL,
+    PIPE,
     GREATER,
     GREATER_EQUAL,
     LESS,
@@ -44,7 +45,7 @@ enum TokenType
     // Literal
     IDENTIFIER,
     STRING,
-    FLOAT,
+    NUMBER,
     LAMBDA,
 
     // reserved

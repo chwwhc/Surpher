@@ -27,6 +27,7 @@ struct Array;
 struct Access;
 struct ArraySet;
 struct Comma;
+struct Pipe;
 
 struct ExprVisitor
 {
@@ -65,6 +66,8 @@ struct ExprVisitor
     virtual std::any visitArraySetExpr(const std::shared_ptr<ArraySet> &expr) = 0;
 
     virtual std::any visitCommaExpr(const std::shared_ptr<Comma> &expr) = 0;
+
+    virtual std::any visitPipeExpr(const std::shared_ptr<Pipe> &expr) = 0;
 };
 
 struct Expr
@@ -79,6 +82,17 @@ struct Binary : Expr, public std::enable_shared_from_this<Binary>
     const std::shared_ptr<Expr> right;
 
     Binary(std::shared_ptr<Expr> left, Token op, std::shared_ptr<Expr> right);
+
+    std::any accept(ExprVisitor &visitor) override;
+};
+
+struct Pipe : Expr, public std::enable_shared_from_this<Pipe>
+{
+    const std::shared_ptr<Expr> left;
+    const Token op;
+    const std::shared_ptr<Expr> right;
+
+    Pipe(std::shared_ptr<Expr> left, Token op, std::shared_ptr<Expr> right);
 
     std::any accept(ExprVisitor &visitor) override;
 };
@@ -145,7 +159,7 @@ struct Call : Expr, public std::enable_shared_from_this<Call>
 {
     const std::shared_ptr<Expr> callee;
     const Token paren;
-    const std::vector<std::shared_ptr<Expr>> arguments;
+    std::vector<std::shared_ptr<Expr>> arguments;
 
     Call(std::shared_ptr<Expr> callee, Token paren, std::vector<std::shared_ptr<Expr>> arguments);
 

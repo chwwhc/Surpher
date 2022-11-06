@@ -114,24 +114,26 @@ void Lexer::matchString()
     anyChar();
 
     TokenType type = STRING;
-    // std::any str_literal = source_code.substr(start + 1, current - 2 - start);
     std::any str_literal = str_builder.str();
     addToken(type, str_literal);
 }
 
 void Lexer::matchNumber()
 {
-    while (isDigit(lookAHead(0)))
+    while (isDigit(lookAHead(0)) || lookAHead(0) == '.' || lookAHead(0) == 'e')
         anyChar();
 
-    if (lookAHead(0) == '.' && isDigit(lookAHead(1)))
-        anyChar();
+    TokenType type = NUMBER;
+    std::any num_literal;
+    try
+    {
+        num_literal = std::stold(source_code.substr(start, current - start));
+    }
+    catch (const std::exception &e)
+    {
+        ::error(line, "Number format incorrect.");
+    }
 
-    while (isDigit(lookAHead(0)))
-        anyChar();
-
-    TokenType type = FLOAT;
-    std::any num_literal = std::stod(source_code.substr(start, current - start));
     addToken(type, num_literal);
 }
 
@@ -214,7 +216,14 @@ void Lexer::scanToken()
         addToken(COMMA);
         break;
     case '.':
-        addToken(DOT);
+        if (isDigit(lookAHead(0)))
+        {
+            matchNumber();
+        }
+        else
+        {
+            addToken(DOT);
+        }
         break;
     case ';':
         addToken(SINGLE_SEMICOLON);
@@ -266,7 +275,14 @@ void Lexer::scanToken()
         }
         break;
     case '|':
-        addToken(SINGLE_BAR);
+        if (matchNextChar('>'))
+        {
+            addToken(PIPE);
+        }
+        else
+        {
+            addToken(SINGLE_BAR);
+        }
         break;
     case '^':
         addToken(CARET);

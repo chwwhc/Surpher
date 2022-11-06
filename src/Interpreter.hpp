@@ -98,6 +98,8 @@ public:
 
     std::any visitCommaExpr(const std::shared_ptr<Comma> &expr) override;
 
+    std::any visitPipeExpr(const std::shared_ptr<Pipe> &expr) override;
+
     std::any visitAccessExpr(const std::shared_ptr<Access> &expr) override;
 
     std::any visitArraySetExpr(const std::shared_ptr<ArraySet> &expr) override;

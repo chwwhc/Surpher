@@ -109,7 +109,7 @@ function       → "sig"? "class"? IDENTIFIER "(" parameters? ")" block ;
 parameters     → IDENTIFIER ( "," IDENTIFIER )* ;
 arguments      → expression ( "," expression )* ;
 
-NUMBER         → DIGIT+ ( "." DIGIT+ )? ;
+NUMBER         → "." ( DIGIT+ "e"* DIGIT* ) | ( DIGIT+ "e"* DIGIT* ) ( "." (DIGIT+ "e"* DIGIT*) )? ;
 STRING         → "\"" <any char except "\"">* "\"" ;
 IDENTIFIER     → ALPHA ( ALPHA | DIGIT )* ;
 ALPHA          → "a" ... "z" | "A" ... "Z" | "_" ;

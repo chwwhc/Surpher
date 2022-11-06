@@ -8,7 +8,17 @@ std::shared_ptr<SurpherNamespace> IO()
     new_environment->define("fileReadAll", std::shared_ptr<NativeFunction>(new ReadAll()), true);
     new_environment->define("fileReadSome", std::shared_ptr<NativeFunction>(new ReadSome()), true);
     new_environment->define("fileClose", std::shared_ptr<NativeFunction>(new FileClose()), true);
+    new_environment->define("input", std::shared_ptr<NativeFunction>(new Input()), true);
     return std::make_shared<SurpherNamespace>("IO", new_environment);
+}
+
+std::shared_ptr<SurpherNamespace> String()
+{
+    std::shared_ptr<Environment> new_environment = std::make_shared<Environment>();
+    new_environment->define("ascii", std::shared_ptr<NativeFunction>(new Ascii()), true);
+    new_environment->define("toNumber", std::shared_ptr<NativeFunction>(new ToNumber()), true);
+    new_environment->define("toString", std::shared_ptr<NativeFunction>(new ToString()), true);
+    return std::make_shared<SurpherNamespace>("String", new_environment);
 }
 
 std::shared_ptr<SurpherNamespace> Math()
@@ -34,5 +44,5 @@ void glodbalFunctionSetup(Environment &environment)
 {
     environment.define("sizeOf", std::shared_ptr<NativeFunction>(new Sizeof()), true);
     environment.define("systemCall", std::shared_ptr<NativeFunction>(new SysCmd()), true);
-    environment.define("toString", std::shared_ptr<NativeFunction>(new ToString()), true);
+    environment.define("equals", std::shared_ptr<NativeFunction>(new Equals()), true);
 }

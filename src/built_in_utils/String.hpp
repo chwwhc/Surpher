@@ -1,20 +1,18 @@
-#pragma once
-
 #include "NativeFunction.hpp"
 
-struct Sizeof : NativeFunction
+struct Ascii : NativeFunction
 {
     uint32_t arity() override;
     std::any call(Interpreter &interpreter, const std::vector<std::any> &arguments) override;
 };
 
-struct Equals : NativeFunction
+struct ToNumber : NativeFunction
 {
     uint32_t arity() override;
     std::any call(Interpreter &interpreter, const std::vector<std::any> &arguments) override;
 };
 
-struct SysCmd : NativeFunction
+struct ToString : NativeFunction
 {
     uint32_t arity() override;
     std::any call(Interpreter &interpreter, const std::vector<std::any> &arguments) override;

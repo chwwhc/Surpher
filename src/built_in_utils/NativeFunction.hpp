@@ -22,8 +22,11 @@ struct NativeFunction : SurpherCallable
     {
         throw RuntimeError(paren, "Unimplemented native function.");
     }
-    virtual std::string SurpherCallableToString() override
+    std::string SurpherCallableToString() override
     {
-        throw RuntimeError(paren, "Unimplemented native function.");
+        void *self = this;
+        std::ostringstream self_addr;
+        self_addr << self;
+        return "<native function> at: " + self_addr.str();
     }
 };

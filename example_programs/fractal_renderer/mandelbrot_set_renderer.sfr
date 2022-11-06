@@ -4,27 +4,16 @@
     render a mandelbrot set; generate a PPM file
 */
 
-fun writeRGB(fp, r, g, b){
-    IO.fileWrite(fp, Math.floor(r));
-    IO.fileWrite(fp, Math.floor(g));
-    IO.fileWrite(fp, Math.floor(b));
-}
-
 fun main(){
-    var cx;
-    var cy;
-    var hx;
-    fixed var hxres = 500;
-    var hy;
-    fixed var hyres = 500;
+    var cx, cy;
+    var hx, hy;
+    fixed var hxres = 1000, hyres = 1000;
     var it2;
     var iteration;
     fixed var itermax = 100;
-    fixed var magnify = 1.0;
-    var x;
-    var x_new;
-    var y;
-    var y_new;
+    fixed var magnify = 1;
+    var x, y;
+    var x_new, y_new;
 
     var fp = IO.fileOpen("mandelbrot.ppm", "w");
     IO.fileWrite(fp, "P6\n");
@@ -55,9 +44,9 @@ fun main(){
             }
 
             if(it2 < itermax){
-                writeRGB(fp, 200 + (55 * it2) / 100, (230 * (100 - it2)) / 100, (230 * (100 - it2)) / 100);
+                IO.fileWrite(fp, [200 + (55 * it2) / 100, (230 * (100 - it2)) / 100, (230 * (100 - it2)) / 100]);
             }else{
-                writeRGB(fp, 0, 255, 255);
+                IO.fileWrite(fp, [0, 255, 255]);
             }
         }
     }

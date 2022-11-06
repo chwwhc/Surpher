@@ -1,6 +1,5 @@
 #include <utility>
 #include <fstream>
-#include <sstream>
 #include <cmath>
 
 #include "SurpherCallable.hpp"

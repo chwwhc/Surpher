@@ -1,9 +1,9 @@
 /*
     Solution to LeetCode 22. Generate Parentheses
 */
-import "../library/ContiguousContainer.sfr";
+import "../library/Container.sfr";
 
-fixed var Vec = ContiguousContainer.Vector;
+fixed var Vec = Container.Vector;
 
 fun generateParenthesis(n){
     var ret = Vec([]);
@@ -13,11 +13,7 @@ fun generateParenthesis(n){
         if(n < 0 or num_of_left < 0){
             return;
         }else if(n == 0 and num_of_left == 0){
-            var result = "";
-            for(var i = 0; i < sizeof(curr); i = i + 1){
-                result = result + @i->curr.arr;
-            }
-            ret.addBack(result);
+            ret.addBack(Vec.copy(curr));
             return;
         }
 
@@ -34,5 +30,5 @@ fun generateParenthesis(n){
     return ret;
 }
 
-for(var i = 0; i <= 7; i = i + 1)
-    print generateParenthesis(i).arr;
+for(var i = 0; i <= 8; i = i + 1)
+    print String.toString(generateParenthesis(i));
