@@ -58,6 +58,17 @@ std::any Variable::accept(ExprVisitor &visitor)
     return visitor.visitVariableExpr(shared_from_this());
 }
 
+Pipe::Pipe(std::shared_ptr<Expr> left, Token op, std::shared_ptr<Expr> right) : left{std::move(left)},
+                                                                                op{std::move(op)},
+                                                                                right{std::move(right)}
+{
+}
+
+std::any Pipe::accept(ExprVisitor &visitor)
+{
+    return visitor.visitPipeExpr(shared_from_this());
+}
+
 Logical::Logical(std::shared_ptr<Expr> left, Token op, std::shared_ptr<Expr> right) : left{std::move(left)},
                                                                                       op{std::move(op)},
                                                                                       right{std::move(right)}

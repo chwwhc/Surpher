@@ -569,14 +569,28 @@ std::shared_ptr<Expr> Parser::logicalOr()
     return expr;
 }
 
-std::shared_ptr<Expr> Parser::logicalAnd()
+std::shared_ptr<Expr> Parser::pipe()
 {
     std::shared_ptr<Expr> expr(bit_wise_or());
+
+    while (match(PIPE))
+    {
+        Token op(previous());
+        std::shared_ptr<Expr> right(bit_wise_or());
+        expr = std::make_shared<Pipe>(expr, op, right);
+    }
+
+    return expr;
+}
+
+std::shared_ptr<Expr> Parser::logicalAnd()
+{
+    std::shared_ptr<Expr> expr(pipe());
 
     while (match(AND))
     {
         Token op(previous());
-        std::shared_ptr<Expr> right(bit_wise_or());
+        std::shared_ptr<Expr> right(pipe());
         expr = std::make_shared<Logical>(expr, op, right);
     }
 

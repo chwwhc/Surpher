@@ -266,7 +266,14 @@ void Lexer::scanToken()
         }
         break;
     case '|':
-        addToken(SINGLE_BAR);
+        if (matchNextChar('>'))
+        {
+            addToken(PIPE);
+        }
+        else
+        {
+            addToken(SINGLE_BAR);
+        }
         break;
     case '^':
         addToken(CARET);

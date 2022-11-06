@@ -110,6 +110,8 @@ public:
 
     std::any visitCommaExpr(const std::shared_ptr<Comma> &expr) override;
 
+    std::any visitPipeExpr(const std::shared_ptr<Pipe> &expr) override;
+
     void resolve(const std::list<std::shared_ptr<Stmt>> &statements);
 
     explicit Resolver(Interpreter &interpreter);

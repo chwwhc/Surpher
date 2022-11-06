@@ -18,6 +18,7 @@ struct Assign;
 struct Variable;
 struct Logical;
 struct Call;
+struct Pipe;
 struct Lambda;
 struct Get;
 struct Set;
@@ -43,6 +44,8 @@ struct ExprVisitor
     virtual std::any visitVariableExpr(const std::shared_ptr<Variable> &expr) = 0;
 
     virtual std::any visitLogicalExpr(const std::shared_ptr<Logical> &expr) = 0;
+
+    virtual std::any visitPipeExpr(const std::shared_ptr<Pipe> &expr) = 0;
 
     virtual std::any visitCallExpr(const std::shared_ptr<Call> &expr) = 0;
 
@@ -83,7 +86,19 @@ struct Binary : Expr, public std::enable_shared_from_this<Binary>
     std::any accept(ExprVisitor &visitor) override;
 };
 
-struct Logical : Expr, public std::enable_shared_from_this<Logical>
+struct Pipe : Expr, public std::enable_shared_from_this<Pipe>
+{
+    const std::shared_ptr<Expr> left;
+    const Token op;
+    const std::shared_ptr<Expr> right;
+
+    Pipe(std::shared_ptr<Expr> left, Token op, std::shared_ptr<Expr> right);
+
+    std::any accept(ExprVisitor &visitor) override;
+};
+
+struct Logical : Expr,
+                 public std::enable_shared_from_this<Logical>
 {
     const std::shared_ptr<Expr> left;
     const Token op;
@@ -145,7 +160,7 @@ struct Call : Expr, public std::enable_shared_from_this<Call>
 {
     const std::shared_ptr<Expr> callee;
     const Token paren;
-    const std::vector<std::shared_ptr<Expr>> arguments;
+    std::vector<std::shared_ptr<Expr>> arguments;
 
     Call(std::shared_ptr<Expr> callee, Token paren, std::vector<std::shared_ptr<Expr>> arguments);
 

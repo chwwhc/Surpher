@@ -40,6 +40,7 @@ enum TokenType
     DOUBLE_COLON,
     RIGHT_ARROW,
     AT,
+    PIPE,
 
     // Literal
     IDENTIFIER,
