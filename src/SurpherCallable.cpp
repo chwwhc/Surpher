@@ -56,7 +56,7 @@ std::string SurpherFunction::SurpherCallableToString()
 
 std::shared_ptr<SurpherFunction> SurpherFunction::bind(const std::shared_ptr<SurpherInstance> &instance)
 {
-    auto environment = closure;
+    auto environment = std::make_shared<Environment>(closure);
     environment->define("this", instance, true);
     return std::make_shared<SurpherFunction>(declaration, std::move(environment), is_initializer, is_partial);
 }

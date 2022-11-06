@@ -1,6 +1,6 @@
-fixed namespace ContiguousContainer{
+fixed namespace Container{
 
-    fixed class ContiguousContainerSignature {
+    fixed class ContainerSignature {
         sig class copy();
         // sig sort();
         // sig getIdx();
@@ -9,17 +9,22 @@ fixed namespace ContiguousContainer{
         // sig popFront();
        // sig popIdx();
 
-        sig __sizeof__();
+        sig __sizeOf__();
+        sig __toString__();
     }
 
-    fixed class Vector < ContiguousContainerSignature {
+    fixed class Vector < ContainerSignature {
         init(arr){
             this.arr = arr;
-            this.size = sizeof(arr);
+            this.size = sizeOf(arr);
         }
 
-        __sizeof__(){
+        __sizeOf__(){
             return this.size;
+        }
+
+        __toString__(){
+            return toString(this.arr);
         }
 
         class copy(other){
@@ -27,26 +32,41 @@ fixed namespace ContiguousContainer{
             for(var i = 0; i < other.size; i = i + 1){
                 @i->new_arr = @i->other.arr;
             }
-            return ContiguousContainer.Vector(new_arr);
+            return Container.Vector(new_arr);
         }
 
-        getMost(cmp){
-            var ret = nil;
-            for(var i = 0; i < sizeof(this.arr); i = i + 1){
-                var curr = @i->this.arr;
-                ret = ret == nil ? curr : (cmp(ret, curr) ? ret : curr);
+        filter(pred){
+            var ret = Container.Vector([]);
+            for(var i = 0; i < this.size; i = i + 1){
+                var curr = this.getIdx(i);
+                if(pred(curr))
+                    ret.addBack(curr);
             }
 
             return ret;
         }
 
+        map(f){
+            for(var i = this.size - 1; i >= 0; i = i - 1)
+                this.setIdx(i, f(this.getIdx(i)));
+        }
+
+        foldRight(f, unit){
+            for(var i = this.size - 1; i >= 0; i = i - 1)
+                unit = f(this.getIdx(i), unit);
+            return unit;
+        }
+
+        foldLeft(f, unit){
+            for(var i = 0; i < this.size; i = i + 1)
+                unit = f(unit, this.getIdx(i));
+            return unit;
+        }
+
         sort(cmp){
             fun merge(arr, left, right){
-                var i = 0;
-                var j = 0;
-                var k = 0;
-                var left_len = sizeof(left);
-                var right_len = sizeof(right);
+                var i = 0, j = 0, k = 0;
+                var left_len = sizeOf(left), right_len = sizeOf(right);
 
                 while(i < left_len and j < right_len){
                     if(cmp(@i->left, @j->right)){
@@ -73,10 +93,10 @@ fixed namespace ContiguousContainer{
             }
 
             fun mergeSort(arr){
-                if(sizeof(arr) < 2) return;
+                if(sizeOf(arr) < 2) return;
 
-                var len = sizeof(arr);
-                var mid = len /- 2;
+                var len = sizeOf(arr);
+                var mid = Math.floor(len / 2);
                 var left = [alloc: mid];
                 var right = [alloc: len - mid];
 
@@ -100,7 +120,15 @@ fixed namespace ContiguousContainer{
             if(idx < this.size and idx >= 0){
                 return @idx->this.arr;
             }else{
-                print "invalid index.";
+                halt "invalid index.";
+            }
+        }
+
+        setIdx(idx, value){
+            if(idx >= 0 and idx < this.size){
+                @idx->this.arr = value;
+            }else{
+                halt "invalid index.";
             }
         }
 
@@ -113,7 +141,7 @@ fixed namespace ContiguousContainer{
                 this.arr = new_arr;
                 this.size = this.size - 1;
             }else{
-                print "cannot pop from an empty vector.";
+                halt "cannot pop from an empty vector.";
             }
         }
 
@@ -136,7 +164,7 @@ fixed namespace ContiguousContainer{
                 this.arr = new_arr;
                 this.size = this.size - 1;
             }else{
-                print "cannot pop from an empty vector.";
+                halt "cannot pop from an empty vector.";
             }
         }
     }

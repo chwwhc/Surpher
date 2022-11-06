@@ -4,8 +4,6 @@
 
 struct Floor : NativeFunction
 {
-    Floor(Token paren) : NativeFunction(paren) {}
-
     uint32_t arity() override;
     std::any call(Interpreter &interpreter, const std::vector<std::any> &arguments) override;
     std::string SurpherCallableToString() override;
@@ -13,8 +11,6 @@ struct Floor : NativeFunction
 
 struct Ceil : NativeFunction
 {
-    Ceil(Token paren) : NativeFunction(paren) {}
-
     uint32_t arity() override;
     std::any call(Interpreter &interpreter, const std::vector<std::any> &arguments) override;
     std::string SurpherCallableToString() override;
@@ -22,8 +18,6 @@ struct Ceil : NativeFunction
 
 struct AbsoluteValue : NativeFunction
 {
-    AbsoluteValue(Token paren) : NativeFunction(paren) {}
-
     uint32_t arity() override;
     std::any call(Interpreter &interpreter, const std::vector<std::any> &arguments) override;
     std::string SurpherCallableToString() override;
@@ -31,8 +25,6 @@ struct AbsoluteValue : NativeFunction
 
 struct Infinity : NativeFunction
 {
-    Infinity(Token paren) : NativeFunction(paren) {}
-
     uint32_t arity() override;
     std::any call(Interpreter &interpreter, const std::vector<std::any> &arguments) override;
     std::string SurpherCallableToString() override;
@@ -40,8 +32,6 @@ struct Infinity : NativeFunction
 
 struct Power : NativeFunction
 {
-    Power(Token paren) : NativeFunction(paren) {}
-
     uint32_t arity() override;
     std::any call(Interpreter &interpreter, const std::vector<std::any> &arguments) override;
     std::string SurpherCallableToString() override;
@@ -49,8 +39,6 @@ struct Power : NativeFunction
 
 struct Sin : NativeFunction
 {
-    Sin(Token paren) : NativeFunction(paren) {}
-
     uint32_t arity() override;
     std::any call(Interpreter &interpreter, const std::vector<std::any> &arguments) override;
     std::string SurpherCallableToString() override;
@@ -58,8 +46,6 @@ struct Sin : NativeFunction
 
 struct Cos : NativeFunction
 {
-    Cos(Token paren) : NativeFunction(paren) {}
-
     uint32_t arity() override;
     std::any call(Interpreter &interpreter, const std::vector<std::any> &arguments) override;
     std::string SurpherCallableToString() override;
@@ -67,8 +53,6 @@ struct Cos : NativeFunction
 
 struct Tan : NativeFunction
 {
-    Tan(Token paren) : NativeFunction(paren) {}
-
     uint32_t arity() override;
     std::any call(Interpreter &interpreter, const std::vector<std::any> &arguments) override;
     std::string SurpherCallableToString() override;
@@ -76,8 +60,6 @@ struct Tan : NativeFunction
 
 struct ComplexNumber : NativeFunction
 {
-    ComplexNumber(Token paren) : NativeFunction(paren) {}
-
     uint32_t arity() override;
     std::any call(Interpreter &interpreter, const std::vector<std::any> &arguments) override;
     std::string SurpherCallableToString() override;
@@ -85,8 +67,6 @@ struct ComplexNumber : NativeFunction
 
 struct ComplexAdd : NativeFunction
 {
-    ComplexAdd(Token paren) : NativeFunction(paren) {}
-
     uint32_t arity() override;
     std::any call(Interpreter &interpreter, const std::vector<std::any> &arguments) override;
     std::string SurpherCallableToString() override;
@@ -94,8 +74,6 @@ struct ComplexAdd : NativeFunction
 
 struct ComplexSub : NativeFunction
 {
-    ComplexSub(Token paren) : NativeFunction(paren) {}
-
     uint32_t arity() override;
     std::any call(Interpreter &interpreter, const std::vector<std::any> &arguments) override;
     std::string SurpherCallableToString() override;
@@ -103,8 +81,6 @@ struct ComplexSub : NativeFunction
 
 struct ComplexMul : NativeFunction
 {
-    ComplexMul(Token paren) : NativeFunction(paren) {}
-
     uint32_t arity() override;
     std::any call(Interpreter &interpreter, const std::vector<std::any> &arguments) override;
     std::string SurpherCallableToString() override;
@@ -112,8 +88,6 @@ struct ComplexMul : NativeFunction
 
 struct ComplexDiv : NativeFunction
 {
-    ComplexDiv(Token paren) : NativeFunction(paren) {}
-
     uint32_t arity() override;
     std::any call(Interpreter &interpreter, const std::vector<std::any> &arguments) override;
     std::string SurpherCallableToString() override;

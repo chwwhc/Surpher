@@ -286,7 +286,7 @@ bool Interpreter::isEqual(const std::any &a, const std::any &b)
 
 std::string Interpreter::stringify(const std::any &value)
 {
-    if (value.type() == typeid(nullptr) || value.type() == typeid(std::nullopt))
+    if (value.type() == typeid(nullptr))
     {
         return "nil";
     }

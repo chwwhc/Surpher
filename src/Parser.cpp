@@ -51,7 +51,7 @@ std::shared_ptr<Expr> Parser::primary()
     else if (match(LEFT_PAREN))
     {
         std::shared_ptr<Expr> expr_in(expression());
-        consume(RIGHT_PAREN, "Expected right parentheses.");
+        consume(RIGHT_PAREN, "Expect right parentheses.");
         return std::make_shared<Group>(expr_in);
     }
     else if (match(IDENTIFIER))
@@ -86,7 +86,7 @@ std::shared_ptr<Expr> Parser::primary()
     else if (match(SUPER))
     {
         Token keyword(previous());
-        consume(DOT, "Expect '.' after 'super'.");
+        consume(DOT, "Expect '.' after \"super\".");
         Token method(consume(IDENTIFIER, "Expect superclass method name."));
         return std::make_shared<Super>(keyword, method);
     }
