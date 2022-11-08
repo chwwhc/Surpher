@@ -33,7 +33,7 @@ std::any Var::accept(StmtVisitor &visitor)
 }
 
 If::If(std::shared_ptr<Expr> condition, std::shared_ptr<Stmt> true_branch,
-       std::optional<std::shared_ptr<Stmt>> else_branch)
+       std::shared_ptr<Stmt> else_branch)
     : condition(std::move(condition)), true_branch(std::move(true_branch)), else_branch(std::move(else_branch))
 {
 }
@@ -71,11 +71,11 @@ Continue::Continue(Token continue_tok) : continue_tok{std::move(continue_tok)}
 {
 }
 
-Function::Function(Token name, std::vector<Token> params, std::list<std::shared_ptr<Stmt>> body, bool is_virtual,
+Function::Function(Token name, std::vector<Token> params, std::list<std::shared_ptr<Stmt>> body, bool is_sig,
                    bool is_fixed)
     : name(
           std::move(name)),
-      params(std::move(params)), body(std::move(body)), is_virtual(is_virtual), is_fixed(is_fixed)
+      params(std::move(params)), body(std::move(body)), is_sig(is_sig), is_fixed(is_fixed)
 {
 }
 
@@ -84,7 +84,7 @@ std::any Function::accept(StmtVisitor &visitor)
     return visitor.visitFunctionStmt(shared_from_this());
 }
 
-Return::Return(Token keyword, std::optional<std::shared_ptr<Expr>> value) : keyword(std::move(keyword)),
+Return::Return(Token keyword, std::shared_ptr<Expr> value) : keyword(std::move(keyword)),
                                                                             value(std::move(value))
 {
 }
@@ -95,7 +95,7 @@ std::any Return::accept(StmtVisitor &visitor)
 }
 
 Class::Class(Token name, std::vector<std::shared_ptr<Function>> instance_methods,
-             std::vector<std::shared_ptr<Function>> class_methods, std::optional<std::shared_ptr<Expr>> superclass,
+             std::vector<std::shared_ptr<Function>> class_methods, std::shared_ptr<Expr> superclass,
              bool is_fixed)
     : name(
           std::move(name)),

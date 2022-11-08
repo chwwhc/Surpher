@@ -169,9 +169,9 @@ std::any Resolver::visitIfStmt(const std::shared_ptr<If> &stmt)
 {
     resolve(stmt->condition);
     resolve(stmt->true_branch);
-    if (stmt->else_branch.has_value())
+    if (stmt->else_branch)
     {
-        resolve(stmt->else_branch.value());
+        resolve(stmt->else_branch);
     }
     return {};
 }
@@ -203,12 +203,12 @@ std::any Resolver::visitReturnStmt(const std::shared_ptr<Return> &stmt)
     if (current_function == FunctionType::NONE)
         error(stmt->keyword, "Can't return from top-level code.");
 
-    if (stmt->value.has_value())
+    if (stmt->value)
     {
         if (current_function == FunctionType::INITIALIZER)
             error(stmt->keyword, "Can't return a value from an initializer.");
 
-        resolve(stmt->value.value());
+        resolve(stmt->value);
     }
     return {};
 }
@@ -302,19 +302,19 @@ std::any Resolver::visitClassStmt(const std::shared_ptr<Class> &stmt)
     declare(stmt->name);
     define(stmt->name);
 
-    if (stmt->superclass.has_value())
+    if (stmt->superclass)
     {
-        auto super_class_var(std::dynamic_pointer_cast<Variable>(stmt->superclass.value()));
+        auto super_class_var(std::dynamic_pointer_cast<Variable>(stmt->superclass));
         if (super_class_var && stmt->name.lexeme == super_class_var->name.lexeme)
         {
             error(super_class_var->name, "Class can't inherit from itself.");
         }
     }
 
-    if (stmt->superclass.has_value())
+    if (stmt->superclass)
     {
         current_class = ClassType::SUBCLASS;
-        resolve(stmt->superclass.value());
+        resolve(stmt->superclass);
         beginScope();
         scopes.top()["super"] = true;
     }
@@ -324,7 +324,7 @@ std::any Resolver::visitClassStmt(const std::shared_ptr<Class> &stmt)
 
     for (const auto &i : stmt->instance_methods)
     {
-        if (i->is_virtual)
+        if (i->is_sig)
             continue;
 
         FunctionType declaration = FunctionType::METHOD;
@@ -336,7 +336,7 @@ std::any Resolver::visitClassStmt(const std::shared_ptr<Class> &stmt)
 
     for (const auto &c : stmt->class_methods)
     {
-        if (c->is_virtual)
+        if (c->is_sig)
             continue;
 
         FunctionType declaration = FunctionType::METHOD;
@@ -348,7 +348,7 @@ std::any Resolver::visitClassStmt(const std::shared_ptr<Class> &stmt)
 
     endScope();
 
-    if (stmt->superclass.has_value())
+    if (stmt->superclass)
         endScope();
 
     current_class = enclosing_class;

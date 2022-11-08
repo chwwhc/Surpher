@@ -17,7 +17,7 @@ std::any Sizeof::call(Interpreter &interpreter, const std::vector<std::any> &arg
     else if (value.type() == typeid(std::shared_ptr<SurpherInstance>))
     {
         auto value_cast{std::any_cast<std::shared_ptr<SurpherInstance>>(value)};
-        return std::any_cast<std::shared_ptr<SurpherFunction>>(value_cast->get(Token("__sizeOf__", {}, STRING, 0)))->call(interpreter, {});
+        return std::any_cast<std::shared_ptr<SurpherCallable>>(value_cast->get(Token("__sizeOf__", {}, STRING, 0)))->call(interpreter, {});
     }
     else if (value.type() == typeid(std::string))
     {
@@ -65,7 +65,7 @@ std::any Equals::call(Interpreter &interpreter, const std::vector<std::any> &arg
     }else if(op1.type() == typeid(std::shared_ptr<SurpherInstance>)){
         auto op1_value {std::any_cast<std::shared_ptr<SurpherInstance>>(op1)};
         auto op2_value {std::any_cast<std::shared_ptr<SurpherInstance>>(op2)};
-        return std::any_cast<std::shared_ptr<SurpherFunction>>(op1_value->get(Token("__equals__", {}, STRING, 0)))->call(interpreter, {op1, op2});
+        return std::any_cast<std::shared_ptr<SurpherCallable>>(op1_value->get(Token("__equals__", {}, STRING, 0)))->call(interpreter, {op1, op2});
     }
 
     return false;

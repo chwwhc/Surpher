@@ -97,10 +97,10 @@ struct If : Stmt, public std::enable_shared_from_this<If>
 {
     const std::shared_ptr<Expr> condition;
     const std::shared_ptr<Stmt> true_branch;
-    const std::optional<std::shared_ptr<Stmt>> else_branch;
+    const std::shared_ptr<Stmt> else_branch;
 
     If(std::shared_ptr<Expr> condition, std::shared_ptr<Stmt> true_branch,
-       std::optional<std::shared_ptr<Stmt>> else_branch);
+       std::shared_ptr<Stmt> else_branch);
 
     std::any accept(StmtVisitor &visitor) override;
 };
@@ -138,10 +138,10 @@ struct Function : Stmt, public std::enable_shared_from_this<Function>
     const Token name;
     const std::vector<Token> params;
     const std::list<std::shared_ptr<Stmt>> body;
-    const bool is_virtual;
+    const bool is_sig;
     const bool is_fixed;
 
-    Function(Token name, std::vector<Token> params, std::list<std::shared_ptr<Stmt>> body, bool is_virtual,
+    Function(Token name, std::vector<Token> params, std::list<std::shared_ptr<Stmt>> body, bool is_sig,
              bool is_fixed);
 
     std::any accept(StmtVisitor &visitor) override;
@@ -150,9 +150,9 @@ struct Function : Stmt, public std::enable_shared_from_this<Function>
 struct Return : Stmt, public std::enable_shared_from_this<Return>
 {
     const Token keyword;
-    const std::optional<std::shared_ptr<Expr>> value;
+    const std::shared_ptr<Expr> value;
 
-    Return(Token keyword, std::optional<std::shared_ptr<Expr>> value);
+    Return(Token keyword, std::shared_ptr<Expr> value);
 
     std::any accept(StmtVisitor &visitor) override;
 };
@@ -169,13 +169,13 @@ struct Import : Stmt, public std::enable_shared_from_this<Import>
 struct Class : Stmt, public std::enable_shared_from_this<Class>
 {
     const Token name;
-    std::optional<std::shared_ptr<Expr>> superclass;
+    std::shared_ptr<Expr> superclass;
     const std::vector<std::shared_ptr<Function>> instance_methods;
     const std::vector<std::shared_ptr<Function>> class_methods;
     const bool is_fixed;
 
     Class(Token name, std::vector<std::shared_ptr<Function>> instance_methods,
-          std::vector<std::shared_ptr<Function>> class_methods, std::optional<std::shared_ptr<Expr>> superclass,
+          std::vector<std::shared_ptr<Function>> class_methods, std::shared_ptr<Expr> superclass,
           bool is_fixed);
 
     std::any accept(StmtVisitor &visitor) override;

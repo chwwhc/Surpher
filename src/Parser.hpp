@@ -101,7 +101,7 @@ class Parser
 
     std::shared_ptr<Stmt> namespaceDeclaration(bool is_fixed);
 
-    std::shared_ptr<Function> functionStatement(const std::string &type, bool is_virtual, bool is_fixed);
+    std::shared_ptr<Function> functionStatement(const std::string &type, bool is_sig, bool is_fixed);
 
     std::shared_ptr<Stmt> statement();
 

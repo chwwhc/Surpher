@@ -88,7 +88,7 @@ std::any ToString::call(Interpreter &interpreter, const std::vector<std::any> &a
     else if (value.type() == typeid(std::shared_ptr<SurpherInstance>))
     {
         auto value_cast{std::any_cast<std::shared_ptr<SurpherInstance>>(value)};
-        return std::any_cast<std::shared_ptr<SurpherFunction>>(value_cast->get(Token("__toString__", {}, STRING, 0)))->call(interpreter, {});
+        return std::any_cast<std::shared_ptr<SurpherCallable>>(value_cast->get(Token("__toString__", {}, STRING, 0)))->call(interpreter, {});
     }
     else if (value.type() == typeid(SurpherArrayPtr))
     {

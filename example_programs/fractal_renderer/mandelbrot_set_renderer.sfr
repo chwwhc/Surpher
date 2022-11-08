@@ -1,13 +1,13 @@
 /*
     original author: https://people.math.sc.edu/Burkardt/cpp_src/mandelbrot_ppm/mandelbrot_ppm.cpp
 
-    render a mandelbrot set; generate a PPM file
+    render mandelbrot set; generate a PPM file
 */
 
 fun main(){
     var cx, cy;
     var hx, hy;
-    fixed var hxres = 1000, hyres = 1000;
+    fixed var hxres = 2000, hyres = 2000;
     var it2;
     var iteration;
     fixed var itermax = 100;

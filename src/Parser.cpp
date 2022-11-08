@@ -237,15 +237,15 @@ std::shared_ptr<Stmt> Parser::statement()
     }
 }
 
-std::shared_ptr<Function> Parser::functionStatement(const std::string &type, bool is_virtual, bool is_fixed)
+std::shared_ptr<Function> Parser::functionStatement(const std::string &type, bool is_sig, bool is_fixed)
 {
     Token name(consume(IDENTIFIER, "Expect " + type + " name."));
-    if (is_virtual)
+    if (is_sig)
     {
         consume(LEFT_PAREN, "Expect '(' after declaring a function signature.");
         consume(RIGHT_PAREN, "Expect ')' after declaring a function signature.");
         consume(SINGLE_SEMICOLON, "Expect ';' after declaring a function signature.");
-        return std::make_shared<Function>(name, std::vector<Token>(), std::list<std::shared_ptr<Stmt>>(), is_virtual, is_fixed);
+        return std::make_shared<Function>(name, std::vector<Token>(), std::list<std::shared_ptr<Stmt>>(), is_sig, is_fixed);
     }
 
     consume(LEFT_PAREN, "Expect '(' after " + type + " name.");
@@ -261,20 +261,16 @@ std::shared_ptr<Function> Parser::functionStatement(const std::string &type, boo
 
     consume(LEFT_BRACE, "Expect '{' before " + type + " body.");
     std::list<std::shared_ptr<Stmt>> body(blockStatement());
-    return std::make_shared<Function>(name, params, body, is_virtual, is_fixed);
+    return std::make_shared<Function>(name, params, body, is_sig, is_fixed);
 }
 
 std::shared_ptr<Stmt> Parser::returnStatement()
 {
     Token keyword = previous();
-    std::optional<std::shared_ptr<Expr>> value;
+    std::shared_ptr<Expr> value;
     if (!check(SINGLE_SEMICOLON, 0))
     {
         value = expression();
-    }
-    else
-    {
-        value = std::nullopt;
     }
 
     consume(SINGLE_SEMICOLON, "Expect ';' after return value.");
@@ -368,10 +364,10 @@ std::shared_ptr<Stmt> Parser::ifStatement()
     consume(RIGHT_PAREN, "Expect ')' after if condition.");
 
     std::shared_ptr<Stmt> then_branch(statement());
-    std::optional<std::shared_ptr<Stmt>> else_branch(std::nullopt);
+    std::shared_ptr<Stmt> else_branch;
     if (match(ELSE))
     {
-        else_branch.emplace(statement());
+        else_branch = statement();
     }
 
     return std::make_shared<If>(condition, then_branch, else_branch);
@@ -462,13 +458,13 @@ std::shared_ptr<Stmt> Parser::printStatement()
     return std::make_shared<Print>(value);
 }
 
-std::shared_ptr<Stmt> Parser::classDeclaration(const bool is_fixed)
+std::shared_ptr<Stmt> Parser::classDeclaration(bool is_fixed)
 {
     Token name(consume(IDENTIFIER, "Expect class name."));
 
-    std::optional<std::shared_ptr<Expr>> superclass(std::nullopt);
+    std::shared_ptr<Expr> superclass;
     if (match(LESS))
-        superclass.emplace(expression());
+        superclass = expression();
 
     consume(LEFT_BRACE, "Expect '{' before class body.");
 
@@ -476,15 +472,15 @@ std::shared_ptr<Stmt> Parser::classDeclaration(const bool is_fixed)
     std::vector<std::shared_ptr<Function>> instance_methods;
     while (!isAtEnd() && !check(RIGHT_BRACE, 0))
     {
-        bool is_virtual{match(SIG)};
+        bool is_sig{match(SIG)};
 
         if (match(CLASS))
         {
-            class_methods.emplace_back(functionStatement("class_method", is_virtual, is_fixed));
+            class_methods.emplace_back(functionStatement("class_method", is_sig, is_fixed));
         }
         else
         {
-            instance_methods.emplace_back(functionStatement("instance_method", is_virtual, is_fixed));
+            instance_methods.emplace_back(functionStatement("instance_method", is_sig, is_fixed));
         }
     }
 
@@ -513,15 +509,15 @@ std::shared_ptr<Expr> Parser::assignment()
         Token equals(previous());
         std::shared_ptr<Expr> value(assignment());
 
-        if (auto *var_expr = dynamic_cast<Variable *>(expr.get()))
+        if (auto var_expr = std::dynamic_pointer_cast<Variable>(expr))
         {
             return std::make_shared<Assign>(var_expr->name, value);
         }
-        else if (auto *get = dynamic_cast<Get *>(expr.get()))
+        else if (auto get = std::dynamic_pointer_cast<Get>(expr))
         {
             return std::make_shared<Set>(get->object, get->name, value);
         }
-        else if (dynamic_cast<Access *>(expr.get()))
+        else if (std::dynamic_pointer_cast<Access>(expr))
         {
             return std::make_shared<ArraySet>(expr, value, equals);
         }

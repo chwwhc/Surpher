@@ -24,7 +24,7 @@ struct SurpherFunction : SurpherCallable
 {
     const bool is_initializer;
     const bool is_partial;
-    const bool is_virtual;
+    const bool is_sig;
     const std::shared_ptr<Environment> closure;
     const std::shared_ptr<Function> declaration;
 
@@ -33,22 +33,22 @@ struct SurpherFunction : SurpherCallable
     std::any call(Interpreter &interpreter, const std::vector<std::any> &arguments) override;
     std::string SurpherCallableToString() override;
 
-    std::shared_ptr<SurpherFunction> bind(const std::shared_ptr<SurpherInstance> &instance);
+    std::shared_ptr<SurpherCallable> bind(const std::shared_ptr<SurpherInstance> &instance);
 };
 
 struct SurpherClass : SurpherCallable, SurpherInstance
 {
     const std::string name;
 
-    std::unordered_map<std::string, std::shared_ptr<SurpherFunction>> instance_methods;
+    std::unordered_map<std::string, std::shared_ptr<SurpherCallable>> instance_methods;
 
-    std::unordered_map<std::string, std::shared_ptr<SurpherFunction>> class_methods;
+    std::unordered_map<std::string, std::shared_ptr<SurpherCallable>> class_methods;
 
-    const std::shared_ptr<SurpherClass> superclass;
+    std::shared_ptr<SurpherCallable> superclass;
 
-    SurpherClass(std::string name, std::unordered_map<std::string, std::shared_ptr<SurpherFunction>> instance_methods,
-                 std::unordered_map<std::string, std::shared_ptr<SurpherFunction>> class_methods,
-                 std::shared_ptr<SurpherClass> superclass);
+    SurpherClass(std::string name, std::unordered_map<std::string, std::shared_ptr<SurpherCallable>> instance_methods,
+                 std::unordered_map<std::string, std::shared_ptr<SurpherCallable>> class_methods,
+                 std::shared_ptr<SurpherCallable> superclass);
 
     uint32_t arity() override;
 
@@ -56,8 +56,8 @@ struct SurpherClass : SurpherCallable, SurpherInstance
 
     std::string SurpherCallableToString() override;
 
-    std::shared_ptr<SurpherFunction> findInstanceMethod(const std::string &methodName);
+    std::shared_ptr<SurpherCallable> findInstanceMethod(const std::string &methodName);
 
-    std::shared_ptr<SurpherFunction> findClassMethod(const std::string &methodName);
+    std::shared_ptr<SurpherCallable> findClassMethod(const std::string &methodName);
 };
 #endif // SURPHER_SURPHERCALLABLE_HPP

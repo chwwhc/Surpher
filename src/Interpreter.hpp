@@ -36,8 +36,6 @@ private:
 
     void execute(const std::shared_ptr<Stmt> &stmt);
 
-    void auxCleanUp();
-
 public:
     Interpreter();
 

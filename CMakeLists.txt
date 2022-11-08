@@ -17,4 +17,5 @@ add_executable(Surpher
         src/SurpherCallable.cpp src/Resolver.hpp src/Resolver.cpp src/SurpherInstance.hpp src/SurpherInstance.cpp 
         src/SurpherNamespace.hpp src/SurpherNamespace.cpp src/built_in_utils/IO.hpp src/built_in_utils/IO.cpp src/built_in_utils/Global.hpp 
         src/built_in_utils/Global.cpp src/built_in_utils/NativeFunction.hpp src/built_in_utils/Math.cpp src/built_in_utils/Math.hpp 
-        src/built_in_utils/String.cpp src/built_in_utils/String.hpp src/built_in_utils/Utils.hpp src/built_in_utils/Utils.cpp)
+        src/built_in_utils/String.cpp src/built_in_utils/String.hpp src/built_in_utils/Chrono.cpp src/built_in_utils/Chrono.hpp
+        src/built_in_utils/Utils.hpp src/built_in_utils/Utils.cpp)

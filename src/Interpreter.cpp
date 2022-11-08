@@ -29,14 +29,7 @@ std::any Interpreter::visitUnaryExpr(const std::shared_ptr<Unary> &expr)
     {
     case MINUS:
         checkNumberOperands(expr->op, {right});
-        if (right.type() == typeid(long double))
-        {
-            return -std::any_cast<long double>(right);
-        }
-        else
-        {
-            return -std::any_cast<int64_t>(right);
-        }
+        return -std::any_cast<long double>(right);
     case BANG:
         return !isTruthy(right);
     default:
@@ -313,21 +306,13 @@ std::string Interpreter::stringify(const std::any &value)
     {
         return std::any_cast<bool>(value) ? "true" : "false";
     }
-    else if (value.type() == typeid(std::shared_ptr<NativeFunction>))
+    else if (value.type() == typeid(std::shared_ptr<SurpherCallable>))
     {
-        return (std::any_cast<std::shared_ptr<NativeFunction>>(value))->SurpherCallableToString();
-    }
-    else if (value.type() == typeid(std::shared_ptr<SurpherFunction>))
-    {
-        return (std::any_cast<std::shared_ptr<SurpherFunction>>(value))->SurpherCallableToString();
+        return (std::any_cast<std::shared_ptr<SurpherCallable>>(value))->SurpherCallableToString();
     }
     else if (value.type() == typeid(std::shared_ptr<SurpherInstance>))
     {
         return (std::any_cast<std::shared_ptr<SurpherInstance>>(value))->SurpherInstanceToString();
-    }
-    else if (value.type() == typeid(std::shared_ptr<SurpherClass>))
-    {
-        return (std::any_cast<std::shared_ptr<SurpherClass>>(value))->SurpherCallableToString();
     }
     else if (value.type() == typeid(std::shared_ptr<SurpherNamespace>))
     {
@@ -377,16 +362,16 @@ std::any Interpreter::visitIfStmt(const std::shared_ptr<If> &stmt)
     {
         execute(stmt->true_branch);
     }
-    else if (stmt->else_branch.has_value())
+    else if (stmt->else_branch)
     {
-        execute(stmt->else_branch.value());
+        execute(stmt->else_branch);
     }
     return {};
 }
 
 std::any Interpreter::visitPipeExpr(const std::shared_ptr<Pipe> &expr)
 {
-    if (Call *right_callable = dynamic_cast<Call *>(expr->right.get()))
+    if (auto right_callable = std::dynamic_pointer_cast<Call>(expr->right))
     {
         right_callable->arguments.insert(right_callable->arguments.begin(), expr->left);
 
@@ -447,71 +432,64 @@ std::any Interpreter::visitContinueStmt(const std::shared_ptr<Continue> &stmt)
 std::any Interpreter::visitCallExpr(const std::shared_ptr<Call> &expr)
 {
     std::any callee(evaluate(expr->callee));
-
     std::vector<std::any> arguments;
+    std::shared_ptr<SurpherCallable> callable;
+
     for (const auto &argument : expr->arguments)
     {
         arguments.emplace_back(evaluate(argument));
     }
-    std::shared_ptr<SurpherCallable> callable;
 
-    if (callee.type() == typeid(std::shared_ptr<SurpherFunction>))
+    if (callee.type() == typeid(std::shared_ptr<SurpherCallable>))
     {
-        auto fun_callable(std::any_cast<std::shared_ptr<SurpherFunction>>(callee));
-        if (fun_callable->is_virtual)
+        callable = std::any_cast<std::shared_ptr<SurpherCallable>>(callee);
+        if (auto surpher_fun = std::dynamic_pointer_cast<SurpherFunction>(callable))
         {
-            throw RuntimeError(fun_callable->declaration->name, "Cannot invoke a virtual method.");
-        }
-
-        if (arguments.size() > fun_callable->arity())
-        {
-            throw RuntimeError(expr->paren,
-                               "Expected " + std::to_string(fun_callable->arity()) + " arguments but got " +
-                                   std::to_string(arguments.size()) + ".");
-        }
-        else if (arguments.size() < fun_callable->arity())
-        {
-            std::shared_ptr<Function> partial_fun(std::make_shared<Function>(
-                Token("partial-" + fun_callable->declaration->name.lexeme, fun_callable->declaration->name.literal,
-                      fun_callable->declaration->name.token_type, fun_callable->declaration->name.line),
-                std::vector<Token>(fun_callable->declaration->params.begin() + arguments.size(),
-                                   fun_callable->declaration->params.end()),
-                fun_callable->declaration->body, fun_callable->is_virtual, true));
-            for (size_t i = 0; i < arguments.size(); i++)
+            if (surpher_fun->is_sig)
             {
-                fun_callable->closure->define(fun_callable->declaration->params[i], arguments[i], true);
+                throw RuntimeError(surpher_fun->declaration->name, "Cannot invoke a function signature.");
             }
-            std::shared_ptr<SurpherFunction> new_fun(std::make_shared<SurpherFunction>(partial_fun, fun_callable->closure,
-                                                                                       fun_callable->is_initializer, true));
-            return new_fun;
+
+            if (arguments.size() > surpher_fun->arity())
+            {
+                throw RuntimeError(expr->paren,
+                                   "Expected " + std::to_string(surpher_fun->arity()) + " arguments but got " +
+                                       std::to_string(arguments.size()) + ".");
+            }
+            else if (arguments.size() < surpher_fun->arity())
+            {
+                std::shared_ptr<Function> partial_fun(std::make_shared<Function>(
+                    Token("partial-" + surpher_fun->declaration->name.lexeme, surpher_fun->declaration->name.literal,
+                          surpher_fun->declaration->name.token_type, surpher_fun->declaration->name.line),
+                    std::vector<Token>(surpher_fun->declaration->params.begin() + arguments.size(),
+                                       surpher_fun->declaration->params.end()),
+                    surpher_fun->declaration->body, surpher_fun->is_sig, true));
+                for (size_t i = 0; i < arguments.size(); i++)
+                {
+                    surpher_fun->closure->define(surpher_fun->declaration->params[i], arguments[i], true);
+                }
+                std::shared_ptr<SurpherCallable> new_fun(std::make_shared<SurpherFunction>(partial_fun, surpher_fun->closure,
+                                                                                           surpher_fun->is_initializer, true));
+                return new_fun;
+            }
+            else
+            {
+                return surpher_fun->call(*this, arguments);
+            }
         }
-        else
+        else if (auto native_fun = std::dynamic_pointer_cast<NativeFunction>(callable))
         {
-            return fun_callable->call(*this, arguments);
+            native_fun->paren = expr->paren;
         }
-    }
-    else if (callee.type() == typeid(std::shared_ptr<SurpherClass>))
-    {
-        callable = std::any_cast<std::shared_ptr<SurpherClass>>(callee);
-    }
-    else if (callee.type() == typeid(std::shared_ptr<NativeFunction>))
-    {
-        auto native_function = static_cast<std::shared_ptr<NativeFunction>>(std::any_cast<std::shared_ptr<NativeFunction>>(callee));
-        native_function->paren = expr->paren;
-        callable = native_function;
-    }
-    else
-    {
-        throw RuntimeError(expr->paren, "Not a callable instance.");
-    }
+        if (arguments.size() != callable->arity())
+        {
+            throw RuntimeError(expr->paren, "Expected " + std::to_string(callable->arity()) + " arguments but got " +
+                                                std::to_string(arguments.size()) + ".");
+        }
 
-    if (arguments.size() != callable->arity())
-    {
-        throw RuntimeError(expr->paren, "Expected " + std::to_string(callable->arity()) + " arguments but got " +
-                                            std::to_string(arguments.size()) + ".");
+        return callable->call(*this, arguments);
     }
-
-    return callable->call(*this, arguments);
+    throw RuntimeError(expr->paren, "Not a callable instance.");
 }
 
 Interpreter::Interpreter()
@@ -520,11 +498,13 @@ Interpreter::Interpreter()
     environment->define("IO", IO(), true);
     environment->define("Math", Math(), true);
     environment->define("String", String(), true);
+   // environment->define("Concurrency", Concurrency(), true);
+    environment->define("Chrono", Chrono(), true);
 }
 
 std::any Interpreter::visitFunctionStmt(const std::shared_ptr<Function> &stmt)
 {
-    std::shared_ptr<SurpherFunction> function(std::make_shared<SurpherFunction>(stmt, environment, false, false));
+    std::shared_ptr<SurpherCallable> function(std::make_shared<SurpherFunction>(stmt, environment, false, false));
     environment->define(stmt->name, std::move(function), stmt->is_fixed);
     return {};
 }
@@ -532,9 +512,9 @@ std::any Interpreter::visitFunctionStmt(const std::shared_ptr<Function> &stmt)
 std::any Interpreter::visitReturnStmt(const std::shared_ptr<Return> &stmt)
 {
     std::any value;
-    if (stmt->value.has_value())
+    if (stmt->value)
     {
-        value = evaluate(stmt->value.value());
+        value = evaluate(stmt->value);
     }
 
     throw ReturnError(value);
@@ -550,7 +530,7 @@ std::any Interpreter::visitLambdaExpr(const std::shared_ptr<Lambda> &expr)
     std::list<std::shared_ptr<Stmt>> lambda_return;
     lambda_return.emplace_back(std::make_shared<Return>(Token("return", {}, RETURN, expr->name.line), expr->body));
 
-    auto function = std::make_shared<SurpherFunction>(
+    std::shared_ptr<SurpherCallable> function = std::make_shared<SurpherFunction>(
         std::make_shared<Function>(expr->name, expr->params, std::move(lambda_return), false, true), environment, false,
         false);
     return function;
@@ -592,70 +572,81 @@ std::any Interpreter::visitClassStmt(const std::shared_ptr<Class> &stmt)
 {
     std::any superclass;
     std::shared_ptr<SurpherClass> superclass_cast;
-    std::unordered_map<std::string, std::shared_ptr<SurpherFunction>> superclass_instance_methods;
-    std::unordered_map<std::string, std::shared_ptr<SurpherFunction>> superclass_class_methods;
+    std::unordered_map<std::string, std::shared_ptr<SurpherCallable>> superclass_instance_methods;
+    std::unordered_map<std::string, std::shared_ptr<SurpherCallable>> superclass_class_methods;
 
-    if (stmt->superclass.has_value())
+    if (stmt->superclass)
     {
-        superclass = evaluate(stmt->superclass.value());
-        if (superclass.type() != typeid(std::shared_ptr<SurpherClass>))
+        superclass = evaluate(stmt->superclass);
+        if (superclass.type() == typeid(std::shared_ptr<SurpherCallable>))
+        {
+            auto superclass_callable = std::any_cast<std::shared_ptr<SurpherCallable>>(superclass);
+            if (superclass_cast = std::dynamic_pointer_cast<SurpherClass>(superclass_callable))
+            {
+                superclass_class_methods = superclass_cast->class_methods;
+                superclass_instance_methods = superclass_cast->instance_methods;
+            }
+            else
+            {
+                throw RuntimeError(stmt->name, "Superclass must be a class.");
+            }
+        }
+        else
         {
             throw RuntimeError(stmt->name, "Superclass must be a class.");
         }
-
-        superclass_cast = std::any_cast<std::shared_ptr<SurpherClass>>(superclass);
-        superclass_class_methods = superclass_cast->class_methods;
-        superclass_instance_methods = superclass_cast->instance_methods;
     }
 
     environment->define(stmt->name, {}, false);
 
-    if (stmt->superclass.has_value())
+    if (stmt->superclass)
     {
         environment = std::make_shared<Environment>(environment);
         environment->define("super", superclass, true);
     }
 
-    std::unordered_map<std::string, std::shared_ptr<SurpherFunction>> instance_methods;
-    std::unordered_map<std::string, std::shared_ptr<SurpherFunction>> class_methods;
+    std::unordered_map<std::string, std::shared_ptr<SurpherCallable>> instance_methods;
+    std::unordered_map<std::string, std::shared_ptr<SurpherCallable>> class_methods;
     for (const auto &i : stmt->instance_methods)
     {
-        std::shared_ptr<SurpherFunction> function(std::make_shared<SurpherFunction>(i, environment, i->name.lexeme == "init", false));
+        std::shared_ptr<SurpherCallable> function(std::make_shared<SurpherFunction>(i, environment, i->name.lexeme == "init", false));
         instance_methods[i->name.lexeme] = function;
     }
     for (const auto &c : stmt->class_methods)
     {
-        std::shared_ptr<SurpherFunction> function(std::make_shared<SurpherFunction>(c, environment, false, false));
+        std::shared_ptr<SurpherCallable> function(std::make_shared<SurpherFunction>(c, environment, false, false));
         class_methods[c->name.lexeme] = function;
     }
 
-    std::shared_ptr<SurpherClass> surpher_class(std::make_shared<SurpherClass>(stmt->name.lexeme, instance_methods, class_methods,
-                                                                               superclass_cast));
+    std::shared_ptr<SurpherCallable> surpher_class(std::make_shared<SurpherClass>(stmt->name.lexeme, instance_methods, class_methods,
+                                                                                  superclass_cast));
 
     if (superclass_cast)
     {
         environment = environment->getEnclosing();
     }
 
-    for (const auto &i : superclass_instance_methods)
+    for (const auto &i_callable : superclass_instance_methods)
     {
-        if (i.second->is_virtual &&
-            (instance_methods.find(i.first) == instance_methods.end() || instance_methods[i.first]->is_virtual))
+        auto i_function = std::dynamic_pointer_cast<SurpherFunction>(i_callable.second);
+        if (i_function->is_sig &&
+            (instance_methods.find(i_callable.first) == instance_methods.end() || std::dynamic_pointer_cast<SurpherFunction>(instance_methods[i_callable.first])->is_sig))
         {
             environment->erase(stmt->name.lexeme);
-            throw RuntimeError(i.second->declaration->name,
-                               "Derived class \"" + stmt->name.lexeme + "\" must implement virtual method \"" + i.first +
+            throw RuntimeError(i_function->declaration->name,
+                               "Derived class \"" + stmt->name.lexeme + "\" must implement virtual method \"" + i_callable.first +
                                    "\" from super class \"" + superclass_cast->name + "\".");
         }
     }
-    for (const auto &c : superclass_class_methods)
+    for (const auto &c_callable : superclass_class_methods)
     {
-        if (c.second->is_virtual &&
-            (class_methods.find(c.first) == class_methods.end() || class_methods[c.first]->is_virtual))
+        auto c_function = std::dynamic_pointer_cast<SurpherFunction>(c_callable.second);
+        if (c_function->is_sig &&
+            (class_methods.find(c_callable.first) == class_methods.end() || std::dynamic_pointer_cast<SurpherFunction>(class_methods[c_callable.first])->is_sig))
         {
             environment->erase(stmt->name.lexeme);
-            throw RuntimeError(c.second->declaration->name,
-                               "Derived class \"" + stmt->name.lexeme + "\" must implement virtual method \"" + c.first +
+            throw RuntimeError(c_function->declaration->name,
+                               "Derived class \"" + stmt->name.lexeme + "\" must implement virtual method \"" + c_callable.first +
                                    "\" from super class \"" + superclass_cast->name + "\".");
         }
     }
@@ -671,15 +662,17 @@ std::any Interpreter::visitGetExpr(const std::shared_ptr<Get> &expr)
 
     if (object.type() == typeid(std::shared_ptr<SurpherInstance>))
     {
-        return (std::any_cast<std::shared_ptr<SurpherInstance>>(object))->get(expr->name);
+        return std::any_cast<std::shared_ptr<SurpherInstance>>(object)->get(expr->name);
     }
-    else if (object.type() == typeid(std::shared_ptr<SurpherClass>))
+    else if (object.type() == typeid(std::shared_ptr<SurpherCallable>))
     {
-        return std::static_pointer_cast<SurpherInstance>((std::any_cast<std::shared_ptr<SurpherClass>>)(object))->get(expr->name);
+        auto a = std::any_cast<std::shared_ptr<SurpherCallable>>(object);
+        auto b = std::static_pointer_cast<SurpherInstance>(std::static_pointer_cast<SurpherClass>(std::any_cast<std::shared_ptr<SurpherCallable>>(object)))->get(expr->name);
+        return std::static_pointer_cast<SurpherInstance>(std::static_pointer_cast<SurpherClass>(std::any_cast<std::shared_ptr<SurpherCallable>>(object)))->get(expr->name);
     }
     else if (object.type() == typeid(std::shared_ptr<SurpherNamespace>))
     {
-        return (std::any_cast<std::shared_ptr<SurpherNamespace>>(object))->get(expr->name);
+        return std::any_cast<std::shared_ptr<SurpherNamespace>>(object)->get(expr->name);
     }
     throw RuntimeError(expr->name, "Can only get from a module or a class instance.");
 }
@@ -712,18 +705,18 @@ std::any Interpreter::visitThisExpr(const std::shared_ptr<This> &expr)
 std::any Interpreter::visitSuperExpr(const std::shared_ptr<Super> &expr)
 {
     uint32_t distance(locals[expr]);
-    auto superclass(std::any_cast<std::shared_ptr<SurpherClass>>(environment->getAt(distance, "super")));
+    auto superclass(std::static_pointer_cast<SurpherClass>(std::any_cast<std::shared_ptr<SurpherCallable>>(environment->getAt(distance, "super"))));
 
     auto object(std::any_cast<std::shared_ptr<SurpherInstance>>(environment->getAt(distance - 1, "this")));
 
-    std::shared_ptr<SurpherFunction> method(superclass->findInstanceMethod(expr->method.lexeme));
+    std::shared_ptr<SurpherCallable> method(superclass->findInstanceMethod(expr->method.lexeme));
     if (!method)
         method = superclass->findClassMethod(expr->method.lexeme);
 
     if (!method)
         throw RuntimeError(expr->method, "Undefined property \"" + expr->method.lexeme + "\".");
 
-    return method->bind(object);
+    return std::dynamic_pointer_cast<SurpherFunction>(method)->bind(object);
 }
 
 void Interpreter::appendScriptFront(const std::list<std::shared_ptr<Stmt>> &script)
