@@ -3,6 +3,7 @@
 #include <numeric>
 #include <functional>
 #include <utility>
+#include <execution>
 #include <sstream>
 
 #include "Interpreter.hpp"
@@ -29,7 +30,7 @@ std::any Interpreter::visitUnaryExpr(const std::shared_ptr<Unary> &expr)
     {
     case MINUS:
         checkNumberOperands(expr->op, {right});
-        return -std::any_cast<long double>(right);
+        return -std::any_cast<const long double &>(right);
     case BANG:
         return !isTruthy(right);
     default:
@@ -45,18 +46,18 @@ std::any Interpreter::visitBinaryExpr(const std::shared_ptr<Binary> &expr)
     {
     case MINUS:
         checkNumberOperands(expr->op, {left, right});
-        return std::any_cast<long double>(left) -
-               std::any_cast<long double>(right);
+        return std::any_cast<const long double &>(left) -
+               std::any_cast<const long double &>(right);
     case SLASH:
         checkNumberOperands(expr->op, {left, right});
         if (std::any_cast<long double>(right) == 0)
             throw RuntimeError(expr->op, "Denominator cannot be 0.");
-        return std::any_cast<long double>(left) /
-               std::any_cast<long double>(right);
+        return std::any_cast<const long double &>(left) /
+               std::any_cast<const long double &>(right);
     case STAR:
         checkNumberOperands(expr->op, {left, right});
-        return std::any_cast<long double>(left) *
-               std::any_cast<long double>(right);
+        return std::any_cast<const long double &>(left) *
+               std::any_cast<const long double &>(right);
     case PLUS:
     {
         if (left.type() == typeid(std::string) || right.type() == typeid(std::string))
@@ -67,48 +68,48 @@ std::any Interpreter::visitBinaryExpr(const std::shared_ptr<Binary> &expr)
         else
         {
             checkNumberOperands(expr->op, {left, right});
-            return std::any_cast<long double>(left) +
-                   std::any_cast<long double>(right);
+            return std::any_cast<const long double &>(left) +
+                   std::any_cast<const long double &>(right);
         }
     }
     case LEFT_SHIFT:
         checkNumberOperands(expr->op, {left, right});
-        return static_cast<long double>(static_cast<int64_t>(std::any_cast<long double>(left)) << static_cast<int64_t>(std::any_cast<long double>(right)));
+        return static_cast<long double>(static_cast<int64_t>(std::any_cast<const long double &>(left)) << static_cast<int64_t>(std::any_cast<const long double &>(right)));
     case RIGHT_SHIFT:
         checkNumberOperands(expr->op, {left, right});
-        return static_cast<long double>(static_cast<int64_t>(std::any_cast<long double>(left)) >> static_cast<int64_t>(std::any_cast<long double>(right)));
+        return static_cast<long double>(static_cast<int64_t>(std::any_cast<const long double &>(left)) >> static_cast<int64_t>(std::any_cast<const long double &>(right)));
     case CARET:
         checkNumberOperands(expr->op, {left, right});
-        return static_cast<long double>(static_cast<int64_t>(std::any_cast<long double>(left)) ^ static_cast<int64_t>(std::any_cast<long double>(right)));
+        return static_cast<long double>(static_cast<int64_t>(std::any_cast<const long double &>(left)) ^ static_cast<int64_t>(std::any_cast<const long double &>(right)));
     case PERCENT:
         checkNumberOperands(expr->op, {left, right});
         if (std::any_cast<long double>(right) == 0)
             throw RuntimeError(expr->op, "Denominator cannot be 0.");
-        return std::fmod(std::any_cast<long double>(left), std::any_cast<long double>(right));
+        return std::fmod(std::any_cast<const long double &>(left), std::any_cast<const long double &>(right));
     case SINGLE_AMPERSAND:
         checkNumberOperands(expr->op, {left, right});
-        return static_cast<long double>(static_cast<int64_t>(std::round(std::any_cast<long double>(left))) &
-                                        static_cast<int64_t>(std::round(std::any_cast<long double>(right))));
+        return static_cast<long double>(static_cast<int64_t>(std::any_cast<const long double &>(left)) &
+                                        static_cast<int64_t>(std::any_cast<const long double &>(right)));
     case SINGLE_BAR:
         checkNumberOperands(expr->op, {left, right});
-        return static_cast<long double>(static_cast<int64_t>(std::round(std::any_cast<long double>(left))) |
-                                        static_cast<int64_t>(std::round(std::any_cast<long double>(right))));
+        return static_cast<long double>(static_cast<int64_t>(std::any_cast<const long double &>(left)) |
+                                        static_cast<int64_t>(std::any_cast<const long double &>(right)));
     case GREATER:
         checkNumberOperands(expr->op, {left, right});
-        return std::any_cast<long double>(left) >
-               std::any_cast<long double>(right);
+        return std::any_cast<const long double &>(left) >
+               std::any_cast<const long double &>(right);
     case GREATER_EQUAL:
         checkNumberOperands(expr->op, {left, right});
-        return std::any_cast<long double>(left) >=
-               std::any_cast<long double>(right);
+        return std::any_cast<const long double &>(left) >=
+               std::any_cast<const long double &>(right);
     case LESS:
         checkNumberOperands(expr->op, {left, right});
-        return std::any_cast<long double>(left) <
-               std::any_cast<long double>(right);
+        return std::any_cast<const long double &>(left) <
+               std::any_cast<const long double &>(right);
     case LESS_EQUAL:
         checkNumberOperands(expr->op, {left, right});
-        return std::any_cast<long double>(left) <=
-               std::any_cast<long double>(right);
+        return std::any_cast<const long double &>(left) <=
+               std::any_cast<const long double &>(right);
     case BANG_EQUAL:
         return !isEqual(left, right);
     case DOUBLE_EQUAL:
@@ -176,7 +177,7 @@ std::any Interpreter::visitHaltStmt(const std::shared_ptr<Halt> &stmt)
     }
     else
     {
-        throw RuntimeError(stmt->keyword, std::any_cast<std::string>(message_str));
+        throw RuntimeError(stmt->keyword, std::any_cast<const std::string &>(message_str));
     }
 }
 
@@ -188,8 +189,8 @@ std::any Interpreter::visitBlockStmt(const std::shared_ptr<Block> &stmt)
 
 std::any Interpreter::visitVarStmt(const std::shared_ptr<Var> &stmt)
 {
-    for (const auto &var_init : stmt->var_inits)
-        environment->define(std::get<0>(var_init), evaluate(std::get<2>(var_init)), std::get<1>(var_init));
+    std::for_each(std::execution::seq, stmt->var_inits.begin(), stmt->var_inits.end(), [this](const auto &a)
+                  { environment->define(std::get<0>(a), evaluate(std::get<2>(a)), std::get<1>(a)); });
 
     return {};
 }
@@ -202,10 +203,10 @@ std::any Interpreter::visitVariableExpr(const std::shared_ptr<Variable> &expr)
 std::any Interpreter::visitCommaExpr(const std::shared_ptr<Comma> &expr)
 {
     std::any ret;
-    for (const auto &e : expr->expressions)
-        ret = evaluate(e);
+    std::for_each(std::execution::seq, expr->expressions.begin(), expr->expressions.end() - 1, [this](const auto &a)
+                  { evaluate(a); });
 
-    return ret;
+    return evaluate(expr->expressions.back());
 }
 
 std::any Interpreter::visitAssignExpr(const std::shared_ptr<Assign> &expr)
@@ -269,9 +270,9 @@ bool Interpreter::isEqual(const std::any &a, const std::any &b)
     if (a.type() == typeid(nullptr))
         return false;
     if (a.type() == typeid(std::string) && b.type() == typeid(std::string))
-        return std::any_cast<std::string>(a) == std::any_cast<std::string>(b);
+        return std::any_cast<const std::string &>(a) == std::any_cast<const std::string &>(b);
     if (a.type() == typeid(long double) && b.type() == typeid(long double))
-        return std::any_cast<long double>(a) == std::any_cast<long double>(b);
+        return std::any_cast<const long double &>(a) == std::any_cast<const long double &>(b);
     if (a.type() == typeid(bool) && b.type() == typeid(bool))
         return std::any_cast<bool>(a) == std::any_cast<bool>(b);
     return false;
@@ -285,9 +286,9 @@ std::string Interpreter::stringify(const std::any &value)
     }
     else if (value.type() == typeid(long double))
     {
-        auto double_val(std::any_cast<long double>(value));
+        auto double_val(std::any_cast<const long double &>(value));
         std::string num_str(std::to_string(double_val));
-        if (floor(double_val) == double_val)
+        if (std::floor(double_val) == double_val)
         {
             uint32_t point_index = 0;
             while (point_index < num_str.size() && num_str[point_index] != '.')
@@ -300,7 +301,7 @@ std::string Interpreter::stringify(const std::any &value)
     }
     else if (value.type() == typeid(std::string))
     {
-        return std::any_cast<std::string>(value);
+        return std::any_cast<const std::string &>(value);
     }
     else if (value.type() == typeid(bool))
     {
@@ -328,28 +329,28 @@ std::string Interpreter::stringify(const std::any &value)
 
         std::ostringstream str_builder;
         str_builder << "[";
-        for (const auto &expr : *expr_vector)
-            str_builder << stringify(expr) << ", ";
-        auto expr_vector_str{str_builder.str()};
-
-        expr_vector_str.pop_back();
-        expr_vector_str.pop_back();
+        std::for_each(std::execution::seq, expr_vector->begin(), expr_vector->end(), [&str_builder](const auto &a)
+                      { str_builder << stringify(a) << ", "; });
+        std::string expr_vector_str{str_builder.str().begin(), str_builder.str().end() - 2};
 
         expr_vector_str.push_back(']');
         return expr_vector_str;
     }
-    return "Error in stringify: unrecognized literal type.";
+    std::ostringstream str_builder;
+    str_builder << &value;
+    return "<unknown type> at: " + str_builder.str();
 }
 
 void Interpreter::checkNumberOperands(const Token &operator_token, const std::vector<std::any> &operands)
 {
     bool result{std::transform_reduce(
+        std::execution::par,
         operands.begin(), operands.end(), true,
-        [&](const bool &a, const bool &b)
+        [](const bool a, const bool b)
         {
             return a && b;
         },
-        [&](const std::any &operand)
+        [](const std::any &operand)
         { return operand.type() == typeid(long double); })};
     if (result)
         return;
@@ -432,13 +433,10 @@ std::any Interpreter::visitContinueStmt(const std::shared_ptr<Continue> &stmt)
 std::any Interpreter::visitCallExpr(const std::shared_ptr<Call> &expr)
 {
     std::any callee(evaluate(expr->callee));
-    std::vector<std::any> arguments;
+    std::vector<std::any> arguments(expr->arguments.size());
+    std::transform(std::execution::par_unseq, expr->arguments.begin(), expr->arguments.end(), arguments.begin(), [this](const auto &a)
+                   { return evaluate(a); });
     std::shared_ptr<SurpherCallable> callable;
-
-    for (const auto &argument : expr->arguments)
-    {
-        arguments.emplace_back(evaluate(argument));
-    }
 
     if (callee.type() == typeid(std::shared_ptr<SurpherCallable>))
     {
@@ -464,9 +462,12 @@ std::any Interpreter::visitCallExpr(const std::shared_ptr<Call> &expr)
                     std::vector<Token>(surpher_fun->declaration->params.begin() + arguments.size(),
                                        surpher_fun->declaration->params.end()),
                     surpher_fun->declaration->body, surpher_fun->is_sig, true));
-                for (size_t i = 0; i < arguments.size(); i++)
+#pragma omp parallel for
                 {
-                    surpher_fun->closure->define(surpher_fun->declaration->params[i], arguments[i], true);
+                    for (size_t i = 0; i < arguments.size(); i++)
+                    {
+                        surpher_fun->closure->define(surpher_fun->declaration->params[i], arguments[i], true);
+                    }
                 }
                 std::shared_ptr<SurpherCallable> new_fun(std::make_shared<SurpherFunction>(partial_fun, surpher_fun->closure,
                                                                                            surpher_fun->is_initializer, true));
@@ -498,7 +499,7 @@ Interpreter::Interpreter()
     environment->define("IO", IO(), true);
     environment->define("Math", Math(), true);
     environment->define("String", String(), true);
-   // environment->define("Concurrency", Concurrency(), true);
+    // environment->define("Concurrency", Concurrency(), true);
     environment->define("Chrono", Chrono(), true);
 }
 
@@ -522,7 +523,7 @@ std::any Interpreter::visitReturnStmt(const std::shared_ptr<Return> &stmt)
 
 std::any Interpreter::visitImportStmt(const std::shared_ptr<Import> &stmt)
 {
-    throw ImportError(std::any_cast<std::string>(evaluate(stmt->script)));
+    throw ImportError(std::any_cast<const std::string &>(evaluate(stmt->script)));
 }
 
 std::any Interpreter::visitLambdaExpr(const std::shared_ptr<Lambda> &expr)
@@ -607,16 +608,14 @@ std::any Interpreter::visitClassStmt(const std::shared_ptr<Class> &stmt)
 
     std::unordered_map<std::string, std::shared_ptr<SurpherCallable>> instance_methods;
     std::unordered_map<std::string, std::shared_ptr<SurpherCallable>> class_methods;
-    for (const auto &i : stmt->instance_methods)
-    {
-        std::shared_ptr<SurpherCallable> function(std::make_shared<SurpherFunction>(i, environment, i->name.lexeme == "init", false));
-        instance_methods[i->name.lexeme] = function;
-    }
-    for (const auto &c : stmt->class_methods)
-    {
-        std::shared_ptr<SurpherCallable> function(std::make_shared<SurpherFunction>(c, environment, false, false));
-        class_methods[c->name.lexeme] = function;
-    }
+    std::for_each(std::execution::par_unseq, stmt->instance_methods.begin(), stmt->instance_methods.end(), [&instance_methods, this](const auto &a)
+                  {
+                std::shared_ptr<SurpherCallable> function(std::make_shared<SurpherFunction>(a, environment, a->name.lexeme == "init", false));
+        instance_methods[a->name.lexeme] = function; });
+    std::for_each(std::execution::par_unseq, stmt->class_methods.begin(), stmt->class_methods.end(), [&class_methods, this](const auto &a)
+                  {
+                std::shared_ptr<SurpherCallable> function(std::make_shared<SurpherFunction>(a, environment, a->name.lexeme == "init", false));
+        class_methods[a->name.lexeme] = function; });
 
     std::shared_ptr<SurpherCallable> surpher_class(std::make_shared<SurpherClass>(stmt->name.lexeme, instance_methods, class_methods,
                                                                                   superclass_cast));
@@ -628,7 +627,7 @@ std::any Interpreter::visitClassStmt(const std::shared_ptr<Class> &stmt)
 
     for (const auto &i_callable : superclass_instance_methods)
     {
-        auto i_function = std::dynamic_pointer_cast<SurpherFunction>(i_callable.second);
+        auto i_function = std::static_pointer_cast<SurpherFunction>(i_callable.second);
         if (i_function->is_sig &&
             (instance_methods.find(i_callable.first) == instance_methods.end() || std::dynamic_pointer_cast<SurpherFunction>(instance_methods[i_callable.first])->is_sig))
         {
@@ -640,7 +639,7 @@ std::any Interpreter::visitClassStmt(const std::shared_ptr<Class> &stmt)
     }
     for (const auto &c_callable : superclass_class_methods)
     {
-        auto c_function = std::dynamic_pointer_cast<SurpherFunction>(c_callable.second);
+        auto c_function = std::static_pointer_cast<SurpherFunction>(c_callable.second);
         if (c_function->is_sig &&
             (class_methods.find(c_callable.first) == class_methods.end() || std::dynamic_pointer_cast<SurpherFunction>(class_methods[c_callable.first])->is_sig))
         {
@@ -738,7 +737,7 @@ std::any Interpreter::visitArrayExpr(const std::shared_ptr<Array> &expr)
         {
             throw RuntimeError(expr->op, "Size for array can only be a number.");
         }
-        else if (std::any_cast<long double>(actual_size) < 0)
+        else if (std::any_cast<const long double &>(actual_size) < 0)
         {
             throw RuntimeError(expr->op, "Size for array cannot be a negative number.");
         }
@@ -792,12 +791,12 @@ std::any Interpreter::visitArraySetExpr(const std::shared_ptr<ArraySet> &expr)
     {
         throw RuntimeError(expr->op, "Index for access operator can only be a number.");
     }
-    else if (std::any_cast<long double>(index) < 0)
+    else if (std::any_cast<const long double &>(index) < 0)
     {
         throw RuntimeError(expr->op, "Index cannot be a negative number.");
     }
 
-    auto index_cast{static_cast<uint64_t>((std::any_cast<long double>(index)))};
+    auto index_cast{static_cast<uint64_t>((std::any_cast<const long double &>(index)))};
     auto arr_name_cast{std::any_cast<SurpherArrayPtr>(arr_name)};
 
     if (arr_name_cast->size() <= index_cast)

@@ -17,7 +17,7 @@ std::any Floor::call(Interpreter &interpreter, const std::vector<std::any> &argu
         throw RuntimeError(paren, "\"floor\" can only be applied to a numeric.");
     }
 
-    return std::floor(std::any_cast<long double>(value));
+    return std::floor(std::any_cast<long double &>(value));
 }
 
 uint32_t Ceil::arity()
@@ -33,7 +33,7 @@ std::any Ceil::call(Interpreter &interpreter, const std::vector<std::any> &argum
         throw RuntimeError(paren, "\"ceil\" can only be applied to a numeric.");
     }
 
-    return std::ceil(std::any_cast<long double>(value));
+    return std::ceil(std::any_cast<long double &>(value));
 }
 
 uint32_t AbsoluteValue::arity()
@@ -51,10 +51,10 @@ std::any AbsoluteValue::call(Interpreter &interpreter, const std::vector<std::an
 
     if (value.type() == typeid(long double))
     {
-        return std::abs(std::any_cast<long double>(value));
+        return std::abs(std::any_cast<long double &>(value));
     }
 
-    return std::abs(std::any_cast<std::complex<long double>>(value));
+    return std::abs(std::any_cast<std::complex<long double> &>(value));
 }
 
 uint32_t Infinity::arity()
@@ -81,7 +81,7 @@ std::any Power::call(Interpreter &interpreter, const std::vector<std::any> &argu
         throw RuntimeError(paren, "\"pow\" can only be applied to numerics.");
     }
 
-    return std::pow(std::any_cast<long double>(num), std::any_cast<long double>(pow));
+    return std::pow(std::any_cast<long double &>(num), std::any_cast<long double &>(pow));
 }
 
 uint32_t Sin::arity()
@@ -97,7 +97,7 @@ std::any Sin::call(Interpreter &interpreter, const std::vector<std::any> &argume
         throw RuntimeError(paren, "\"sin\" can only be applied to a numeric.");
     }
 
-    return std::sin(std::any_cast<long double>(value));
+    return std::sin(std::any_cast<long double &>(value));
 }
 
 uint32_t Cos::arity()
@@ -113,7 +113,7 @@ std::any Cos::call(Interpreter &interpreter, const std::vector<std::any> &argume
         throw RuntimeError(paren, "\"cos\" can only be applied to a numeric.");
     }
 
-    return std::cos(std::any_cast<long double>(value));
+    return std::cos(std::any_cast<long double &>(value));
 }
 
 uint32_t Tan::arity()
@@ -129,7 +129,7 @@ std::any Tan::call(Interpreter &interpreter, const std::vector<std::any> &argume
         throw RuntimeError(paren, "\"tan\" can only be applied to a numeric.");
     }
 
-    return std::tan(std::any_cast<long double>(value));
+    return std::tan(std::any_cast<long double &>(value));
 }
 
 uint32_t ComplexNumber::arity()
@@ -146,7 +146,7 @@ std::any ComplexNumber::call(Interpreter &interpreter, const std::vector<std::an
         throw RuntimeError(paren, "\"complexNum\" can only be applied to numerics.");
     }
 
-    return std::complex(std::any_cast<long double>(real), std::any_cast<long double>(img));
+    return std::complex(std::any_cast<long double &>(real), std::any_cast<long double &>(img));
 }
 
 uint32_t ComplexAdd::arity()
@@ -163,7 +163,7 @@ std::any ComplexAdd::call(Interpreter &interpreter, const std::vector<std::any> 
         throw RuntimeError(paren, "\"complexAdd\" can only be applied to complex numbers.");
     }
 
-    return std::any_cast<std::complex<long double>>(op1) + std::any_cast<std::complex<long double>>(op2);
+    return std::any_cast<std::complex<long double> &>(op1) + std::any_cast<std::complex<long double> &>(op2);
 }
 
 uint32_t ComplexSub::arity()
@@ -180,7 +180,7 @@ std::any ComplexSub::call(Interpreter &interpreter, const std::vector<std::any> 
         throw RuntimeError(paren, "\"complexSub\" can only be applied to complex numbers.");
     }
 
-    return std::any_cast<std::complex<long double>>(op1) - std::any_cast<std::complex<long double>>(op2);
+    return std::any_cast<std::complex<long double> &>(op1) - std::any_cast<std::complex<long double> &>(op2);
 }
 
 uint32_t ComplexMul::arity()
@@ -197,7 +197,7 @@ std::any ComplexMul::call(Interpreter &interpreter, const std::vector<std::any> 
         throw RuntimeError(paren, "\"complexMul\" can only be applied to complex numbers.");
     }
 
-    return std::any_cast<std::complex<long double>>(op1) * std::any_cast<std::complex<long double>>(op2);
+    return std::any_cast<std::complex<long double> &>(op1) * std::any_cast<std::complex<long double> &>(op2);
 }
 
 uint32_t ComplexDiv::arity()
@@ -213,10 +213,10 @@ std::any ComplexDiv::call(Interpreter &interpreter, const std::vector<std::any> 
     {
         throw RuntimeError(paren, "\"complexDiv\" can only be applied to complex numbers.");
     }
-    else if (std::any_cast<std::complex<long double>>(op2) == std::complex<long double>(0, 0))
+    else if (std::any_cast<std::complex<long double> &>(op2) == std::complex<long double>(0, 0))
     {
         throw RuntimeError(paren, "\"complexDiv\"'s denominator cannot be 0.");
     }
 
-    return std::any_cast<std::complex<long double>>(op1) / std::any_cast<std::complex<long double>>(op2);
+    return std::any_cast<std::complex<long double> &>(op1) / std::any_cast<std::complex<long double> &>(op2);
 }

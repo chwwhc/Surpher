@@ -28,8 +28,8 @@ fixed namespace Container{
         }
 
         class copy(other){
-            var new_arr = [alloc: other.size];
-            for(var i = 0; i < other.size; i = i + 1){
+            var new_arr = [alloc: sizeOf(other)];
+            for(var i = 0; i < sizeOf(other); i = i + 1){
                 @i->new_arr = @i->other.arr;
             }
             return Container.Vector(new_arr);

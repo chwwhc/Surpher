@@ -166,8 +166,8 @@ class BostonCream < Doughnut {
 BostonCream().cook();
 ```
 
-### 3. Rendering a Mandelbrot set
-Please see
+### 3. Mandelbrot set renderer
+Please refer
 ```
 ./example_programs/fractal_renderer/mandelbrot_set_renderer.sfr
 ```

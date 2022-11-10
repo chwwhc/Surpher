@@ -12,7 +12,7 @@ std::any Ascii::call(Interpreter &interpreter, const std::vector<std::any> &argu
     auto any_value = arguments[0];
     if (any_value.type() == typeid(std::string))
     {
-        auto value = std::any_cast<std::string>(any_value);
+        auto value = std::any_cast<const std::string &>(any_value);
         if (value.size() == 1)
         {
             return static_cast<long double>(value[0]);
@@ -32,7 +32,7 @@ std::any ToNumber::call(Interpreter &interpreter, const std::vector<std::any> &a
     auto any_value = arguments[0];
     if (any_value.type() == typeid(std::string))
     {
-        auto value = std::any_cast<std::string>(any_value);
+        auto value = std::any_cast<const std::string &>(any_value);
         long double ret;
         try
         {
@@ -48,7 +48,6 @@ std::any ToNumber::call(Interpreter &interpreter, const std::vector<std::any> &a
     throw RuntimeError(paren, "Invalid usage of \"toNumber\". Usage: toNumber(<string encoded number>).");
 }
 
-
 uint32_t ToString::arity()
 {
     return 1;
@@ -62,11 +61,11 @@ std::any ToString::call(Interpreter &interpreter, const std::vector<std::any> &a
     {
         return std::string("nil");
     }
-    else if (value.type() == typeid(long double))
+    else if (value.type() == typeid(long double &))
     {
-        auto double_val(std::any_cast<long double>(value));
+        auto double_val(std::any_cast<long double &>(value));
         std::string num_str(std::to_string(double_val));
-        if (floor(double_val) == double_val)
+        if (std::floor(double_val) == double_val)
         {
             uint32_t point_index = 0;
             while (point_index < num_str.size() && num_str[point_index] != '.')
@@ -79,7 +78,7 @@ std::any ToString::call(Interpreter &interpreter, const std::vector<std::any> &a
     }
     else if (value.type() == typeid(std::string))
     {
-        return std::any_cast<std::string>(value);
+        return std::any_cast<const std::string &>(value);
     }
     else if (value.type() == typeid(bool))
     {
@@ -101,7 +100,7 @@ std::any ToString::call(Interpreter &interpreter, const std::vector<std::any> &a
         std::ostringstream str_builder;
         str_builder << "[";
         for (const auto &expr : *expr_vector)
-            str_builder << std::any_cast<std::string>(call(interpreter, {expr})) << ", ";
+            str_builder << std::any_cast<const std::string &>(call(interpreter, {expr})) << ", ";
         auto expr_vector_str{str_builder.str()};
 
         expr_vector_str.pop_back();
@@ -113,6 +112,6 @@ std::any ToString::call(Interpreter &interpreter, const std::vector<std::any> &a
     }
     else
     {
-        throw RuntimeError(paren, "Type not supported for \"toString\".");
+        throw RuntimeError(paren, "Type not supported for \"tostring\".");
     }
 }

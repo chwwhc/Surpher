@@ -19,3 +19,4 @@ add_executable(Surpher
         src/built_in_utils/Global.cpp src/built_in_utils/NativeFunction.hpp src/built_in_utils/Math.cpp src/built_in_utils/Math.hpp 
         src/built_in_utils/String.cpp src/built_in_utils/String.hpp src/built_in_utils/Chrono.cpp src/built_in_utils/Chrono.hpp
         src/built_in_utils/Utils.hpp src/built_in_utils/Utils.cpp)
+target_link_libraries(${PROJECT_NAME} tbb)

@@ -29,11 +29,11 @@ class Lexer
 
     inline char anyChar();
 
-    char lookAHead(uint32_t offset);
+    inline char lookAHead(uint32_t offset);
 
     inline void addToken(TokenType type);
 
-    void addToken(TokenType type, const std::any &literal);
+    inline void addToken(TokenType type, const std::any &literal);
 
     bool matchNextChar(char expected);
 

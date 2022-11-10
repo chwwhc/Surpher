@@ -51,7 +51,7 @@ bool Lexer::matchNextChar(char expected)
     return true;
 }
 
-void Lexer::addToken(TokenType type, const std::any &literal)
+inline void Lexer::addToken(TokenType type, const std::any &literal)
 {
     token_list.emplace_back(Token(source_code.substr(start, current - start), literal, type, line));
 }
@@ -61,7 +61,7 @@ inline void Lexer::addToken(TokenType type)
     addToken(type, nullptr);
 }
 
-char Lexer::lookAHead(uint32_t offset)
+inline char Lexer::lookAHead(uint32_t offset)
 {
     return (isAtEnd(0) || current + offset >= source_code.size()) ? '\0' : source_code[current + offset];
 }

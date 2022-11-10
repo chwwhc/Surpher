@@ -1,5 +1,6 @@
 #include <utility>
 #include <fstream>
+#include <execution>
 #include <cmath>
 
 #include "SurpherCallable.hpp"
@@ -18,10 +19,15 @@ SurpherFunction::SurpherFunction(std::shared_ptr<Function> declaration, std::sha
 std::any SurpherFunction::call(Interpreter &interpreter, const std::vector<std::any> &arguments)
 {
     auto environment{is_partial ? closure : std::make_shared<Environment>(closure)};
-    for (size_t i = 0; i < declaration->params.size(); i++)
+
+#pragma omp parallel for
     {
-        environment->define(declaration->params[i], arguments[i], false);
+        for (size_t i = 0; i < declaration->params.size(); i++)
+        {
+            environment->define(declaration->params[i], arguments[i], false);
+        }
     }
+
     try
     {
         interpreter.executeBlock(declaration->body, environment);

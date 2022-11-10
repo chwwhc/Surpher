@@ -84,7 +84,6 @@ int main(int argc, char *argv[]) {
         runRepl();
     }else if(argc == 2){
         runScript(argv[1]);
-        runRepl();
     }else{
         std::cerr << "Usage: Surpher [path to script]*\n";
     }

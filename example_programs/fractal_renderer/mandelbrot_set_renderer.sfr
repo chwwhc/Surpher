@@ -7,7 +7,7 @@
 fun main(){
     var cx, cy;
     var hx, hy;
-    fixed var hxres = 2000, hyres = 2000;
+    fixed var hxres = 500, hyres = 500;
     var it2;
     var iteration;
     fixed var itermax = 100;
