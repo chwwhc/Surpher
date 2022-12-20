@@ -3,23 +3,12 @@
 ## Introduction
 This repo contains my C++ implementation of Robert Nystrom's programming language `Lox` (link to the original book: [Crafting Interpreters](https://craftinginterpreters.com/), 
 link to the GitHub repo: [craftinginterpreters](https://github.com/munificent/craftinginterpreters)). I started this project to learn C++ and, more importantly, to have fun! Because this is my first time using C++ in a serious project (sort of?), 
-there are bound to be lots of bad codes. Refer
-to them at your own risk ;)
+there are lots of bad codes for sure. Refer to them at your own risk ;)
 
 ## Overview of the Surpher language
-Surpher is a dynamically typed, 
-interpreted language that supports object-oriented
+Surpher is a dynamically typed language that supports object-oriented
 programming and first-class functions. The current Surpher interpreter
 is a tree-walk interpreter implemented in C++17.
-
-Some add-on features to vanilla Lox:
-<ul>
-<li>More expressions(array, comma, bit operation)</li>
-<li>Rich native functions</li>
-<li>Function signatures in classes</li>
-<li>Static and non-static methods in classes</li>
-<li>Namespaces to avoid name collision</li>
-</ul>
 
 ## How to use
 Load CMake project:
